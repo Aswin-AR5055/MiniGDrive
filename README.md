@@ -63,6 +63,7 @@ Access it in your browser
 http://127.0.0.1/
 
 🔒 Security Notes
+
 Passwords are hashed securely before being stored in the database using Werkzeug.
 
 Session tokens ensure users stay logged in securely for up to 7 days.
