@@ -60,7 +60,7 @@ Run the application
 python app.py
 
 Access it in your browser
-http://127.0.0.1:80/
+http://127.0.0.1/
 
 🔒 Security Notes
 Passwords are hashed securely before being stored in the database using Werkzeug.
