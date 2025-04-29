@@ -53,6 +53,8 @@ cd MiniGDrive
 Install the dependencies
 
 pip install flask werkzeug
+or
+pip install -r requirements.txt
 
 Run the application
 python app.py
