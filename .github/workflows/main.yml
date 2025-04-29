@@ -1,0 +1,11 @@
+name: First CI/CD Test
+
+on: [push]
+
+jobs:
+  say-hello:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Hello World
+        run: echo "Hello bro, your CI/CD is working! 🚀"
