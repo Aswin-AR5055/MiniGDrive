@@ -1,12 +1,27 @@
-name: HelloWorld
-
+name: Creation of EC2 instance
 on:
   push:
-
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Print HelloWorld
-        run: echo "HelloWorld"
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up AWS CLI
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+
+      - name: Create EC2 instance
+        run: |
+          INSTANCE_ID=$(aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --count 1 --instance-type t2.micro --key-name MiniGoogleDriveKey --query 'Instances[0].InstanceId' --output text 'Instance[0].InstancepublicIpAddress' --output text)
+          echo "EC2 instance created with ID: $INSTANCE_ID"
+          echo "Instance public IP Address: $INSTANCE_PUBLIC_IP_ADDRESS"
