@@ -22,6 +22,8 @@ jobs:
 
       - name: Create EC2 instance
         run: |
-          INSTANCE_ID=$(aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --count 1 --instance-type t2.micro --key-name MiniGoogleDriveKey --query 'Instances[0].InstanceId' --output text 'Instance[0].InstancepublicIpAddress' --output text)
+          INSTANCE_DETAILS=$(aws ec2 run-instances --image-id ami-0c55b159cbfafe1f0 --count 1 --instance-type t2.micro --key-name MiniGoogleDriveKey --query 'Instances[0]' --output json)
+          INSTANCE_ID=$(echo $INSTANCE_DETAILS | jq -r '.InstanceId')
+          INSTANCE_PUBLIC_IP_ADDRESS=$(echo $INSTANCE_DETAILS | jq -r '.PublicIpAddress')
           echo "EC2 instance created with ID: $INSTANCE_ID"
           echo "Instance public IP Address: $INSTANCE_PUBLIC_IP_ADDRESS"
