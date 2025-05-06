@@ -126,7 +126,9 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 ## 🙏 Acknowledgements
 
 Built with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5055)
-[Instagram](https://www.instagram.com/ar_aswinraj?igsh=amt2NjI4M2oyZW1m)
+
+
+[Instagram](https://www.instagram.com/ar_aswinraj)
 
 
 
