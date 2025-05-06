@@ -83,23 +83,8 @@ MiniGDrive/
    Open your browser and navigate to:
    ```
    http://127.0.0.1/
-   ```
 
----
-
-## 🔒 Security Notes
-
-- **Password Security**: Passwords are hashed securely before being stored in the database using Werkzeug.  
-- **Session Management**: Session tokens ensure users stay logged in securely for up to 7 days.
-
----
-
-## 🙏 Acknowledgements
-
-Built with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5055)
-
-
----
+   ---
 
 ## 🛳️ Run with Docker
 
@@ -119,10 +104,27 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 3. **Run the container**:
    ```bash
    docker run -p 5000:5000 minigdrive
-   ```
+   ``````
+
+---
+
+## 🔒 Security Notes
+
+- **Password Security**: Passwords are hashed securely before being stored in the database using Werkzeug.  
+- **Session Management**: Session tokens ensure users stay logged in securely for up to 7 days.
 
 4. **Access the application**:
    Open your browser and go to:
    ```
    http://localhost:5000
    ```
+
+---
+
+## 🙏 Acknowledgements
+
+Built with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5055)
+
+
+
+
