@@ -107,18 +107,18 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
    ``````
 *Make sure port 80 is free or open on your system* 
 
+4. **Access the application**:
+   Open your browser and go to:
+   ```
+   http://localhost:5000
+   ```
+
 ---
 
 ## 🔒 Security Notes
 
 - **Password Security**: Passwords are hashed securely before being stored in the database using Werkzeug.  
 - **Session Management**: Session tokens ensure users stay logged in securely for up to 7 days.
-
-4. **Access the application**:
-   Open your browser and go to:
-   ```
-   http://localhost:5000
-   ```
 
 ---
 
