@@ -98,3 +98,31 @@ MiniGDrive/
 
 Built with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5055)
 
+
+---
+
+## 🛳️ Run with Docker
+
+If you have Docker installed, you can run MiniGDrive without installing dependencies manually.
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Aswin-AR5055/MiniGDrive.git
+   cd MiniGDrive
+   ```
+
+2. **Build the Docker image**:
+   ```bash
+   docker build -t minigdrive .
+   ```
+
+3. **Run the container**:
+   ```bash
+   docker run -p 5000:5000 minigdrive
+   ```
+
+4. **Access the application**:
+   Open your browser and go to:
+   ```
+   http://localhost:5000
+   ```
