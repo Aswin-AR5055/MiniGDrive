@@ -103,8 +103,9 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 3. **Run the container**:
    ```bash
-   docker run -p 5000:5000 minigdrive
+   docker run -p 80:80 minigdrive
    ``````
+*Make sure port 80 is free or open on your system* 
 
 ---
 
