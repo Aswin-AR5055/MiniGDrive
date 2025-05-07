@@ -1,0 +1,16 @@
+__pychache__/
+*.pyc
+*.pyo
+
+.venv/
+env/
+venv/
+
+*.db
+
+.vscode/
+
+.env
+
+*.log
+
