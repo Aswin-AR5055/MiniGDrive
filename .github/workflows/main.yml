@@ -1,24 +1,18 @@
-name: CI
+name: test and deploy to ec2
 on:
   push:
     branches:
-      - master
+      main
+
 jobs:
-  test:
-    runs-on: ubuntu-latest
+  testanddeploy:
     steps:
+
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install dependencies
+      - name: Run tests
         run: |
-          pip install -r requirements.txt
-
-      - name: Check syntax
-        run: |
-          python -m py_compile app.py
+          sudo apt install pytest
+          pytest
+             
