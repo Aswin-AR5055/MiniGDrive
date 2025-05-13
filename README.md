@@ -42,7 +42,8 @@ MiniGDrive is a lightweight cloud storage application built using Flask and SQLi
 MiniGDrive/
 │
 ├── app.py                # Main Flask application
-├── users.db              # SQLite Database file
+├── users.db              # SQLite Database file(generated automatically(dynamically) when the app runs)
+├── test_app.py           # Test file for app.py
 ├── templates/            # HTML templates
 │   ├── index.html
 │   ├── login.html
@@ -65,7 +66,7 @@ MiniGDrive/
    cd MiniGDrive
    ```
 
-2. **Install the dependencies**:
+2. **Install the dependencies**(use a virtual environment):
    ```bash
    pip install flask werkzeug
    ```
@@ -78,11 +79,16 @@ MiniGDrive/
    ```bash
    python app.py
    ```
-
-4. **Access the application**:
-   Open your browser and navigate to:
+   OR:
+   
+    ```bash
+   python3 app.py
    ```
-   http://127.0.0.1/
+   
+5. **Access the application**:
+   Open your browser and navigate to (or) copy paste the address shown on terminal when you run the app:
+   ```
+   http://127.0.0.1/5000 
 
    ---
 
@@ -103,15 +109,15 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 3. **Run the container**:
    ```bash
-   docker run -p 80:80 minigdrive
+   docker run -p 5000:5000 minigdrive
    ``````
-"MAKE SURE PORT 80 IS FREE(OPEN)" 
+
 
 4. **Access the application**:
    
    Open your browser and go to:
    ```
-   http://localhost
+   http://localhost   #localhost is the local machine's address
    ```
 
 ---
