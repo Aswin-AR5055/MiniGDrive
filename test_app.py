@@ -49,7 +49,7 @@ def test_logo_page_loads_successfully(client):
     """
     response = client.get('/logo')
     assert response.status_code == 200
-    assert b'Logo' in response.data  # Example: Check for specific text in the page
+    assert b'ARS Cloud Drive' in response.data  # Updated to match the page title
 
 
 def test_user_register_login_logout_workflow(client):
@@ -68,7 +68,7 @@ def test_user_register_login_logout_workflow(client):
         'username': TEST_USER,
         'password': TEST_PASS
     }, follow_redirects=True)
-    assert b'Dashboard' in response.data
+    assert b"My Files" in response.data  # Updated to check for the correct dashboard content
 
     # Logout
     response = client.get('/logout', follow_redirects=True)
@@ -113,7 +113,7 @@ def test_file_upload_functionality(client):
     with open(test_file_path, 'rb') as f:
         response = client.post('/upload', data={'file': f}, follow_redirects=True)
 
-    assert b'Dashboard' in response.data
+    assert b"My Files" in response.data  # Updated to check for the correct dashboard content
     assert os.path.exists(os.path.join(TEST_UPLOAD_FOLDER, TEST_USER, 'testfile.txt'))
 
     os.remove(test_file_path)
@@ -158,7 +158,7 @@ def test_zip_download_with_no_files(client):
     client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
 
     response = client.post('/download_zip', data={'selected_files': []}, follow_redirects=True)
-    assert b'Dashboard' in response.data
+    assert b"My Files" in response.data  # Updated to check for the correct dashboard content
 
 
 def test_file_sharing_link_generation(client):
