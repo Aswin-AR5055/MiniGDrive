@@ -1,4 +1,4 @@
-name: test and deploy to ec2
+name: test app
 on:
   push:
     branches:
@@ -22,7 +22,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Check Syntax
+      - name: Lint Code
         run: |
-          python -m py_compile app.py
+          pip install flake8
+          flake8 app.py
+
+      - name: Run Unit Tests
+        run: |
+        pip install pytest
+        pytest
 
