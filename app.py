@@ -1,17 +1,8 @@
-from flask import (
-    Flask, render_template, request, redirect,
-    send_from_directory, url_for, session, flash
-)
+from flask import Flask, render_template, request, redirect, send_from_directory, url_for, session, flash
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import timedelta
-import os
-import shutil
-import zipfile
-import sqlite3
-import uuid
-import unicodedata
-
+import os, shutil, zipfile, sqlite3, uuid, unicodedata
 
 app = Flask(__name__)
 app.secret_key = "supersecretkey"
@@ -22,7 +13,6 @@ UPLOAD_BASE = os.path.join(BASE_DIR, "uploads")
 TRASH_BASE = os.path.join(BASE_DIR, "trash")
 STORAGE_DIR = os.path.join(BASE_DIR, "storage")
 os.makedirs(STORAGE_DIR, exist_ok=True)
-
 
 def init_db():
     conn = sqlite3.connect("users.db")
@@ -40,21 +30,16 @@ def init_db():
     conn.commit()
     conn.close()
 
-
 init_db()
-
 
 def normalize_filename(name):
     return unicodedata.normalize('NFKD', name).encode('ascii', 'ignore').decode('ascii')
 
-
 def get_user_folder():
     return os.path.join(UPLOAD_BASE, session["username"])
 
-
 def get_trash_folder():
     return os.path.join(TRASH_BASE, session["username"])
-
 
 def get_storage_info():
     total_bytes = 0
@@ -66,17 +51,14 @@ def get_storage_info():
     percent = min(int((used_mb / max_mb) * 100), 100)
     return used_mb, max_mb, percent
 
-
 @app.route("/")
 def home():
     return redirect("/logo")
-
 
 @app.route("/logo")
 def logo():
     is_logged_in = "username" in session
     return render_template("logo.html", logged_in=is_logged_in)
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -104,7 +86,6 @@ def register():
 
     return render_template("register.html")
 
-
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -126,12 +107,71 @@ def login():
         flash("Invalid credentials", "danger")
     return render_template("login.html")
 
-
 @app.route("/logout")
 def logout():
     session.pop("username", None)
     return redirect("/login")
 
+@app.route("/profile", methods=["GET", "POST"])
+def profile():
+    if "username" not in session:
+        return redirect("/login")
+
+    lang = request.args.get("lang", "en")
+    translations = get_translations(lang)
+
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+
+    if request.method == "POST":
+        bio = request.form.get("bio", "")
+        age = request.form.get("age", "")
+        remove_pic = request.form.get("remove_pic") == "on"
+        profile_pic = request.files.get("profile_pic")
+
+        filename = None
+        if profile_pic and profile_pic.filename:
+            filename = secure_filename(profile_pic.filename)
+            profile_pic_path = os.path.join("static", "profiles", filename)
+            os.makedirs(os.path.dirname(profile_pic_path), exist_ok=True)
+            profile_pic.save(profile_pic_path)
+            c.execute("UPDATE users SET bio=?, age=?, profile_pic=? WHERE username=?",
+                      (bio, age, filename, session["username"]))
+        else:
+            c.execute("UPDATE users SET bio=?, age=? WHERE username=?",
+                      (bio, age, session["username"]))
+
+        if remove_pic:
+            c.execute("SELECT profile_pic FROM users WHERE username=?", (session["username"],))
+            current_pic = c.fetchone()[0]
+            if current_pic:
+                try:
+                    os.remove(os.path.join("static", "profiles", current_pic))
+                except FileNotFoundError:
+                    pass
+            c.execute("UPDATE users SET profile_pic=NULL WHERE username=?", (session["username"],))
+
+        conn.commit()
+
+    c.execute("SELECT bio, age, profile_pic FROM users WHERE username=?", (session["username"],))
+    row = c.fetchone()
+    conn.close()
+
+    return render_template("profile.html", 
+                         user=session["username"], 
+                         bio=row[0], 
+                         age=row[1], 
+                         profile_pic=row[2],
+                         translations=translations,
+                         lang=lang)
+
+def get_user_profile():
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    c.execute("SELECT bio, profile_pic FROM users WHERE username=?", (session["username"],))
+    row = c.fetchone()
+    conn.close()
+    return {"bio": row[0], "profile_pic": row[1]} if row else {"bio": "", "profile_pic": None}
 
 @app.route("/dashboard")
 def dashboard():
@@ -151,20 +191,12 @@ def dashboard():
     used_mb, max_mb, percent_used = get_storage_info()
     profile = get_user_profile()
 
-    return render_template(
-        "index.html",
-        user=session["username"],
-        files=files,
-        trashed=trashed,
-        used_mb=used_mb,
-        max_mb=max_mb,
-        percent_used=percent_used,
-        translations=translations,
-        lang=lang,
-        bio=profile["bio"],
-        profile_pic=profile["profile_pic"]
-    )
-
+    return render_template("index.html", user=session["username"],
+                           files=files, trashed=trashed,
+                           used_mb=used_mb, max_mb=max_mb,
+                           percent_used=percent_used,
+                           translations=translations, lang=lang,
+                           bio=profile["bio"], profile_pic=profile["profile_pic"])
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -176,13 +208,11 @@ def upload():
         file.save(os.path.join(get_user_folder(), filename))
     return redirect("/dashboard")
 
-
 @app.route("/download/<filename>")
 def download_file(filename):
     if "username" not in session:
         return redirect("/login")
     return send_from_directory(get_user_folder(), filename, as_attachment=True)
-
 
 @app.route("/trash/<filename>")
 def download_trash_file(filename):
@@ -190,38 +220,37 @@ def download_trash_file(filename):
         return redirect("/login")
     return send_from_directory(get_trash_folder(), filename, as_attachment=True)
 
-
 @app.route("/delete/<path:filename>")
 def delete(filename):
     if "username" not in session:
         return redirect("/login")
+    safe_filename = secure_filename(normalize_filename(filename))
     src = os.path.join(get_user_folder(), filename)
     dst = os.path.join(get_trash_folder(), filename)
     if os.path.exists(src):
         shutil.move(src, dst)
     return redirect("/dashboard")
 
-
 @app.route("/restore/<filename>")
 def restore(filename):
     if "username" not in session:
         return redirect("/login")
+    safe_filename = secure_filename(normalize_filename(filename))
     src = os.path.join(get_trash_folder(), normalize_filename(filename))
     dst = os.path.join(get_user_folder(), normalize_filename(filename))
     if os.path.exists(src):
         shutil.move(src, dst)
     return redirect("/dashboard")
 
-
 @app.route("/permadelete/<filename>")
 def permadelete(filename):
     if "username" not in session:
         return redirect("/login")
+    safe_filename = secure_filename(normalize_filename(filename))
     path = os.path.join(get_trash_folder(), normalize_filename(filename))
     if os.path.exists(path):
         os.remove(path)
     return redirect("/dashboard")
-
 
 @app.route("/download_zip", methods=["POST"])
 def download_zip():
@@ -239,23 +268,12 @@ def download_zip():
                 zipf.write(file_path, arcname=f)
     return send_from_directory(STORAGE_DIR, zip_name, as_attachment=True)
 
-
 @app.route("/share/<filename>")
 def share(filename):
     if "username" not in session:
         return redirect("/login")
     file_url = url_for("download_file", filename=filename, _external=True)
     return f"<h3>Share this link:</h3><a href='{file_url}'>{file_url}</a><br><br><a href='/dashboard'>⬅ Back</a>"
-
-
-def get_user_profile():
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
-    c.execute("SELECT bio, profile_pic FROM users WHERE username=?", (session["username"],))
-    row = c.fetchone()
-    conn.close()
-    return {"bio": row[0], "profile_pic": row[1]} if row else {"bio": "", "profile_pic": None}
-
 
 def get_translations(lang):
     translations = {
@@ -288,7 +306,6 @@ def get_translations(lang):
         "back_to_dashboard": {"en": "Back to Dashboard", "ta": "டாஷ்போர்டுக்கு திரும்புக", "hi": "डैशबोर्ड पर वापस जाएं"}
     }
     return {key: val.get(lang, val["en"]) for key, val in translations.items()}
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
