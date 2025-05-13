@@ -24,5 +24,5 @@ jobs:
 
       - name: Check Syntax
         run: |
-          python -m py_compile app.y
+          python -m py_compile app.py
 
