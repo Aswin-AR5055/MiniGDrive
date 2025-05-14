@@ -1,0 +1,58 @@
+name: Deploy to EC2 using Terraform
+
+on:
+  push:
+    branches:
+      - testbranch # Adjust this if needed
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Set up Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.11.3 # Adjust the version if required
+
+      # Step 3: Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
+        working-directory: ./ # Adjust if main.tf is in a subdirectory
+
+      # Step 4: Plan Terraform deployment
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: ./ # Adjust if main.tf is in a subdirectory
+
+      # Step 5: Apply Terraform deployment
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: ./ 
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      # Step 6: Get Terraform output (public IP)
+      - name: Get Terraform Outputs
+        id: get_outputs
+        run: |
+          echo "public_ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
+        working-directory: ./ 
+
+      # Step 7: Add SSH Key for Instance Access (Optional)
+      - name: Add SSH Key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ssh_access_key }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ steps.get_outputs.outputs.public_ip }} >> ~/.ssh/known_hosts
+
+      # Step 8: Test SSH Connection (Optional)
+      - name: Test SSH Access
+        run: ssh -i ~/.ssh/id_rsa ubuntu@${{ steps.get_outputs.outputs.public_ip }} 'echo "SSH Connection Successful"'
