@@ -1,11 +1,11 @@
-name: test app
+name: pytest
 on:
   push:
     branches:
       master
 
 jobs:
-  testanddeploy:
+  test:
     runs-on: ubuntu-latest
     steps:
 
