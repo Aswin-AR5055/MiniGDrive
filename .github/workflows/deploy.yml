@@ -24,11 +24,17 @@ jobs:
       - name: Terraform Init
         run: terraform init
         working-directory: ./ # Adjust if main.tf is in a subdirectory
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # Step 4: Plan Terraform deployment
       - name: Terraform Plan
         run: terraform plan
         working-directory: ./ # Adjust if main.tf is in a subdirectory
+         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       # Step 5: Apply Terraform deployment
       - name: Terraform Apply
