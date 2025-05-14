@@ -44,21 +44,15 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      # Step 6: Get Terraform output (public IP)
-      - name: Get Terraform Outputs
-        id: get_outputs
-        run: |
-          echo "public_ip=$(terraform output -raw public_ip)" >> $GITHUB_OUTPUT
-        working-directory: ./ 
-
+    
       # Step 7: Add SSH Key for Instance Access (Optional)
       - name: Add SSH Key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.ssh_access_key }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ steps.get_outputs.outputs.public_ip }} >> ~/.ssh/known_hosts
+          ssh-keyscan -H ${{ steps.terraform.outputs.public_ip }} >> ~/.ssh/known_hosts
 
       # Step 8: Test SSH Connection (Optional)
       - name: Test SSH Access
-        run: ssh -i ~/.ssh/id_rsa ubuntu@${{ steps.get_outputs.outputs.public_ip }} 'echo "SSH Connection Successful"'
+        run: ssh -i ~/.ssh/id_rsa ubuntu@${{ steps.terraform.outputs.public_ip }} 'echo "SSH Connection Successful"'
