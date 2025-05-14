@@ -5,7 +5,7 @@ from datetime import timedelta
 import os, shutil, zipfile, sqlite3, uuid, unicodedata
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
+app.secret_key = "supersecretkey"
 app.permanent_session_lifetime = timedelta(days=7)
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
