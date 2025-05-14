@@ -4,7 +4,4 @@ myenv/
 .vscode/
 app.py.bak
 test_app.py.bak
-*.tfstate
-*.tfstate.backup
-.terraform.lock.hcl
-.terraform/
+
