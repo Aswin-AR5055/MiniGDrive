@@ -33,6 +33,10 @@ MiniGDrive is a lightweight cloud storage application built using Flask and SQLi
 | **Security**        | Werkzeug (secure filename + password hashing) | Secure file uploads and password management |
 | **File Handling**   | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`) | File operations (uploads, storage, trash)   |
 | **Session Management** | Flask + `datetime`               | Managing user sessions (login duration)      |
+| Deployment       | AWS EC2                 | Hosting the application                     |
+| Containerization | Docker                  | Packaging and running the app               |
+| CI/CD            | GitHub Actions          | Automating tests and deployment           |
+
 
 ---
 
