@@ -131,12 +131,11 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 ## 🙏 Acknowledgements
 
-Built with ❤️ by [Aswin Raj A](https://github.com/Aswin-AR5055)
+Built with ❤️ by [Aswin Raj A](https://www.instagram.com/ar_aswinraj)
 
 Design Support by [Mohamed Suhail S](https://www.instagram.com/realoctatrix/)
 
 
-[Instagram](https://www.instagram.com/ar_aswinraj)
 
 
 
