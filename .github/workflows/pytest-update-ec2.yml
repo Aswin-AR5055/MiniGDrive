@@ -6,7 +6,7 @@ on:
       master  
 
 jobs:
-  Test+update-ec2:
+  pytest-update-ec2:
     runs-on: ubuntu-latest
 
     steps:
