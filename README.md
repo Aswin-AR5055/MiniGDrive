@@ -7,6 +7,8 @@ MiniGDrive is a lightweight cloud storage application built using Flask and SQLi
 
 ## 🌐 Live Demo
 
+**Link Shortened with tinyurl**
+
 👉 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue)](https://tinyurl.com/MyminiGDriveAR)
 
 
