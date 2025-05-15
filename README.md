@@ -33,9 +33,9 @@ MiniGDrive is a lightweight cloud storage application built using Flask and SQLi
 | **Security**        | Werkzeug (secure filename + password hashing) | Secure file uploads and password management |
 | **File Handling**   | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`) | File operations (uploads, storage, trash)   |
 | **Session Management** | Flask + `datetime`               | Managing user sessions (login duration)      |
-| Deployment       | AWS EC2                 | Hosting the application                     |
-| Containerization | Docker                  | Packaging and running the app               |
-| CI/CD            | GitHub Actions          | Automating tests and deployment           |
+| **Deployment**       | AWS EC2                 | Hosting the application                     |
+| **Containerization** | Docker                  | Packaging and running the app               |
+| **CI/CD**            | GitHub Actions          | Automating tests and deployment           |
 
 
 ---
@@ -92,7 +92,7 @@ MiniGDrive/
 5. **Visit the application**:
    Open your browser and navigate to (or) copy paste the address shown on terminal when you run the app:
    ```
-   http://127.0.0.1/5000 
+   http://127.0.0.1:5000 
 
    ---
 
@@ -114,7 +114,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 3. **Run the container**:
    ```bash
    docker run -p 5000:5000 minigdrive
-   ``````
+   ```
 
 
 4. **Access the application**:
