@@ -91,8 +91,11 @@ MiniGDrive/
    
 5. **Visit the application**:
    Open your browser and navigate to (or) copy paste the address shown on terminal when you run the app:
-   ```
+
+   ```bash
    http://127.0.0.1:5000 
+
+   ```
 
    ---
 
