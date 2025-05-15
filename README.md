@@ -42,18 +42,18 @@ MiniGDrive is a lightweight cloud storage application built using Flask and SQLi
 MiniGDrive/
 │
 ├── app.py                # Main Flask application
-├── users.db              # SQLite Database file(generated automatically(dynamically) when the app runs)
-├── test_app.py           # Test file for app.py
+├── users.db              # SQLite DB (created at runtime)
+├── test_app.py           # Unit tests
 ├── templates/            # HTML templates
 │   ├── index.html
 │   ├── login.html
 │   ├── logo.html
 │   ├── profile.html
 │   └── register.html
-├── uploads/              # Folder for uploaded files (created dynamically)
-├── trash/                # Folder for trashed files (created dynamically)
-├── storage/              # Main storage directory (created dynamically)
-└── static/               # Static files (e.g., profile pictures)
+├── uploads/             # Uploaded files (generated)
+├── trash/               # Trashed files (generated)
+├── storage/             # User storage dir (generated)
+└── static/              # Static assets (profile images, etc.)
 ```
 
 ---
@@ -85,7 +85,7 @@ MiniGDrive/
    python3 app.py
    ```
    
-5. **Access the application**:
+5. **Visit the application**:
    Open your browser and navigate to (or) copy paste the address shown on terminal when you run the app:
    ```
    http://127.0.0.1/5000 
@@ -117,7 +117,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
    
    Open your browser and go to:
    ```
-   http://localhost   #localhost is the local machine's address
+   http://localhost:5000   #localhost is the local machine's address
    ```
 
 ---
@@ -131,7 +131,9 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 ## 🙏 Acknowledgements
 
-Built with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5055)
+Built with ❤️ by [Aswin Raj A](https://github.com/Aswin-AR5055)
+
+Design Support by [Mohamed Suhail S](https://www.instagram.com/realoctatrix/)
 
 
 [Instagram](https://www.instagram.com/ar_aswinraj)
