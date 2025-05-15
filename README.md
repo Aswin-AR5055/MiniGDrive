@@ -1,13 +1,11 @@
 
 # MiniGDrive
 
-MiniGDrive is a lightweight cloud storage application built using Flask and SQLite, designed to mimic the basic functionality of Google Drive. Users can register, log in, upload, download, and manage their files — all within a simple and secure environment.
+**MiniGDrive** is a lightweight cloud storage application built using Flask and SQLite, designed to mimic the basic functionality of Google Drive. Users can register, log in, upload, download, and manage their files — all within a simple and secure environment.
 
 ---
 
 ## 🌐 Live Demo
-
-**Link Shortened with tinyurl**
 
 👉 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue)](https://tinyurl.com/MyminiGDriveAR)
 
