@@ -7,7 +7,7 @@
 
 ## 🌐 Live Demo
 
-👉 **CLICK HERE:** [![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue)](https://tinyurl.com/MyminiGDriveAR)
+👉 [![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://tinyurl.com/MyminiGDriveAR)
 
 
 ---
