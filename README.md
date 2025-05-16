@@ -7,7 +7,7 @@
 
 ## 🌐 Live Demo
 
-👉 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue)](https://tinyurl.com/MyminiGDriveAR)
+👉 **CLICK HERE:** [![Live Demo](https://img.shields.io/badge/Live%20Demo-Click%20Here-blue)](https://tinyurl.com/MyminiGDriveAR)
 
 
 ---
@@ -71,13 +71,11 @@ MiniGDrive/
    ```
 
 2. **Install the dependencies**(use a virtual environment):
-   ```bash
-   pip install flask werkzeug
-   ```
-   Or use the requirements.txt file:
+
    ```bash
    pip install -r requirements.txt
    ```
+   **Note**:requirements.txt file is included
 
 3. **Run the application**:
    ```bash
