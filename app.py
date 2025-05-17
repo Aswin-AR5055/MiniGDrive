@@ -277,6 +277,7 @@ def share(filename):
 
 def get_translations(lang):
     translations = {
+        "my_drive": {"en": "My Drive", "ta": "என் டிரைவ்", "hi": "मेरा ड्राइव"},
         "hello": {"en": "Hello", "ta": "வணக்கம்", "hi": "नमस्ते"},
         "logout": {"en": "Logout", "ta": "வெளியேறு", "hi": "लॉगआउट"},
         "storage": {"en": "Storage:", "ta": "சேமிப்பு:", "hi": "स्टोरेज:"},
