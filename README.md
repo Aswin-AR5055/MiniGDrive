@@ -131,6 +131,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 - **Password Security**: Passwords are hashed securely before being stored in the database using Werkzeug.  
 - **Session Management**: Session tokens ensure users stay logged in securely for up to 7 days.
+- **Important:** For your safety, **do not use your real personal email address or password** when registering on this site. Use a secondary or disposable email, and a       unique password that you do not use elsewhere.
 
 ---
 
