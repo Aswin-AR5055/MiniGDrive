@@ -3,7 +3,7 @@ name: Test and Update EC2 Instance
 on:
   push:
     branches:
-      master  
+      - master
 
 jobs:
   pytest-update-ec2:
