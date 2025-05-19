@@ -116,37 +116,6 @@ def logout():
     session.pop("username", None)
     return redirect("/login")
 
-@app.route("/delete_account", methods=["POST"])
-def delete_account():
-    if "username" not in session:
-        return redirect("/login")
-    uname = session["username"]
-
-    # Remove user from database
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
-    c.execute("DELETE FROM users WHERE username=?", (uname,))
-    conn.commit()
-    conn.close()
-
-    # Delete uploads and trash folders
-    shutil.rmtree(os.path.join(UPLOAD_BASE, uname), ignore_errors=True)
-    shutil.rmtree(os.path.join(TRASH_BASE, uname), ignore_errors=True)
-
-    # Delete profile picture if exists
-    profile_pic_dir = os.path.join("static", "profiles")
-    for file in os.listdir(profile_pic_dir):
-        if file.startswith(uname):
-            try:
-                os.remove(os.path.join(profile_pic_dir, file))
-            except Exception:
-                pass
-
-    # Log out user
-    session.pop("username", None)
-    flash("Your account has been deleted.", "success")
-    return redirect("/register")
-
 @app.route("/profile", methods=["GET", "POST"])
 def profile():
     if "username" not in session:
