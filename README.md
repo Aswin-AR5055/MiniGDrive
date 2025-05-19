@@ -7,9 +7,15 @@
 
 ## 📸 Screenshot
 
-Dashboard:
+Dashboard(PC view):
 
 ![Dashboard](assets/dashboard.png)
+
+Dashboard(mobile view):
+
+![Dashboard](assets/dashboardmobile.jpg)
+
+![Dashboard](assets/dashboardmobile2.jpg)
 
 ## 🌐 Live Demo
 
