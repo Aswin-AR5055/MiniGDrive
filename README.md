@@ -25,17 +25,17 @@
 
 ## 🛠️ Tech Stack
 
-| Layer               | Technology Used                     | Purpose                                      |
-|---------------------|-------------------------------------|----------------------------------------------|
-| **Backend**         | Python + Flask                     | Web server and application logic             |
-| **Database**        | SQLite                             | Storing user accounts and profiles           |
-| **Frontend**        | HTML (Flask templates)             | User interface rendering                     |
-| **Security**        | Werkzeug (secure filename + password hashing) | Secure file uploads and password management |
-| **File Handling**   | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`) | File operations (uploads, storage, trash)   |
-| **Session Management** | Flask + `datetime`               | Managing user sessions (login duration)      |
-| **Deployment**       | AWS EC2                 | Hosting the application                     |
-| **Containerization** | Docker                  | Packaging and running the app               |
-| **CI/CD**            | GitHub Actions          | Automating tests and deployment           |
+| Layer                | Technology Used                                                   | Purpose                                         |
+|----------------------|-------------------------------------------------------------------|-------------------------------------------------|
+| **Backend**          | Python + Flask                                                    | Web server and application logic                |
+| **Database**         | SQLite                                                            | Storing user accounts and profiles              |
+| **Frontend**         | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript           | Responsive UI, modals, sorting/filtering, interactivity |
+| **Security**         | Werkzeug (secure filename + password hashing)                     | Secure file uploads and password management     |
+| **File Handling**    | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)      |
+| **Session Management** | Flask + `datetime`                                              | Managing user sessions (login duration)         |
+| **Deployment**       | AWS EC2                                                           | Hosting the application                         |
+| **Containerization** | Docker                                                            | Packaging and running the app                   |
+| **CI/CD**            | GitHub Actions                                                    | Automating tests and deployment                 |
 
 
 ---
