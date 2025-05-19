@@ -11,7 +11,7 @@ Dashboard(PC view):
 
 ![Dashboard](assets/dashboard.png)
 
-Dashboard(mobile view):
+Dashboard(Mobile view):
 
 <img src="assets/dashboardmobile2.jpg" width="200"/> <img src="assets/dashboardmobile.jpg" width="200"/>
 
