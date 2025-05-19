@@ -778,3 +778,39 @@
     background: #e0e0e0;
     transform: scale(1.1);
 }
+/* Dark mode: form-select (dropdown) and form-control (input) */
+body.dark-mode .form-select,
+body.dark-mode .form-control {
+  background-color: var(--dark-surface);
+  color: var(--dark-text);
+  border-color: var(--dark-border);
+}
+
+body.dark-mode .form-select:focus,
+body.dark-mode .form-control:focus {
+  background-color: var(--dark-surface);
+  color: var(--dark-text);
+  border-color: var(--dark-accent);
+  box-shadow: 0 0 0 0.2rem rgba(138, 180, 248, 0.25); /* Use your --dark-accent color */
+}
+
+body.dark-mode .form-select::placeholder,
+body.dark-mode .form-control::placeholder {
+  color: var(--dark-text-secondary);
+  opacity: 1;
+}
+/* Thicker dropdown arrow for Bootstrap .form-select */
+.form-select {
+  /* Remove default arrow for custom one */
+  background-image:
+    url("data:image/svg+xml;charset=UTF-8,<svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M6 8L10 12L14 8' stroke='%235f6368' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1.2em;
+}
+
+/* Dark mode: thicker arrow with accent color */
+body.dark-mode .form-select {
+  background-image:
+    url("data:image/svg+xml;charset=UTF-8,<svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M6 8L10 12L14 8' stroke='%238ab4f8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+}
