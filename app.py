@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, send_from_directory, url_for, session, flash
+from flask import Flask, render_template, request, redirect, send_from_directory, url_for, session, flash, jsonify, abort
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import timedelta
-import os, shutil, zipfile, sqlite3, uuid, unicodedata
+from datetime import timedelta, datetime
+import os, shutil, zipfile, sqlite3, uuid, unicodedata, mimetypes
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
@@ -13,6 +13,8 @@ UPLOAD_BASE = os.path.join(BASE_DIR, "uploads")
 TRASH_BASE = os.path.join(BASE_DIR, "trash")
 STORAGE_DIR = os.path.join(BASE_DIR, "storage")
 os.makedirs(STORAGE_DIR, exist_ok=True)
+os.makedirs(UPLOAD_BASE, exist_ok=True)
+os.makedirs(TRASH_BASE, exist_ok=True)
 
 def init_db():
     conn = sqlite3.connect("users.db")
@@ -44,6 +46,8 @@ def get_trash_folder():
 def get_storage_info():
     total_bytes = 0
     user_dir = get_user_folder()
+    if not os.path.exists(user_dir):
+        return 0, 1024, 0
     for f in os.listdir(user_dir):
         total_bytes += os.path.getsize(os.path.join(user_dir, f))
     used_mb = round(total_bytes / (1024 * 1024), 2)
@@ -191,12 +195,25 @@ def dashboard():
     used_mb, max_mb, percent_used = get_storage_info()
     profile = get_user_profile()
 
+    # --- File meta for sorting/filtering ---
+    file_dates = {}
+    file_sizes = {}
+    for f in files:
+        try:
+            path = os.path.join(upload_folder, f)
+            file_dates[f] = datetime.utcfromtimestamp(os.path.getmtime(path)).isoformat()
+            file_sizes[f] = os.path.getsize(path)
+        except Exception:
+            file_dates[f] = ""
+            file_sizes[f] = 0
+
     return render_template("index.html", user=session["username"],
                            files=files, trashed=trashed,
                            used_mb=used_mb, max_mb=max_mb,
                            percent_used=percent_used,
                            translations=translations, lang=lang,
-                           bio=profile["bio"], profile_pic=profile["profile_pic"])
+                           bio=profile["bio"], profile_pic=profile["profile_pic"],
+                           file_dates=file_dates, file_sizes=file_sizes)
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -212,7 +229,17 @@ def upload():
 def download_file(filename):
     if "username" not in session:
         return redirect("/login")
-    return send_from_directory(get_user_folder(), filename, as_attachment=True)
+    safe_filename = secure_filename(normalize_filename(filename))
+    path = os.path.join(get_user_folder(), safe_filename)
+    if not os.path.exists(path):
+        abort(404)
+    # Serve text files as plain text for preview, otherwise as attachment
+    ext = safe_filename.split('.')[-1].lower()
+    as_attachment = not ext in ['txt', 'md', 'py', 'js', 'css', 'html']
+    mimetype, _ = mimetypes.guess_type(path)
+    if ext in ['txt', 'md', 'py', 'js', 'css', 'html']:
+        return send_from_directory(get_user_folder(), safe_filename, as_attachment=False, mimetype=mimetype or 'text/plain')
+    return send_from_directory(get_user_folder(), safe_filename, as_attachment=True)
 
 @app.route("/trash/<filename>")
 def download_trash_file(filename):
@@ -290,7 +317,7 @@ def get_translations(lang):
         "download": {"en": "Download", "ta": "பதிவிறக்கு", "hi": "डाउनलोड"},
         "trash": {"en": "Trash", "ta": "அகற்றுக", "hi": "ट्रैश"},
         "share": {"en": "Share", "ta": "பகிர்", "hi": "साझा करें"},
-        "no_files": {"en": "No files uploaded.", "ta": "எந்த கோப்புகளும் இல்லை.", "hi": "कोई फ़ाइल अपलोड नहीं की गई है।"},
+        "no_files": {"en": "No files uploaded.", "ta": "எந்த கோப்புகளும் இல்லை.", "hi": "कोई फ़ाइल अपलोड नहीं की गई"},
         "download_selected": {"en": "Download Selected as ZIP", "ta": "ZIP ஆக பதிவிறக்கு", "hi": "चयनित ज़िप डाउनलोड करें"},
         "trash_bin": {"en": "Trash", "ta": "அகற்றியவை", "hi": "कचरा पात्र"},
         "restore": {"en": "Restore", "ta": "மீட்டமை", "hi": "पुनर्स्थापित"},
@@ -298,13 +325,13 @@ def get_translations(lang):
         "used": {"en": "used", "ta": "பயன்பட்டது", "hi": "उपयोग किया गया"},
         "profile": {"en": "Profile", "ta": "சுயவிவரம்", "hi": "प्रोफ़ाइल"},
         "bio": {"en": "Bio", "ta": "வாழ்க்கை வரலாறு", "hi": "जीवनी"},
-        "bio_placeholder": {"en": "Tell us something about you...", "ta": "உங்களைப் பற்றி எங்களிடம் சொல்லுங்கள்...", "hi": "हमें अपने बारे में कुछ बताएं..."},
+        "bio_placeholder": {"en": "Tell us something about you...", "ta": "உங்களைப் பற்றி எங்களிடம் சொல்லுங்கள்...", "hi": "हमें अपने बारे में बताएं..."},
         "age": {"en": "Age", "ta": "வயது", "hi": "उम्र"},
         "age_placeholder": {"en": "Your age", "ta": "உங்கள் வயது", "hi": "आपकी उम्र"},
         "profile_pic": {"en": "Profile Picture", "ta": "சுயவிவர படம்", "hi": "प्रोफ़ाइल चित्र"},
         "remove_pic": {"en": "Remove current profile picture", "ta": "தற்போதைய சுயவிவர படத்தை அகற்று", "hi": "वर्तमान प्रोफ़ाइल चित्र हटाएं"},
         "save_changes": {"en": "Save Changes", "ta": "மாற்றங்களை சேமிக்கவும்", "hi": "परिवर्तनों को सुरक्षित करें"},
-        "back_to_dashboard": {"en": "Back to Dashboard", "ta": "டாஷ்போர்டுக்கு திரும்புக", "hi": "डैशबोर्ड पर वापस जाएं"}
+        "back_to_dashboard": {"en": "Back to Dashboard", "ta": "டாஷ்போர்டுக்கு திரும்புக", "hi": "डैशबोर्ड पर वापस जाएं"},
     }
     return {key: val.get(lang, val["en"]) for key, val in translations.items()}
 

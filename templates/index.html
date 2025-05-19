@@ -7,7 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body id="body">
 
@@ -16,31 +16,26 @@
     <div class="drive-wrapper">
         <aside class="drive-sidebar" id="driveSidebar">
             <div class="sidebar-title">{{ translations["my_drive"] | default("My Drive") }}</div>
-
-
-            
-<div class="sidebar-profile text-center mb-3">
-    {% if profile_pic %}
-        <img src="{{ url_for('static', filename='profiles/' + profile_pic) }}" alt="Profile Picture"
-             style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem;">
-    {% else %}
-        <span class="material-icons-outlined" style="font-size: 4rem; color: gray;">account_circle</span>
-    {% endif %}
-    <div><strong>{{ user }}</strong></div>
-    <small class="text-muted">{{ bio or "No bio yet" }}</small>
-</div>
-<a href="/profile" class="sidebar-item">
-    <span class="material-icons-outlined">person</span>
-    <span>{{ translations["profile"] | default("Profile") }}</span>
-</a>
-<div class="sidebar-divider"></div>
-<a href="#" class="sidebar-item active">
+            <div class="sidebar-profile text-center mb-3">
+                {% if profile_pic %}
+                    <img src="{{ url_for('static', filename='profiles/' + profile_pic) }}" alt="Profile Picture"
+                         style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem;">
+                {% else %}
+                    <span class="material-icons-outlined" style="font-size: 4rem; color: gray;">account_circle</span>
+                {% endif %}
+                <div><strong>{{ user }}</strong></div>
+                <small class="text-muted">{{ bio or "No bio yet" }}</small>
+            </div>
+            <a href="/profile" class="sidebar-item">
+                <span class="material-icons-outlined">person</span>
+                <span>{{ translations["profile"] | default("Profile") }}</span>
+            </a>
+            <div class="sidebar-divider"></div>
+            <a href="#" class="sidebar-item active">
                 <span class="material-icons-outlined">folder_open</span>
                 <span>{{ translations["my_files"] | default("My Files") }}</span>
             </a>
-
             <div class="sidebar-divider"></div>
-
             <div class="storage-info">
                 <label>
                     <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: bottom; margin-right: 5px;">cloud</span>
@@ -79,24 +74,40 @@
             <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data" style="display: none;">
                 <input type="file" name="file" id="fileInput" required onchange="handleFileUpload(this.files)">
             </form>
-             <div class="drop-zone mb-4" id="dropZone">
-                 <div id="dropZoneContent">
-                     <span class="material-icons-outlined">cloud_upload</span>
-                     <div><strong>{{ translations["drop_here"] | default("Drop files here or click to upload") }}</strong></div>
-                     <div class="upload-progress" id="uploadProgress"></div>
-                     <div id="uploadStatus" class="small text-muted mt-2"></div>
-                 </div>
-             </div>
-
+            <div class="drop-zone mb-4" id="dropZone">
+                <div id="dropZoneContent">
+                    <span class="material-icons-outlined">cloud_upload</span>
+                    <div><strong>{{ translations["drop_here"] | default("Drop files here or click to upload") }}</strong></div>
+                    <div class="upload-progress" id="uploadProgress"></div>
+                    <div id="uploadStatus" class="small text-muted mt-2"></div>
+                </div>
+            </div>
 
             <section id="my-files-section">
                 <h5 class="section-title">{{ translations["my_files"] | default("My Files") }}</h5>
                 {% if files %}
                 <form action="/download_zip" method="POST" id="downloadForm">
+
+                    <!-- SORT & SEARCH CONTROLS -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <select id="sortFiles" class="form-select w-auto">
+                        <option value="name">Sort by Name</option>
+                        <option value="date">Sort by Date</option>
+                        <option value="size">Sort by Size</option>
+                        <option value="type">Sort by Type</option>
+                      </select>
+                      <input type="text" id="fileSearch" class="form-control w-25" placeholder="Search files...">
+                    </div>
+                    <!-- /SORT & SEARCH CONTROLS -->
+
                     <div class="file-grid mb-4">
                         {% for file in files %}
-                        <div class="file-card">
-                            <div class="file-card-thumbnail">
+                        <div class="file-card"
+                             data-filename="{{ file }}"
+                             data-date="{{ file_dates[file] }}"
+                             data-size="{{ file_sizes[file] }}"
+                             data-type="{{ file.split('.')[-1].lower() }}">
+                            <div class="file-card-thumbnail" style="cursor:pointer;">
                                 {% set ext = file.split('.')[-1].lower() %}
                                 {% if ext in ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'] %}
                                     <img src="{{ url_for('download_file', filename=file) }}" alt="{{ file }}">
@@ -184,10 +195,23 @@
 &copy Made with ❤️ by Aswin
 </a>
 </div>
+
+<!-- FILE PREVIEW MODAL -->
+<div class="modal fade" id="filePreviewModal" tabindex="-1" aria-labelledby="filePreviewTitle" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="filePreviewTitle">File Preview</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="filePreviewBody">
+        <!-- Dynamic content will be inserted here -->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- END FILE PREVIEW MODAL -->
+
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
-
-
-
-
