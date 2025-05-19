@@ -13,9 +13,7 @@ Dashboard(PC view):
 
 Dashboard(mobile view):
 
-![Dashboard](assets/dashboardmobile.jpg)
-
-![Dashboard](assets/dashboardmobile2.jpg)
+<img src="assets/dashboardmobile.jpg" width="200"/> <img src="assets/dashboardmobile2.jpg" width="200"/>
 
 ## 🌐 Live Demo
 
