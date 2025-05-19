@@ -7,6 +7,8 @@
 
 ## 📸 Screenshot
 
+Dashboard:
+
 ![Dashboard](assets/dashboard.png)
 
 ## 🌐 Live Demo
