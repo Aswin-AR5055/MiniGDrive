@@ -197,6 +197,10 @@
         </a>
       </div>
     </form>
+<form action="{{ url_for('delete_account') }}" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');">
+  <button type="submit" class="btn btn-danger mt-3">Delete Account</button>
+</form>
+
   </div>
 
   <div class="watermark"><a href="https://instagram.com/ar_aswinraj" target="_blank" title="Click to visit my Instagram" style="text-decoration: none; color: inherit;">
