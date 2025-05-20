@@ -276,6 +276,50 @@ document.addEventListener("DOMContentLoaded", function() {
             selectAll.checked = Array.from(boxes).every(cb => cb.checked);
         }
     });
+    // --- Trash Section Select All & Delete Selected ---
+    const selectAllTrash = document.getElementById("selectAllTrash");
+    const deleteSelectedTrashBtn = document.getElementById("deleteSelectedTrashBtn");
+
+    function getTrashCheckboxes() {
+        return document.querySelectorAll('input[name="selected_trash_files"]');
+    }
+
+    if (selectAllTrash) {
+        selectAllTrash.addEventListener("change", function() {
+            getTrashCheckboxes().forEach(cb => cb.checked = selectAllTrash.checked);
+        });
+    }
+
+    document.addEventListener("change", function(e) {
+        if (e.target.name === "selected_trash_files" && !e.target.checked && selectAllTrash) {
+            selectAllTrash.checked = false;
+        }
+        if (e.target.name === "selected_trash_files" && selectAllTrash) {
+            const boxes = getTrashCheckboxes();
+            selectAllTrash.checked = Array.from(boxes).every(cb => cb.checked);
+        }
+    });
+
+    if (deleteSelectedTrashBtn) {
+        deleteSelectedTrashBtn.addEventListener("click", function() {
+            const selected = Array.from(getTrashCheckboxes()).filter(cb => cb.checked).map(cb => cb.value);
+            if (selected.length === 0) {
+                alert("No files selected.");
+                return;
+            }
+            if (!confirm("Are you sure you want to permanently delete the selected files?")) return;
+
+            fetch("/permadelete_selected", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({files: selected})
+            })
+            .then(res => {
+                if (res.ok) location.reload();
+                else alert("Failed to delete files.");
+            });
+        });
+    }
 
     if (deleteBtn) {
         deleteBtn.addEventListener("click", function() {
