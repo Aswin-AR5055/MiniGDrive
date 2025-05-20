@@ -318,6 +318,20 @@ def delete_selected():
             shutil.move(src, dst)
     return jsonify({"success": True})
 
+@app.route("/permadelete_selected", methods=["POST"])
+def permadelete_selected():
+    if "username" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.get_json()
+    files = data.get("files", [])
+    trash_folder = get_trash_folder()
+    for filename in files:
+        safe_filename = secure_filename(normalize_filename(filename))
+        file_path = os.path.join(trash_folder, safe_filename)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+    return jsonify({"success": True})
+
 def get_translations(lang):
     translations = {
         "my_drive": {"en": "My Drive", "ta": "என் டிரைவ்", "hi": "मेरा ड्राइव"},
