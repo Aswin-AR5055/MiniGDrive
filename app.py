@@ -302,6 +302,22 @@ def share(filename):
     file_url = url_for("download_file", filename=filename, _external=True)
     return f"<h3>Share this link:</h3><a href='{file_url}'>{file_url}</a><br><br><a href='/dashboard'>⬅ Back</a>"
 
+@app.route("/delete_selected", methods=["POST"])
+def delete_selected():
+    if "username" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.get_json()
+    files = data.get("files", [])
+    user_folder = get_user_folder()
+    trash_folder = get_trash_folder()
+    for filename in files:
+        safe_filename = secure_filename(normalize_filename(filename))
+        src = os.path.join(user_folder, safe_filename)
+        dst = os.path.join(trash_folder, safe_filename)
+        if os.path.exists(src):
+            shutil.move(src, dst)
+    return jsonify({"success": True})
+
 def get_translations(lang):
     translations = {
         "my_drive": {"en": "My Drive", "ta": "என் டிரைவ்", "hi": "मेरा ड्राइव"},
