@@ -251,3 +251,50 @@ function animateDelete(card) {
     card.classList.add('fade-out');
     setTimeout(() => card.remove(), 300);
 }
+document.addEventListener("DOMContentLoaded", function() {
+    const selectAll = document.getElementById("selectAll");
+    const deleteBtn = document.getElementById("deleteSelectedBtn");
+
+    function getFileCheckboxes() {
+        return document.querySelectorAll('input[name="selected_files"]');
+    }
+
+    if (selectAll) {
+        selectAll.addEventListener("change", function() {
+            getFileCheckboxes().forEach(cb => cb.checked = selectAll.checked);
+        });
+    }
+
+    // Uncheck "Select All" if any file is unchecked
+    document.addEventListener("change", function(e) {
+        if (e.target.name === "selected_files" && !e.target.checked && selectAll) {
+            selectAll.checked = false;
+        }
+        // If all are checked, check "Select All"
+        if (e.target.name === "selected_files" && selectAll) {
+            const boxes = getFileCheckboxes();
+            selectAll.checked = Array.from(boxes).every(cb => cb.checked);
+        }
+    });
+
+    if (deleteBtn) {
+        deleteBtn.addEventListener("click", function() {
+            const selected = Array.from(getFileCheckboxes()).filter(cb => cb.checked).map(cb => cb.value);
+            if (selected.length === 0) {
+                alert("No files selected.");
+                return;
+            }
+            if (!confirm("Are you sure you want to delete the selected files?")) return;
+
+            fetch("/delete_selected", {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({files: selected})
+            })
+            .then(res => {
+                if (res.ok) location.reload();
+                else alert("Failed to delete files.");
+            });
+        });
+    }
+});
