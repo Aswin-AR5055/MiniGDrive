@@ -320,6 +320,26 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     }
+    const restoreSelectedTrashBtn = document.getElementById("restoreSelectedTrashBtn");
+
+if (restoreSelectedTrashBtn) {
+    restoreSelectedTrashBtn.addEventListener("click", function() {
+        const selected = Array.from(getTrashCheckboxes()).filter(cb => cb.checked).map(cb => cb.value);
+        if (selected.length === 0) {
+            alert("No files selected.");
+            return;
+        }
+        fetch("/restore_selected", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({files: selected})
+        })
+        .then(res => {
+            if (res.ok) location.reload();
+            else alert("Failed to restore files.");
+        });
+    });
+}
 
     if (deleteBtn) {
         deleteBtn.addEventListener("click", function() {
