@@ -53,7 +53,7 @@ function applyTheme(theme) {
 }
 function checkTheme() {
     const savedTheme = localStorage.getItem("theme");
-    applyTheme(savedTheme || "light");
+    applyTheme(savedTheme || "dark");
 }
 function toggleDarkMode() {
     const isDark = body.classList.contains("dark-mode");
