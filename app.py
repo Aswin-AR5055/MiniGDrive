@@ -350,6 +350,41 @@ def restore_selected():
 
 def get_translations(lang):
     translations = {
+        "select_all": {
+            "en": "Select All",
+            "ta": "அனைத்தையும் தேர்ந்தெடு",
+            "hi": "सभी चुनें"
+        },
+        "delete_selected": {
+            "en": "Delete Selected",
+            "ta": "தேர்ந்தெடுத்தவற்றை நீக்கு",
+            "hi": "चयनित हटाएँ"
+        },
+        "sort_by_name": {
+            "en": "Sort by Name",
+            "ta": "பெயரால் வரிசைப்படுத்து",
+            "hi": "नाम से छाँटें"
+        },
+        "sort_by_date": {
+            "en": "Sort by Date",
+            "ta": "தேதியால் வரிசைப்படுத்து",
+            "hi": "तारीख से छाँटें"
+        },
+        "sort_by_size": {
+            "en": "Sort by Size",
+            "ta": "அளவால் வரிசைப்படுத்து",
+            "hi": "आकार से छाँटें"
+        },
+        "sort_by_type": {
+            "en": "Sort by Type",
+            "ta": "வகையால் வரிசைப்படுத்து",
+            "hi": "प्रकार से छाँटें"
+        },
+        "search_files": {
+            "en": "Search files...",
+            "ta": "கோப்புகளை தேடு...",
+            "hi": "फ़ाइलें खोजें..."
+        },
         "my_drive": {"en": "My Drive", "ta": "என் டிரைவ்", "hi": "मेरा ड्राइव"},
         "hello": {"en": "Hello", "ta": "வணக்கம்", "hi": "नमस्ते"},
         "logout": {"en": "Logout", "ta": "வெளியேறு", "hi": "लॉगआउट"},

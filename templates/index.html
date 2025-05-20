@@ -92,16 +92,16 @@
                     <div class="d-flex justify-content-between align-items-center mb-3">
                         <div>
                             <input type="checkbox" id="selectAll" class="form-check-input me-2">
-                            <label for="selectAllFiles" style="margin-right: 1rem;">Select All</label>
-                            <button type="button" id="deleteSelectedBtn" class="btn btn-danger btn-sm" style="margin-right: 1rem;">Delete Selected</button>
+                            <label for="selectAllFiles" style="margin-right: 1rem;">{{ translations["select_all"] | default("Select All") }}</label>
+                            <button type="button" id="deleteSelectedBtn" class="btn btn-outline-danger btn-sm" style="margin-right: 1rem;">{{ translations["delete_selected"] | default("Delete Selected") }}</button>
                         </div>
                       <select id="sortFiles" class="form-select w-auto">
-                        <option value="name">Sort by Name</option>
-                        <option value="date">Sort by Date</option>
-                        <option value="size">Sort by Size</option>
-                        <option value="type">Sort by Type</option>
+                        <option value="name">{{ translations["sort_by_name"] | default("Sort by Name") }}</option>
+                        <option value="date">{{ translations["sort_by_date"] | default("Sort by Date") }}</option>
+                        <option value="size">{{ translations["sort_by_size"] | default("Sort by Size") }}</option>
+                        <option value="type">{{ translations["sort_by_type"] | default("Sort by Type") }}</option>
                       </select>
-                      <input type="text" id="fileSearch" class="form-control w-25" placeholder="Search files...">
+                      <input type="text" id="fileSearch" class="form-control w-25" placeholder="{{ translations['search_files'] | default('Search files...')}}">
                     </div>
                     <!-- /SORT & SEARCH CONTROLS -->
 
@@ -172,9 +172,9 @@
     <form id="trashForm">
         <div class="d-flex align-items-center mb-2">
             <input type="checkbox" id="selectAllTrash" class="form-check-input me-2">
-            <label for="selectAllTrash" style="margin-right: 1rem;">Select All</label>
-            <button type="button" id="restoreSelectedTrashBtn" class="btn btn-success btn-sm me-2">Restore Selected</button>
-            <button type="button" id="deleteSelectedTrashBtn" class="btn btn-danger btn-sm">Delete Selected</button>
+            <label for="selectAllTrash" style="margin-right: 1rem;">{{ translations["select_all"] | default("Select All") }}</label>
+            <button type="button" id="restoreSelectedTrashBtn" class="btn btn-sm btn-outline-google me-2">{{ translations["restore_selected"] | default("Restore Selected") }}</button>
+            <button type="button" id="deleteSelectedTrashBtn" class="btn btn-outline-danger btn-sm">{{ translations["delete_selected"] | default("Delete Selected") }}</button>
         </div>
         <ul class="trash-list">
             {% for file in trashed %}
