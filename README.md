@@ -7,15 +7,15 @@
 
 ## 📑 Table of Contents
 
-- [Screenshots](#-screenshots)
-- [Live Demo](#-live-demo)
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [How to Run Locally](#️-how-to-run-locally)
-- [Run with Docker](#️-run-with-docker)
-- [Security Notes](#-security-notes)
-- [Acknowledgements](#-acknowledgements)
+- [Screenshots](#screenshots)
+- [Live Demo](#live-demo)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [How to Run Locally](#how-to-run-locally)
+- [Run with Docker](#run-with-docker)
+- [Security Notes](#security-notes)
+- [Acknowledgements](#acknowledgements)
 
 ---
 
