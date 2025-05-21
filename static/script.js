@@ -64,35 +64,62 @@ function toggleDarkMode() {
 
 // --- File Upload Handling ---
 function handleFileUpload(files) {
-    if (files.length > 0) {
-        const file = files[0];
-        uploadStatus.textContent = `Uploading ${file.name}...`;
-        dropZoneContent.innerHTML = `
-            <div class="d-flex flex-column align-items-center">
-                <div class="gdrive-spinner">
-                    <div class="triangle yellow"></div>
-                    <div class="triangle green"></div>
-                    <div class="triangle blue"></div>
-                </div>
-                <strong class="mt-2">Uploading ${file.name}</strong>
-                <div class="upload-progress mt-2" id="uploadProgressInner" style="width: 0%; height: 4px;"></div>
-            </div>`;
-        const progressInner = document.getElementById('uploadProgressInner');
-        let progress = 0;
-        uploadProgress.style.width = '0%';
-        progressInner.style.width = '0%';
+    if (!files.length) return;
 
-        const interval = setInterval(() => {
-            progress += 10;
-            progressInner.style.width = `${progress}%`;
-            if (progress >= 100) {
-                clearInterval(interval);
-                setTimeout(() => {
-                    uploadForm.submit();
-                }, 300);
-            }
-        }, 100);
+    // Clear previous status and progress
+    uploadStatus.textContent = '';
+    dropZoneContent.innerHTML = '';
+
+    // Helper to upload a single file with progress
+    function uploadSingleFile(file, index, total) {
+        return new Promise((resolve, reject) => {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Create progress bar for this file
+            const fileDiv = document.createElement('div');
+            fileDiv.className = 'mb-2';
+            fileDiv.innerHTML = `
+                <div><strong>${file.name}</strong></div>
+                <div class="upload-progress" id="progressBar${index}" style="width:0%;height:4px;"></div>
+                <div class="small text-muted" id="status${index}"></div>
+            `;
+            dropZoneContent.appendChild(fileDiv);
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/upload', true);
+
+            xhr.upload.onprogress = function(e) {
+                if (e.lengthComputable) {
+                    const percent = Math.round((e.loaded / e.total) * 100);
+                    document.getElementById(`progressBar${index}`).style.width = percent + '%';
+                }
+            };
+            xhr.onload = function() {
+                if (xhr.status === 200) {
+                    document.getElementById(`status${index}`).textContent = 'Uploaded!';
+                    resolve();
+                } else {
+                    document.getElementById(`status${index}`).textContent = 'Failed!';
+                    reject();
+                }
+            };
+            xhr.onerror = function() {
+                document.getElementById(`status${index}`).textContent = 'Error!';
+                reject();
+            };
+            xhr.send(formData);
+        });
     }
+
+    // Upload files sequentially (or use Promise.all for parallel)
+    (async () => {
+        for (let i = 0; i < files.length; i++) {
+            await uploadSingleFile(files[i], i, files.length);
+        }
+        // After all uploads, reload or redirect
+        setTimeout(() => window.location.reload(), 800);
+    })();
 }
 
 // --- Drag and Drop & Click ---

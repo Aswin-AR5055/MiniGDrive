@@ -219,10 +219,11 @@ def dashboard():
 def upload():
     if "username" not in session:
         return redirect("/login")
-    file = request.files["file"]
-    if file and file.filename:
-        filename = secure_filename(normalize_filename(file.filename))
-        file.save(os.path.join(get_user_folder(), filename))
+    files = request.files.getlist("file")
+    for file in files:
+        if file and file.filename:
+            filename = secure_filename(normalize_filename(file.filename))
+            file.save(os.path.join(get_user_folder(), filename))
     return redirect("/dashboard")
 
 @app.route("/download/<filename>")

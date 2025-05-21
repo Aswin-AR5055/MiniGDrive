@@ -71,7 +71,7 @@
             </header>
 
             <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data" style="display: none;">
-                <input type="file" name="file" id="fileInput" required onchange="handleFileUpload(this.files)">
+                <input type="file" name="file" id="fileInput" required onchange="handleFileUpload(this.files)" multiple>
             </form>
             <div class="drop-zone mb-4" id="dropZone">
                 <div id="dropZoneContent">
