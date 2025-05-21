@@ -814,3 +814,142 @@ body.dark-mode .form-select {
   background-image:
     url("data:image/svg+xml;charset=UTF-8,<svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M6 8L10 12L14 8' stroke='%238ab4f8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
+
+/* --- Mobile Responsive Styles --- */
+@media (max-width: 576px) {
+  .drive-wrapper {
+    flex-direction: column;
+  }
+  .drive-sidebar {
+    width: 80vw;
+    min-width: 150px;
+    max-width: 320px;
+    padding: 1rem 0.5rem;
+    font-size: 0.95rem;
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    z-index: 2100;
+    background: var(--drive-surface, #f8f9fa);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+    box-shadow: 2px 0 8px rgba(0,0,0,0.08);
+    overflow-y: auto;
+  }
+  .sidebar-open .drive-sidebar {
+    transform: translateX(0);
+  }
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: 2000;
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.2s;
+  }
+  .drive-main-content {
+    padding: 1rem 0.5rem 2.5rem 0.5rem;
+  }
+  .drive-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.7rem;
+  }
+  .drive-header h4 {
+    font-size: 1.1rem;
+  }
+  .header-actions {
+    flex-wrap: wrap;
+    gap: 0.3rem;
+  }
+  .sidebar-title {
+    font-size: 1.1rem;
+  }
+  .sidebar-profile img,
+  .sidebar-profile .material-icons-outlined {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 3rem !important;
+  }
+  .sidebar-profile strong {
+    font-size: 1rem;
+  }
+  .sidebar-profile small {
+    font-size: 0.8rem;
+  }
+  .section-title {
+    font-size: 1rem;
+    padding-bottom: 0.3rem;
+  }
+  .trash-item {
+    padding: 0.5rem 0.5rem;
+    font-size: 0.9rem;
+  }
+  .file-grid {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 0.5rem;
+  }
+  .file-card-thumbnail {
+    height: 80px;
+  }
+  .file-card-info {
+    padding: 0.5rem;
+  }
+  .file-card-name {
+    font-size: 0.8rem;
+  }
+  .file-card-actions {
+    gap: 0.25rem;
+  }
+  .download-selected-btn {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.7rem;
+  }
+  .drop-zone {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+  .btn, .form-control, .form-select {
+    font-size: 1rem;
+    min-height: 38px;
+  }
+  .btn-action .material-icons-outlined {
+    font-size: 1.1rem;
+  }
+  .watermark {
+    font-size: 0.75rem;
+    right: 5px;
+    bottom: 5px;
+  }
+  .modal-dialog {
+    margin: 0.5rem;
+    max-width: 98vw;
+  }
+  /* Make search and sort controls stack on small screens */
+  #downloadForm > .d-flex,
+  #trashForm > .d-flex {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.5rem;
+  }
+  #downloadForm .form-control,
+  #downloadForm .form-select {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  #fileSearch {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* Hide sidebar overlay by default */
+.sidebar-overlay {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
