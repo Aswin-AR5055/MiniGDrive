@@ -839,7 +839,6 @@ body.dark-mode .form-select {
     }
     .logout-mobile-right {
         margin-left: auto !important;
-        margin-right: 1rem !important;
         order: 2;
     }
     .sidebar-title {
