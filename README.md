@@ -19,7 +19,7 @@
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 Dashboard(PC view):
 
@@ -31,14 +31,14 @@ Dashboard(Mobile view):
 
 ---
 
-## 🌐 Live Demo
+## Live Demo
 
 👉 [![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://tinyurl.com/MyminiGDriveAR)
 
 
 ---
 
-## 🚀 Features
+## Features
 
 - **User Registration and Login**: Secure authentication with password hashing.  
 - **File Management**: Upload, download, and delete files.  
@@ -49,7 +49,7 @@ Dashboard(Mobile view):
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 | Layer                | Technology Used                                                   | Purpose                                         |
 |----------------------|-------------------------------------------------------------------|-------------------------------------------------|
@@ -66,7 +66,7 @@ Dashboard(Mobile view):
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 
 ```plaintext
 MiniGDrive/
@@ -88,7 +88,7 @@ MiniGDrive/
 
 ---
 
-## ⚙️ How to Run Locally
+## How to Run Locally
 
 1. **Clone the repository**:
    ```bash
@@ -123,7 +123,7 @@ MiniGDrive/
 
    ---
 
-## 🛳️ Run with Docker
+## Run with Docker
 
 If you have Docker installed, you can run MiniGDrive without installing dependencies manually.
 
@@ -153,7 +153,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 ---
 
-## 🔒 Security Notes
+## Security Notes
 
 - **Password Security**: Passwords are hashed securely before being stored in the database using Werkzeug.  
 - **Session Management**: Session tokens ensure users stay logged in securely for up to 7 days.
@@ -161,7 +161,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 ---
 
-## 🙏 Acknowledgements
+## Acknowledgements
 
 Lead Development and DevOps handled by [Aswin Raj A](https://www.instagram.com/ar_aswinraj)
 
