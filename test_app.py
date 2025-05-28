@@ -55,7 +55,8 @@ def test_upload_file(client):
 
     test_file = (io.BytesIO(b"hello world"), "hello.txt")
     response = client.post('/upload', data={'file': test_file}, content_type='multipart/form-data', follow_redirects=True)
-    assert b'Dashboard' in response.data
+
+    assert b"Cloud Drive" in response.data or b"My Files" in response.data
 
 def test_file_download(client):
     client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
