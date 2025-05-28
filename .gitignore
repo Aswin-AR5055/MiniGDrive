@@ -4,4 +4,5 @@ myenv/
 .vscode/
 app.py.bak
 test_app.py.bak
+.pytest_cache
 
