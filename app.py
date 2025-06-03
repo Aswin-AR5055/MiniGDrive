@@ -51,8 +51,9 @@ def get_storage_info():
     for f in os.listdir(user_dir):
         total_bytes += os.path.getsize(os.path.join(user_dir, f))
     used_mb = round(total_bytes / (1024 * 1024), 2)
-    max_mb = 1024
+    max_mb = 4096
     percent = min(int((used_mb / max_mb) * 100), 100)
+    max_mb = round(max_mb / 1024, 2)
     return used_mb, max_mb, percent
 
 @app.route("/")
