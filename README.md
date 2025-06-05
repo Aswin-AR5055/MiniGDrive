@@ -168,7 +168,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 ## Acknowledgements
 
-Lead Development and DevOps handled by [Aswin Raj A](https://www.instagram.com/ar_aswinraj)
+Full Stack Development and DevOps by [Aswin Raj A](https://www.instagram.com/ar_aswinraj)
 
 Design Support by [Mohamed Suhail S](https://github.com/octatrix008)
 
