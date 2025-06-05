@@ -71,7 +71,7 @@ Dashboard(Mobile view):
 ```plaintext
 MiniGDrive/
 │
-├── .github/workflows/pytest-update-ec2.yml   # GitHub Actions workflow files
+├── .github/workflows/pytest-update-ec2.yml   # GitHub Actions workflow file
 ├── Dockerfile            # Docker configuration
 ├── requirements.txt      # Python dependencies
 ├── assets/               # Logo and Screenshots
