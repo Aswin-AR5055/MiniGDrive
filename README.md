@@ -71,6 +71,10 @@ Dashboard(Mobile view):
 ```plaintext
 MiniGDrive/
 │
+├── .github/workflows/pytest-update-ec2.yml   # GitHub Actions workflow files
+├── Dockerfile            # Docker configuration
+├── requirements.txt      # Python dependencies
+├── assets/               # Logo and Screenshots
 ├── app.py                # Main Flask application
 ├── users.db              # SQLite DB (created at runtime)
 ├── test_app.py           # Unit tests
@@ -84,7 +88,12 @@ MiniGDrive/
 ├── trash/               # Trashed files (generated)
 ├── storage/             # User storage dir (generated)
 └── static/              # Static assets (profile images, etc.)
+
 ```
+## Github actions Workflow
+
+![CI](https://github.com/Aswin-AR5055/MiniGDrive/actions/workflows/pytest-update-ec2.yml/badge.svg)
+
 
 ---
 
