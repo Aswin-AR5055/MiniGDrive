@@ -1,5 +1,5 @@
 
-# <img src="assets/ars_logo_32x32.png" alt="ARS" width="24" height="24"> MiniGDrive
+# <img src="assets/ars_logo_32x32.png" alt="ARS" width="24" height="24"> MiniGDrive          ![CI](https://github.com/Aswin-AR5055/MiniGDrive/actions/workflows/pytest-update-ec2.yml/badge.svg)
 
 **MiniGDrive** is a lightweight cloud storage application built using Flask and SQLite, designed to mimic the basic functionality of Google Drive. Users can register, log in, upload, download, and manage their files — all within a simple and secure environment.
 
@@ -90,10 +90,6 @@ MiniGDrive/
 └── static/              # Static assets (profile images, etc.)
 
 ```
-## Github actions Workflow
-
-![CI](https://github.com/Aswin-AR5055/MiniGDrive/actions/workflows/pytest-update-ec2.yml/badge.svg)
-
 
 ---
 
