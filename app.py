@@ -191,12 +191,13 @@ def dashboard():
     os.makedirs(upload_folder, exist_ok=True)
     os.makedirs(trash_folder, exist_ok=True)
 
-    files = os.listdir(upload_folder)
+    all_files = os.listdir(upload_folder)
     trashed = os.listdir(trash_folder)
+    files = [f for f in all_files if f not in trashed]
+
     used_mb, max_mb, percent_used = get_storage_info()
     profile = get_user_profile()
 
-    # --- File meta for sorting/filtering ---
     file_dates = {}
     file_sizes = {}
     for f in files:
@@ -208,13 +209,20 @@ def dashboard():
             file_dates[f] = ""
             file_sizes[f] = 0
 
-    return render_template("index.html", user=session["username"],
-                           files=files, trashed=trashed,
-                           used_mb=used_mb, max_mb=max_mb,
+    return render_template("index.html",
+                           user=session["username"],
+                           files=files,
+                           used_mb=used_mb,
+                           max_mb=max_mb,
                            percent_used=percent_used,
-                           translations=translations, lang=lang,
-                           bio=profile["bio"], profile_pic=profile["profile_pic"],
-                           file_dates=file_dates, file_sizes=file_sizes)
+                           translations=translations,
+                           lang=lang,
+                           bio=profile["bio"],
+                           profile_pic=profile["profile_pic"],
+                           file_dates=file_dates,
+                           file_sizes=file_sizes,
+                           active_page="dashboard")
+
 
 @app.route("/upload", methods=["POST"])
 def upload():
@@ -349,6 +357,31 @@ def restore_selected():
         if os.path.exists(src):
             shutil.move(src, dst)
     return jsonify({"success": True})
+
+@app.route("/trash")
+def trash():
+    if "username" not in session:
+        return redirect("/login")
+
+    lang = request.args.get("lang", "en")
+    translations = get_translations(lang)
+
+    trashed = os.listdir(get_trash_folder())
+    profile = get_user_profile()
+    used_mb, max_mb, percent_used = get_storage_info()
+
+    return render_template("trash.html",
+                           user=session["username"],
+                           trashed=trashed,
+                           bio=profile["bio"],
+                           profile_pic=profile["profile_pic"],
+                           used_mb=used_mb,
+                           max_mb=max_mb,
+                           percent_used=percent_used,
+                           translations=translations,
+                           lang=lang,
+                           active_page="trash")
+
 
 def get_translations(lang):
     translations = {

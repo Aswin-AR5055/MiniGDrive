@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>{{ user }}'s Trash</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body id="body">
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="drive-wrapper">
+        <aside class="drive-sidebar" id="driveSidebar">
+            <div class="sidebar-title">{{ translations["my_drive"] | default("My Drive") }}</div>
+            <div class="sidebar-profile text-center mb-3">
+                {% if profile_pic %}
+                    <img src="{{ url_for('static', filename='profiles/' + profile_pic) }}" alt="Profile Picture"
+                         style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 0.5rem;">
+                {% else %}
+                    <span class="material-icons-outlined" style="font-size: 4rem; color: gray;">account_circle</span>
+                {% endif %}
+                <div><strong>{{ user }}</strong></div>
+                <small class="text-muted">{{ bio or "No bio yet" }}</small>
+            </div>
+
+            <a href="/profile" class="sidebar-item">
+                <span class="material-icons-outlined">person</span>
+                <span>{{ translations["profile"] | default("Profile") }}</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
+
+            <a href="/dashboard" class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
+                <span class="material-icons-outlined">folder_open</span>
+                <span>{{ translations["my_files"] | default("My Files") }}</span>
+            </a>
+
+            <a href="/trash" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
+                <span class="material-icons-outlined">delete</span>
+                <span>{{ translations["trash_bin"] | default("Trash") }}</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
+
+            <div class="storage-info">
+                <label>
+                    <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: bottom; margin-right: 5px;">cloud</span>
+                    {{ translations["storage"] | default("Storage") }}
+                </label>
+                <div class="progress mb-2">
+                    <div class="progress-bar" role="progressbar" style="width: {{ percent_used }}%;"
+                         aria-valuenow="{{ percent_used }}" aria-valuemin="0" aria-valuemax="100">
+                    </div>
+                </div>
+                <small class="text-muted">{{ used_mb }} MB / {{ max_mb }} GB {{ translations["used"] | default("used") }}</small>
+            </div>
+        </aside>
+
+        <main class="drive-main-content">
+            <header class="drive-header">
+                <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle menu">
+                    <span class="material-icons-outlined">menu</span>
+                </button>
+                <h4 class="mb-0">{{ translations["trash_bin"] | default("Trash") }}</h4>
+                <div class="header-actions">
+                    <div class="language-switch">
+                        <span class="material-icons-outlined" style="vertical-align: middle; font-size: 1.1rem;">language</span>
+                        <a href="?lang=en">EN</a> |
+                        <a href="?lang=ta">தமிழ்</a> |
+                        <a href="?lang=hi">हिंदी</a>
+                    </div>
+                    <button onclick="toggleDarkMode()" class="theme-toggle-btn" aria-label="Toggle dark mode">
+                        <span class="material-icons-outlined" id="theme-icon">brightness_6</span>
+                    </button>
+                    <a href="/logout" class="btn btn-outline-danger btn-sm logout-mobile-right">{{ translations["logout"] | default("Logout") }}</a>
+                </div>
+            </header>
+
+            <section id="trash-section">
+                <h5 class="section-title">{{ translations["trash_bin"] | default("Trash Bin") }}</h5>
+                <form id="trashForm">
+                    <div class="d-flex flex-wrap align-items-center mb-2 gap-2">
+                        <input type="checkbox" id="selectAllTrash" class="form-check-input me-2">
+                        <label for="selectAllTrash" class="me-2">{{ translations["select_all"] | default("Select All") }}</label>
+                        <button type="button" id="restoreSelectedTrashBtn" class="btn btn-sm btn-outline-google me-2">{{ translations["restore_selected"] | default("Restore Selected") }}</button>
+                        <button type="button" id="deleteSelectedTrashBtn" class="btn btn-outline-danger btn-sm">{{ translations["delete_selected"] | default("Delete Selected") }}</button>
+                    </div>
+                    <ul class="trash-list">
+                        {% for file in trashed %}
+                        <li class="trash-item">
+                            <input class="form-check-input me-2" type="checkbox" name="selected_trash_files" value="{{ file }}" id="trashCheck{{ loop.index }}">
+                            <span class="trash-item-name">
+                                <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: text-bottom; margin-right: 8px;">article</span>
+                                {{ file }}
+                            </span>
+                            <div class="trash-actions">
+                                <a href="{{ url_for('restore', filename=file) }}" class="btn btn-sm btn-outline-google" title="{{ translations['restore'] | default('Restore') }}">
+                                    <span class="material-icons-outlined">restore_from_trash</span>
+                                    <span class="d-none d-md-inline ms-1">{{ translations["restore"] | default("Restore") }}</span>
+                                </a>
+                                <a href="{{ url_for('permadelete', filename=file) }}" class="btn btn-sm btn-outline-danger" title="{{ translations['delete_forever'] | default('Delete Forever') }}">
+                                    <span class="material-icons-outlined">delete_forever</span>
+                                    <span class="d-none d-md-inline ms-1">{{ translations["delete_forever"] | default("Delete Forever") }}</span>
+                                </a>
+                            </div>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </form>
+            </section>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
+    <script>
+        // Initialize theme
+        function applyTheme(theme) {
+            if (theme === "dark") {
+                document.body.classList.add("dark-mode");
+                document.getElementById("theme-icon").textContent = "light_mode";
+            } else {
+                document.body.classList.remove("dark-mode");
+                document.getElementById("theme-icon").textContent = "dark_mode";
+            }
+        }
+        
+        function checkTheme() {
+            const savedTheme = localStorage.getItem("theme");
+            applyTheme(savedTheme || "dark");
+        }
+        
+        function toggleDarkMode() {
+            const isDark = document.body.classList.contains("dark-mode");
+            const newTheme = isDark ? "light" : "dark";
+            localStorage.setItem("theme", newTheme);
+            applyTheme(newTheme);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', checkTheme);
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Select All functionality
+            const selectAllTrash = document.getElementById("selectAllTrash");
+            const deleteSelectedTrashBtn = document.getElementById("deleteSelectedTrashBtn");
+            const restoreSelectedTrashBtn = document.getElementById("restoreSelectedTrashBtn");
+
+            function getTrashCheckboxes() {
+                return document.querySelectorAll('input[name="selected_trash_files"]');
+            }
+
+            if (selectAllTrash) {
+                selectAllTrash.addEventListener("change", function() {
+                    getTrashCheckboxes().forEach(cb => cb.checked = selectAllTrash.checked);
+                });
+            }
+
+            // Uncheck "Select All" if any file is unchecked
+            document.addEventListener("change", function(e) {
+                if (e.target.name === "selected_trash_files" && !e.target.checked && selectAllTrash) {
+                    selectAllTrash.checked = false;
+                }
+                if (e.target.name === "selected_trash_files" && selectAllTrash) {
+                    const boxes = getTrashCheckboxes();
+                    selectAllTrash.checked = Array.from(boxes).every(cb => cb.checked);
+                }
+            });
+
+            // Delete Selected functionality
+            if (deleteSelectedTrashBtn) {
+                deleteSelectedTrashBtn.addEventListener("click", function() {
+                    const selected = Array.from(getTrashCheckboxes())
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+                    
+                    if (selected.length === 0) {
+                        alert("No files selected.");
+                        return;
+                    }
+                    
+                    if (!confirm("Are you sure you want to permanently delete the selected files?")) return;
+
+                    fetch("/permadelete_selected", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({files: selected})
+                    })
+                    .then(res => {
+                        if (res.ok) location.reload();
+                        else alert("Failed to delete files.");
+                    });
+                });
+            }
+
+            // Restore Selected functionality
+            if (restoreSelectedTrashBtn) {
+                restoreSelectedTrashBtn.addEventListener("click", function() {
+                    const selected = Array.from(getTrashCheckboxes())
+                        .filter(cb => cb.checked)
+                        .map(cb => cb.value);
+                    
+                    if (selected.length === 0) {
+                        alert("No files selected.");
+                        return;
+                    }
+
+                    fetch("/restore_selected", {
+                        method: "POST",
+                        headers: {"Content-Type": "application/json"},
+                        body: JSON.stringify({files: selected})
+                    })
+                    .then(res => {
+                        if (res.ok) location.reload();
+                        else alert("Failed to restore files.");
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>

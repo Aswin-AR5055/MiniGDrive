@@ -36,6 +36,11 @@
                 <span>{{ translations["my_files"] | default("My Files") }}</span>
             </a>
             <div class="sidebar-divider"></div>
+            <a href="/trash" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
+            <span class="material-icons-outlined">delete</span>
+            <span>{{ translations["trash_bin"] | default("Trash") }}</span>
+            </a>
+            <div class="sidebar-divider"></div>
             <div class="storage-info">
                 <label>
                     <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: bottom; margin-right: 5px;">cloud</span>
