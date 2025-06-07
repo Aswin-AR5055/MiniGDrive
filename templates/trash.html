@@ -39,6 +39,8 @@
                 <span>{{ translations["my_files"] | default("My Files") }}</span>
             </a>
 
+            <div class="sidebar-divider"></div>
+
             <a href="/trash" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
                 <span class="material-icons-outlined">delete</span>
                 <span>{{ translations["trash_bin"] | default("Trash") }}</span>
