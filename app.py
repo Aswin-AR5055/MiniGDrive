@@ -395,6 +395,11 @@ def get_translations(lang):
             "ta": "தேர்ந்தெடுத்தவற்றை நீக்கு",
             "hi": "चयनित हटाएँ"
         },
+        "restore_selected": {
+            "en": "restore selected",
+            "ta": "தேர்ந்தெடுக்கப்பட்டவை மீட்க",
+            "hi": "चयनित बहाल करें"
+        },
         "sort_by_name": {
             "en": "Sort by Name",
             "ta": "பெயரால் வரிசைப்படுத்து",
