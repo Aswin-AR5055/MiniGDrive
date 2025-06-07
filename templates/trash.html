@@ -118,111 +118,150 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     
     <script>
-        // Initialize theme
-        function applyTheme(theme) {
-            if (theme === "dark") {
-                document.body.classList.add("dark-mode");
-                document.getElementById("theme-icon").textContent = "light_mode";
-            } else {
-                document.body.classList.remove("dark-mode");
-                document.getElementById("theme-icon").textContent = "dark_mode";
-            }
+    // Mobile Sidebar Toggle - This needs to run immediately, not in DOMContentLoaded
+    function setupSidebarToggle() {
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const body = document.body;
+
+        function openSidebar() {
+            body.classList.add('sidebar-open');
         }
-        
-        function checkTheme() {
-            const savedTheme = localStorage.getItem("theme");
-            applyTheme(savedTheme || "dark");
+
+        function closeSidebar() {
+            body.classList.remove('sidebar-open');
         }
-        
-        function toggleDarkMode() {
-            const isDark = document.body.classList.contains("dark-mode");
-            const newTheme = isDark ? "light" : "dark";
-            localStorage.setItem("theme", newTheme);
-            applyTheme(newTheme);
-        }
-        
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', checkTheme);
-    </script>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Select All functionality
-            const selectAllTrash = document.getElementById("selectAllTrash");
-            const deleteSelectedTrashBtn = document.getElementById("deleteSelectedTrashBtn");
-            const restoreSelectedTrashBtn = document.getElementById("restoreSelectedTrashBtn");
-
-            function getTrashCheckboxes() {
-                return document.querySelectorAll('input[name="selected_trash_files"]');
-            }
-
-            if (selectAllTrash) {
-                selectAllTrash.addEventListener("change", function() {
-                    getTrashCheckboxes().forEach(cb => cb.checked = selectAllTrash.checked);
-                });
-            }
-
-            // Uncheck "Select All" if any file is unchecked
-            document.addEventListener("change", function(e) {
-                if (e.target.name === "selected_trash_files" && !e.target.checked && selectAllTrash) {
-                    selectAllTrash.checked = false;
-                }
-                if (e.target.name === "selected_trash_files" && selectAllTrash) {
-                    const boxes = getTrashCheckboxes();
-                    selectAllTrash.checked = Array.from(boxes).every(cb => cb.checked);
+        if (menuToggleBtn) {
+            menuToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (body.classList.contains('sidebar-open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
                 }
             });
+        }
 
-            // Delete Selected functionality
-            if (deleteSelectedTrashBtn) {
-                deleteSelectedTrashBtn.addEventListener("click", function() {
-                    const selected = Array.from(getTrashCheckboxes())
-                        .filter(cb => cb.checked)
-                        .map(cb => cb.value);
-                    
-                    if (selected.length === 0) {
-                        alert("No files selected.");
-                        return;
-                    }
-                    
-                    if (!confirm("Are you sure you want to permanently delete the selected files?")) return;
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
 
-                    fetch("/permadelete_selected", {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({files: selected})
-                    })
-                    .then(res => {
-                        if (res.ok) location.reload();
-                        else alert("Failed to delete files.");
-                    });
-                });
+        // Close sidebar when clicking on sidebar items on mobile
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 992) {
+                    closeSidebar();
+                }
+            });
+        });
+    }
+
+    // Initialize theme
+    function applyTheme(theme) {
+        if (theme === "dark") {
+            document.body.classList.add("dark-mode");
+            document.getElementById("theme-icon").textContent = "light_mode";
+        } else {
+            document.body.classList.remove("dark-mode");
+            document.getElementById("theme-icon").textContent = "dark_mode";
+        }
+    }
+    
+    function checkTheme() {
+        const savedTheme = localStorage.getItem("theme");
+        applyTheme(savedTheme || "dark");
+    }
+    
+    function toggleDarkMode() {
+        const isDark = document.body.classList.contains("dark-mode");
+        const newTheme = isDark ? "light" : "dark";
+        localStorage.setItem("theme", newTheme);
+        applyTheme(newTheme);
+    }
+
+    // Initialize everything when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+        setupSidebarToggle();
+        checkTheme();
+        
+        // Select All functionality
+        const selectAllTrash = document.getElementById("selectAllTrash");
+        const deleteSelectedTrashBtn = document.getElementById("deleteSelectedTrashBtn");
+        const restoreSelectedTrashBtn = document.getElementById("restoreSelectedTrashBtn");
+
+        function getTrashCheckboxes() {
+            return document.querySelectorAll('input[name="selected_trash_files"]');
+        }
+
+        if (selectAllTrash) {
+            selectAllTrash.addEventListener("change", function() {
+                getTrashCheckboxes().forEach(cb => cb.checked = selectAllTrash.checked);
+            });
+        }
+
+        // Uncheck "Select All" if any file is unchecked
+        document.addEventListener("change", function(e) {
+            if (e.target.name === "selected_trash_files" && !e.target.checked && selectAllTrash) {
+                selectAllTrash.checked = false;
             }
-
-            // Restore Selected functionality
-            if (restoreSelectedTrashBtn) {
-                restoreSelectedTrashBtn.addEventListener("click", function() {
-                    const selected = Array.from(getTrashCheckboxes())
-                        .filter(cb => cb.checked)
-                        .map(cb => cb.value);
-                    
-                    if (selected.length === 0) {
-                        alert("No files selected.");
-                        return;
-                    }
-
-                    fetch("/restore_selected", {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({files: selected})
-                    })
-                    .then(res => {
-                        if (res.ok) location.reload();
-                        else alert("Failed to restore files.");
-                    });
-                });
+            if (e.target.name === "selected_trash_files" && selectAllTrash) {
+                const boxes = getTrashCheckboxes();
+                selectAllTrash.checked = Array.from(boxes).every(cb => cb.checked);
             }
         });
-    </script>
+
+        // Delete Selected functionality
+        if (deleteSelectedTrashBtn) {
+            deleteSelectedTrashBtn.addEventListener("click", function() {
+                const selected = Array.from(getTrashCheckboxes())
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+                
+                if (selected.length === 0) {
+                    alert("No files selected.");
+                    return;
+                }
+                
+                if (!confirm("Are you sure you want to permanently delete the selected files?")) return;
+
+                fetch("/permadelete_selected", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({files: selected})
+                })
+                .then(res => {
+                    if (res.ok) location.reload();
+                    else alert("Failed to delete files.");
+                });
+            });
+        }
+
+        // Restore Selected functionality
+        if (restoreSelectedTrashBtn) {
+            restoreSelectedTrashBtn.addEventListener("click", function() {
+                const selected = Array.from(getTrashCheckboxes())
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.value);
+                
+                if (selected.length === 0) {
+                    alert("No files selected.");
+                    return;
+                }
+
+                fetch("/restore_selected", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({files: selected})
+                })
+                .then(res => {
+                    if (res.ok) location.reload();
+                    else alert("Failed to restore files.");
+                });
+            });
+        }
+    });
+</script>
 </body>
 </html>
