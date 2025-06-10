@@ -78,7 +78,13 @@
                     <button onclick="toggleDarkMode()" class="theme-toggle-btn" aria-label="Toggle dark mode">
                         <span class="material-icons-outlined" id="theme-icon">brightness_6</span>
                     </button>
-                    <a href="/logout" class="btn btn-outline-danger btn-sm logout-mobile-right">{{ translations["logout"] | default("Logout") }}</a>
+                    <div class="d-flex flex-column flex-md-row align-items-md-center gap-2 mt-2">
+                    <a href="{{ url_for('dashboard', lang=lang) }}" class="order-1 order-md-2 d-inline-block">
+                    <span class="material-icons-outlined" style="vertical-align: middle;">arrow_back</span>
+                    {{ translations["back_to_dashboard"] | default("Back to Dashboard") }}
+                    </a>
+                    <a href="/logout" class="btn btn-outline-danger btn-sm order-2 order-md-1">{{ translations["logout"] | default("Logout") }}</a>
+                </div>
                 </div>
             </header>
 
