@@ -428,7 +428,7 @@ def get_translations(lang):
         "my_drive": {"en": "My Drive", "ta": "எனது டிரைவ்", "hi": "मेरा ड्राइव"},
         "hello": {"en": "Hello", "ta": "வணக்கம்", "hi": "नमस्ते"},
         "logout": {"en": "Logout", "ta": "வெளியேறு", "hi": "लॉगआउट"},
-        "storage": {"en": "Storage:", "ta": "சேமிப்பு:", "hi": "स्टोरेज:"},
+        "storage": {"en": "Storage:", "ta": "ஸ்டோரேஜ்:", "hi": "स्टोरेज:"},
         "drop_here": {
             "en": "Drop files here or click to upload",
             "ta": "இங்கே கோப்புகளை இடுக அல்லது கிளிக் செய்யவும்",
