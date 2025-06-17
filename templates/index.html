@@ -26,7 +26,7 @@
                 <div><strong>{{ user }}</strong></div>
                 <small class="text-muted">{{ bio or "No bio yet" }}</small>
             </div>
-            <a href="/profile" class="sidebar-item">
+            <a href="/profile?lang={{ lang }}" class="sidebar-item">
                 <span class="material-icons-outlined">person</span>
                 <span>{{ translations["profile"] | default("Profile") }}</span>
             </a>

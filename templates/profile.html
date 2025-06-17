@@ -192,7 +192,7 @@
       </div>
 
       <div class="text-center back-link">
-        <a href="{{ url_for('dashboard', lang=lang) }}" class="mt-3 d-inline-block">
+        <a href="/dashboard?lang={{ lang }}" class="mt-3 d-inline-block">
           <span class="material-icons-outlined" style="vertical-align: middle;">arrow_back</span>
           {{ translations["back_to_dashboard"] | default("Back to Dashboard") }}
         </a>

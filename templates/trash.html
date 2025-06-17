@@ -27,21 +27,21 @@
                 <small class="text-muted">{{ bio or "No bio yet" }}</small>
             </div>
 
-            <a href="/profile" class="sidebar-item">
+            <a href="/profile?lang={{ lang }}" class="sidebar-item">
                 <span class="material-icons-outlined">person</span>
                 <span>{{ translations["profile"] | default("Profile") }}</span>
             </a>
 
             <div class="sidebar-divider"></div>
 
-            <a href="/dashboard" class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
+            <a href="/dashboard?lang={{ lang }}" class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
                 <span class="material-icons-outlined">folder_open</span>
                 <span>{{ translations["my_files"] | default("My Files") }}</span>
             </a>
 
             <div class="sidebar-divider"></div>
 
-            <a href="/trash" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
+            <a href="/trash?lang={{ lang }}" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
                 <span class="material-icons-outlined">delete</span>
                 <span>{{ translations["trash_bin"] | default("Trash") }}</span>
             </a>
