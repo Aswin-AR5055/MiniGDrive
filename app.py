@@ -425,7 +425,7 @@ def get_translations(lang):
             "ta": "கோப்புகளை தேடு...",
             "hi": "फ़ाइलें खोजें..."
         },
-        "my_drive": {"en": "My Drive", "ta": "என் டிரைவ்", "hi": "मेरा ड्राइव"},
+        "my_drive": {"en": "My Drive", "ta": "எனது டிரைவ்", "hi": "मेरा ड्राइव"},
         "hello": {"en": "Hello", "ta": "வணக்கம்", "hi": "नमस्ते"},
         "logout": {"en": "Logout", "ta": "வெளியேறு", "hi": "लॉगआउट"},
         "storage": {"en": "Storage:", "ta": "சேமிப்பு:", "hi": "स्टोरेज:"},
