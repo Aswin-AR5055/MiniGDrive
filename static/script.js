@@ -278,6 +278,20 @@ function animateDelete(card) {
     card.classList.add('fade-out');
     setTimeout(() => card.remove(), 300);
 }
+function hideOrShowDownloadSelected() {
+   // Hide "download selected" if nothing is selected
+   const btnDownloadSelected = document.getElementById("btnDownloadSelected");
+   if (!btnDownloadSelected) {
+      return;
+   }
+   const boxes = document.querySelectorAll('input[name="selected_files"]');
+   if (Array.from(boxes).some(cb => cb.checked)) {
+      btnDownloadSelected.classList.remove('hidden');
+   }
+   else {
+      btnDownloadSelected.classList.add('hidden');
+   }
+}
 document.addEventListener("DOMContentLoaded", function() {
     const selectAll = document.getElementById("selectAll");
     const deleteBtn = document.getElementById("deleteSelectedBtn");
@@ -289,6 +303,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (selectAll) {
         selectAll.addEventListener("change", function() {
             getFileCheckboxes().forEach(cb => cb.checked = selectAll.checked);
+            hideOrShowDownloadSelected();
         });
     }
 
@@ -301,6 +316,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (e.target.name === "selected_files" && selectAll) {
             const boxes = getFileCheckboxes();
             selectAll.checked = Array.from(boxes).every(cb => cb.checked);
+            hideOrShowDownloadSelected();
         }
     });
     // --- Trash Section Select All & Delete Selected ---
