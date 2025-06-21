@@ -71,7 +71,7 @@
                     <button onclick="toggleDarkMode()" class="theme-toggle-btn" aria-label="Toggle dark mode">
                         <span class="material-icons-outlined" id="theme-icon">brightness_6</span>
                     </button>
-                    <a href="/logout" class="btn btn-outline-danger btn-sm logout-mobile-right">{{ translations["logout"] | default("Logout") }}</a>
+                    <a href="/logout" class="btn btn-gradient btn-sm">Logout</a>{{ translations["logout"] | default("Logout") }}</a>
                 </div>
             </header>
 
@@ -79,13 +79,20 @@
                 <input type="file" name="file" id="fileInput" required onchange="handleFileUpload(this.files)" multiple>
             </form>
             <div class="drop-zone mb-4" id="dropZone">
-                <div id="dropZoneContent">
+		<button class="btn btn-gradient" onclick="document.getElementById('fileInput').click()">Upload</button>
+		<div id="dropZoneContent">
                     <span class="material-icons-outlined">cloud_upload</span>
                     <div><strong>{{ translations["drop_here"] | default("Drop files here or click to upload") }}</strong></div>
                     <div class="upload-progress" id="uploadProgress"></div>
                     <div id="uploadStatus" class="small text-muted mt-2"></div>
                 </div>
             </div>
+
+	<div class="d-flex justify-content-end mb-3 gap-2">
+    		<button class="btn btn-gradient" onclick="document.getElementById('fileInput').click()">Upload</button>
+    		<a href="/logout" class="btn btn-gradient btn-sm">Logout</a>
+	</div>
+
 
             <section id="my-files-section">
                 <h5 class="section-title">{{ translations["my_files"] | default("My Files") }}</h5>
