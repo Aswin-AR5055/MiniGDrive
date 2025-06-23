@@ -783,6 +783,35 @@ body.dark-mode .form-select {
         url("data:image/svg+xml;charset=UTF-8,<svg width='20' height='20' viewBox='0 0 20 20' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M6 8L10 12L14 8' stroke='%238ab4f8' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/></svg>");
 }
 
+/* Specific styles for the logout button */
+.btn-outline-danger {
+    color: #dc3545; /* Bootstrap's default danger color */
+    border-color: #dc3545;
+    background-color: transparent;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+.btn-outline-danger:hover {
+    color: white;
+    border-color: transparent; /* Remove border on hover for gradient */
+    background: linear-gradient(45deg, #dc3545, #ff6b6b); /* Red gradient */
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4); /* Optional: add a subtle shadow */
+}
+
+/* Dark mode for the logout button */
+body.dark-mode .btn-outline-danger {
+    color: #ff4d4d; /* Lighter red for dark mode */
+    border-color: #ff4d4d;
+}
+
+body.dark-mode .btn-outline-danger:hover {
+    color: white;
+    border-color: transparent;
+    background: linear-gradient(45deg, #ff4d4d, #ff8080); /* Lighter red gradient for dark mode */
+    box-shadow: 0 4px 8px rgba(255, 77, 77, 0.4);
+}
+
+
 /* --- Mobile Responsive Styles --- */
 @media (max-width: 576px) {
     .drive-wrapper {
