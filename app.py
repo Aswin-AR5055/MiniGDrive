@@ -396,7 +396,7 @@ def get_translations(lang):
             "hi": "चयनित हटाएँ"
         },
         "restore_selected": {
-            "en": "restore selected",
+            "en": "Restore selected",
             "ta": "தேர்ந்தெடுக்கப்பட்டவை மீட்க",
             "hi": "चयनित बहाल करें"
         },
