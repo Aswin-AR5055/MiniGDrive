@@ -25,7 +25,6 @@ def init_db():
             username TEXT,
             password TEXT,
             bio TEXT,
-            Gender TEXT,
             age INTEGER,
             profile_pic TEXT
         )
@@ -131,7 +130,6 @@ def profile():
 
     if request.method == "POST":
         bio = request.form.get("bio", "")
-        gender = request.form.get("gender", "")
         age = request.form.get("age", "")
         remove_pic = request.form.get("remove_pic") == "on"
         profile_pic = request.files.get("profile_pic")
@@ -448,8 +446,6 @@ def get_translations(lang):
         "used": {"en": "used", "ta": "பயன்பட்டது", "hi": "उपयोग किया गया"},
         "profile": {"en": "Profile", "ta": "சுயவிவரம்", "hi": "प्रोफ़ाइल"},
         "bio": {"en": "Bio", "ta": "வாழ்க்கை வரலாறு", "hi": "जीवनी"},
-        "gender": {"en": "gender", "ta": "பாலினம்", "hi": "लिंग"},
-        "select": {"en": "select", "ta": "தேர்ந்தெடுக்கவும்", "hi": "चुनना"},
         "bio_placeholder": {"en": "Tell us something about you...", "ta": "உங்களைப் பற்றி எங்களிடம் சொல்லுங்கள்...", "hi": "हमें अपने बारे में बताएं..."},
         "age": {"en": "Age", "ta": "வயது", "hi": "उम्र"},
         "age_placeholder": {"en": "Your age", "ta": "உங்கள் வயது", "hi": "आपकी उम्र"},

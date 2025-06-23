@@ -50,7 +50,6 @@
       font-size: 0.95rem;
       background-color: #fff;
       color: #000;
-      margin-top: 10px;
     }
 
     .form-control::placeholder {
@@ -161,16 +160,6 @@
       <div class="mb-3">
         <label class="form-label">{{ translations["bio"] | default("Bio") }}</label>
         <input type="text" name="bio" class="form-control" value="{{ bio or '' }}" placeholder="{{ translations['bio_placeholder'] | default('Tell us something about you...') }}">
-      </div>
-
-      <div class="mb-3">
-        <label for="gender">{{ translations["gender"] | capitalize }}</label>
-        <select id="gender" name="gender" class="form-control">
-        <option value="select">{{ translations["select"] | default("Select") }}</option>
-        <option value="male" {% if gender == 'male' %}selected{% endif %}>Male</option>
-        <option value="female" {% if gender == 'female' %}selected{% endif %}>Female</option>
-        <option value="other" {% if gender == 'other' %}selected{% endif %}>Other</option>
-        </select>
       </div>
 
       <div class="mb-3">
