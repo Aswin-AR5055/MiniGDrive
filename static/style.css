@@ -598,6 +598,9 @@ body.dark-mode .language-switch a:hover {
 .text-muted {
     color: var(--drive-text-secondary) !important;
 }
+.hidden {
+    visibility: hidden;
+}
 body.dark-mode .text-muted {
     color: var(--dark-text-secondary) !important;
 }
