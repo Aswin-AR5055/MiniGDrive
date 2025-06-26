@@ -21,16 +21,16 @@ resource "tls_private_key" "privatekey" {
 
 resource "local_file" "my_private_key" {
     content = tls_private_key.privatekey.private_key_pem
-    filename = "keyfile.pem"
+    filename = "mynewkey.pem"
 }
 
 resource "aws_key_pair" "myubuntukey" {
-    key_name = "keyfile"
+    key_name = "mynewkey"
     public_key = tls_private_key.privatekey.public_key_openssh
 }
 
 resource "aws_security_group" "my_security_group" {
-    name = "mysecuritygroup"
+    name = "my_securitygroup"
     description = "Allow http and ssh traffic" 
     ingress { 
         from_port = 80
