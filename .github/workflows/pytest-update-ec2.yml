@@ -3,7 +3,7 @@ name: Test and Deploy to EC2 with Docker
 on:
   push:
     branches:
-      - master
+      - master  # Change if your main branch is named differently
 
 jobs:
   deploy:
@@ -43,12 +43,12 @@ jobs:
           git pull
 
           echo "[+] Stopping and removing existing container..."
-          sudo docker stop minigdrive || true
-          sudo docker rm minigdrive || true
+          sudo docker stop gdrive || true
+          sudo docker rm gdrive || true
 
-          echo "[+] Building new Docker image..."
-          sudo docker build -t minigdrive .
+          echo "[+] Building Docker image as 'gdrive'..."
+          sudo docker build -t gdrive .
 
-          echo "[+] Running new container on port 80:5000..."
-          sudo docker run -d --name minigdrive -p 80:5000 minigdrive
+          echo "[+] Running container as 'gdrive' on port 80:5000..."
+          sudo docker run -d --name gdrive -p 80:5000 gdrive
         EOF
