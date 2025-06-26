@@ -29,7 +29,7 @@ resource "aws_key_pair" "myubuntukey" {
     public_key = tls_private_key.privatekey.public_key_openssh
 }
 
-resource "aws_security_group" "my_sg" {
+resource "aws_security_group" "my_security_group" {
     name = "mysecuritygroup"
     description = "Allow http and ssh traffic" 
     ingress { 
