@@ -36,7 +36,7 @@ jobs:
 
     - name: SSH into EC2 and Deploy with Docker
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@43.204.216.68 << 'EOF'
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@43.204.216.68 << EOF
           set -e
           cd MiniGDrive
 
@@ -57,16 +57,16 @@ jobs:
           echo "[+] Building Docker image..."
           sudo docker build -t gdrive .
 
-          echo "[+] Running container with selective volume mounts and secret key..."
+          echo "[+] Running container with volume mounts and secret key..."
           sudo docker run -d --name gdrive \
             -p 80:5000 \
             -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
             -v /home/ubuntu/minigdrive_data/trash:/app/trash \
             -v /home/ubuntu/minigdrive_data/storage:/app/storage \
             -v /home/ubuntu/minigdrive_data/users.db:/app/users.db \
-            -e SECRET_KEY='d7b9664071b3c43bda23bae9b90f115b1dbe92883352a58f4bfa211ca80835f1' \
+            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             gdrive
 
-          echo "[+] Deployment complete. Container status:"
+          echo "[+] Done. Current running containers:"
           sudo docker ps
         EOF
