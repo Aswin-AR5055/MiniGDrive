@@ -46,9 +46,13 @@ jobs:
           sudo docker stop gdrive || true
           sudo docker rm gdrive || true
 
+          echo "[+] Creating persistent volume directory..."
+          mkdir -p /home/ubuntu/minigdrive_data
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
+
           echo "[+] Building Docker image as 'gdrive'..."
           sudo docker build -t gdrive .
 
-          echo "[+] Running container as 'gdrive' on port 80:5000..."
-          sudo docker run -d --name gdrive -p 80:5000 gdrive
+          echo "[+] Running container with full /app volume mount..."
+          sudo docker run -d --name gdrive -p 80:5000             -v /home/ubuntu/minigdrive_data:/app             gdrive
         EOF
