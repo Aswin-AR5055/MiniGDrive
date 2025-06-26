@@ -3,7 +3,7 @@ name: Test and Deploy to EC2 with Docker
 on:
   push:
     branches:
-      - master  # Change if your main branch is named differently
+      - master
 
 jobs:
   deploy:
