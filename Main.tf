@@ -14,23 +14,8 @@ data "aws_ami" "my_ubuntu_ami" {
     owners = ["099720109477"]
 }
 
-resource "tls_private_key" "privatekey" {
-    algorithm = "RSA"
-    rsa_bits = 4096
-}
-
-resource "local_file" "my_private_key" {
-    content = tls_private_key.privatekey.private_key_pem
-    filename = "mynewkey.pem"
-}
-
-resource "aws_key_pair" "myubuntukey" {
-    key_name = "mynewkey"
-    public_key = tls_private_key.privatekey.public_key_openssh
-}
-
 resource "aws_security_group" "my_security_group" {
-    name = "my_securitygroup"
+    name = "my_security_group"
     description = "Allow http and ssh traffic" 
     ingress { 
         from_port = 80
@@ -61,7 +46,7 @@ resource "aws_security_group" "my_security_group" {
 resource "aws_instance" "my_instance" {
     ami = data.aws_ami.my_ubuntu_ami.id
     instance_type = "t2.micro"
-    key_name = aws_key_pair.myubuntukey.key_name
+    key_name = "newubuntukeypair"
     vpc_security_group_ids = [aws_security_group.my_security_group.id] 
 }
 
