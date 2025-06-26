@@ -148,7 +148,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 ---
 
-## 🚀 Deployment Pipeline
+## Deployment Pipeline
 
 - Code pushed to `master` branch
 - GitHub Actions runs unit tests
