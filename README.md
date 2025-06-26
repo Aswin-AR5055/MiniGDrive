@@ -19,7 +19,7 @@
 
 ---
 
-## Screenshots
+## Screenshot
 
 Dashboard (PC view):
 
