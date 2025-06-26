@@ -37,6 +37,7 @@ jobs:
     - name: SSH into EC2 and Deploy with Docker
       run: |
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@43.204.216.68 << 'EOF'
+          set -e
           cd MiniGDrive
 
           echo "[+] Pulling latest changes..."
@@ -46,13 +47,25 @@ jobs:
           sudo docker stop gdrive || true
           sudo docker rm gdrive || true
 
-          echo "[+] Creating persistent volume directory..."
-          mkdir -p /home/ubuntu/minigdrive_data
+          echo "[+] Creating persistent data directories..."
+          mkdir -p /home/ubuntu/minigdrive_data/uploads
+          mkdir -p /home/ubuntu/minigdrive_data/trash
+          mkdir -p /home/ubuntu/minigdrive_data/storage
+          touch /home/ubuntu/minigdrive_data/users.db
           sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
 
-          echo "[+] Building Docker image as 'gdrive'..."
+          echo "[+] Building Docker image..."
           sudo docker build -t gdrive .
 
-          echo "[+] Running container with full /app volume mount..."
-          sudo docker run -d --name gdrive -p 80:5000             -v /home/ubuntu/minigdrive_data:/app             gdrive
+          echo "[+] Running container with selective volume mounts..."
+          sudo docker run -d --name gdrive \
+            -p 80:5000 \
+            -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
+            -v /home/ubuntu/minigdrive_data/trash:/app/trash \
+            -v /home/ubuntu/minigdrive_data/storage:/app/storage \
+            -v /home/ubuntu/minigdrive_data/users.db:/app/users.db \
+            gdrive
+
+          echo "[+] Deployment complete. Container status:"
+          sudo docker ps
         EOF
