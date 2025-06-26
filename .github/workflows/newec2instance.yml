@@ -1,8 +1,8 @@
 name: create ec2 instance
 on:
     push:
-        branches:
-            - ec2
+      branches:
+        - ec2
 
 jobs:
     ec2:
