@@ -37,7 +37,8 @@ jobs:
 
     - name: SSH into EC2 and Update Repository
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@15.206.149.193 <<EOF
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@43.204.216.68
+<<EOF
         cd MiniGDrive
         git pull
         EOF
