@@ -35,7 +35,7 @@ Dashboard (Mobile view):
 
 ## Live Demo
 
-👉 [![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://tinyurl.com/minigdrivears)  
+👉 [![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://d2r6fbb0wu8aqt.cloudfront.net)  
 > ⚙️ Hosted live on an AWS EC2 instance using Docker & GitHub Actions CI/CD.  
 > 🔒 **Note**: This demo runs on plain HTTP and is intended for testing purposes only. Do not upload sensitive or personal data.
 
