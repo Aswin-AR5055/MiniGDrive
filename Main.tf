@@ -30,20 +30,29 @@ resource "aws_key_pair" "myubuntukey" {
 }
 
 resource "aws_security_group" "my_sg" {
-    name = "mysecuritygroup"
-    description = "Allow http and ssh traffic" 
-    ingress { 
-        from_port = 80
-        to_port = 80
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-    egress { 
-        from_port = 22
-        to_port = 22
-        protocol = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  name        = "mysecuritygroup"
+  description = "Allow HTTP and SSH inbound; all outbound"
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 }
 
 resource "aws_instance" "my_instance" {
