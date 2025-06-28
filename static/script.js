@@ -279,17 +279,20 @@ function animateDelete(card) {
     setTimeout(() => card.remove(), 300);
 }
 function hideOrShowDownloadSelected() {
-   // Hide "download selected" if nothing is selected
+   // Hide "download selected" and disable "delete selected" if nothing is selected
    const btnDownloadSelected = document.getElementById("btnDownloadSelected");
-   if (!btnDownloadSelected) {
+   const btnDeleteSelected = document.getElementById("deleteSelectedBtn");
+   if (!btnDownloadSelected && !btnDeleteSelected) {
       return;
    }
    const boxes = document.querySelectorAll('input[name="selected_files"]');
    if (Array.from(boxes).some(cb => cb.checked)) {
       btnDownloadSelected.classList.remove('hidden');
+      btnDeleteSelected.disabled = false;
    }
    else {
       btnDownloadSelected.classList.add('hidden');
+      btnDeleteSelected.disabled = true;
    }
 }
 document.addEventListener("DOMContentLoaded", function() {
