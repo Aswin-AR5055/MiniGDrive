@@ -21,7 +21,7 @@
 
 ---
 
-## Screenshot
+## Screenshots
 
 Dashboard (PC view):
 
@@ -35,36 +35,42 @@ Dashboard (Mobile view):
 
 ## Live Demo
 
-👉 [![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://d2r6fbb0wu8aqt.cloudfront.net)  
-> ⚙️ Hosted live on an AWS EC2 instance using Docker & GitHub Actions CI/CD.  
-> 🔒 **Note**: This demo runs on plain HTTP and is intended for testing purposes only. Do not upload sensitive or personal data.
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://d2r6fbb0wu8aqt.cloudfront.net)  
+> **Hosted:** AWS EC2 instance using Docker and GitHub Actions  
+> **Secured via:** CloudFront CDN (HTTPS)  
+> **Note:** This is a demo site. Please avoid uploading sensitive or personal data.  
+> **Disclaimer:** I am not responsible for any data theft, loss, or misuse.
 
 ---
 
 ## Features
 
-- **User Registration and Login**: Secure authentication with password hashing.  
-- **File Management**: Upload, download, and delete files.  
-- **Trash System**: Deleted files are moved to a trash folder for recovery.  
-- **Personal Storage Management**: Monitor storage usage with a progress bar.  
-- **Session Management**: Auto-expiry of sessions after 7 days.  
-- **Profile Customization**: Update bio, age, and profile picture.
-
+- **User Registration and Login**: Secure authentication with password hashing.
+- **File Upload and Download**: Users can upload and download files easily.
+- **Trash System**: Deleted files go to trash instead of being permanently removed.
+- **Restore and Permanent Delete**: Restore files from trash or delete them forever.
+- **Bulk Actions**: Select multiple files to delete, restore, or download as ZIP.
+- **Storage Monitoring**: View used storage with a visual progress bar.
+- **Responsive UI**: Works well on both desktop and mobile screens.
+- **Profile Customization**: Add bio, age, and profile picture.
+- **Multilingual Support**: UI available in English, Tamil, and Hindi.
+- **CI/CD Pipeline**: Auto-deployment on AWS EC2 using GitHub Actions and Docker.
 ---
 
 ## Tech Stack
 
-| Layer                | Technology Used                                                   | Purpose                                         |
-|----------------------|-------------------------------------------------------------------|-------------------------------------------------|
-| **Backend**          | Python + Flask                                                    | Web server and application logic                |
-| **Database**         | SQLite                                                            | Storing user accounts and profiles              |
-| **Frontend**         | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript           | Responsive UI, modals, sorting/filtering, interactivity |
-| **Security**         | Werkzeug (secure filename + password hashing)                     | Secure file uploads and password management     |
-| **File Handling**    | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)      |
-| **Session Management** | Flask + `datetime`                                              | Managing user sessions (login duration)         |
-| **Deployment**       | AWS EC2                                                           | Hosting the application                         |
-| **Containerization** | Docker                                                            | Packaging and running the app                   |
-| **CI/CD**            | GitHub Actions                                                    | Automating tests and deployment                 |
+| Layer                  | Technology Used                                                   | Purpose                                               |
+|------------------------|-------------------------------------------------------------------|-------------------------------------------------------|
+| **Backend**            | Python + Flask                                                    | Web server and application logic                      |
+| **Database**           | SQLite                                                            | Storing user accounts and profiles                    |
+| **Frontend**           | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript           | Responsive UI, modals, sorting/filtering, interactivity |
+| **Security**           | Werkzeug (secure filename + password hashing)                     | Secure file uploads and password management           |
+| **File Handling**      | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)            |
+| **Session Management** | Flask + `datetime`                                                | Managing user sessions (login duration)               |
+| **Hosting**            | AWS EC2                                                           | Server for running the app                            |
+| **HTTPS/CDN**          | AWS CloudFront                                                    | Secure global access over HTTPS with CDN caching      |
+| **Containerization**   | Docker                                                            | Packaging and running the app                         |
+| **CI/CD**              | GitHub Actions                                                    | Automating tests and deployment                       |
 
 ---
 
@@ -158,6 +164,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 - Docker image is rebuilt using latest code
 - Existing container is stopped and removed
 - New container is started on port 80
+- Hosted securely via AWS CloudFront (HTTPS)
 
 ---
 
@@ -171,7 +178,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 ## Acknowledgements
 
-Full Stack Development and DevOps by [Aswin Raj A](https://www.instagram.com/ar_aswinraj)  
-Design Support by [Mohamed Suhail S](https://github.com/octatrix008)  
+Full Stack Development and DevOps: [Aswin Raj A](https://www.instagram.com/ar_aswinraj)  
+Design Suggestions: [Mohamed Suhail S](https://github.com/octatrix008)  
 
-Built with ❤️
+Built with love, sweat and coffee ☕ 
