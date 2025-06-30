@@ -2,7 +2,7 @@
 
 ![Status](https://img.shields.io/badge/status-under_frequent_development-orange)
 
-**MiniGDrive** is a lightweight cloud storage application built using Flask and SQLite, designed to mimic the basic functionality of Google Drive. Users can register, log in, upload, download, and manage their files — all within a simple and secure environment.
+**MiniGDrive** is a lightweight, responsive cloud storage application powered by Flask + SQLite, now with voice command support. Users can register, log in, upload, download, and manage files — all within a clean and intuitive UI.
 
 ---
 
@@ -45,6 +45,7 @@ Dashboard (Mobile view):
 
 ## Features
 
+- **Voice Command Support**: Control file actions like upload, open, delete, and logout using voice recognition.
 - **User Registration and Login**: Secure authentication with password hashing.
 - **File Upload and Download**: Users can upload and download files easily.
 - **Trash System**: Deleted files go to trash instead of being permanently removed.
