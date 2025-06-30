@@ -1,4 +1,5 @@
-name: Test and Deploy to EC2 with Docker
+name: CI/CD - Docker
+
 
 on:
   push:
