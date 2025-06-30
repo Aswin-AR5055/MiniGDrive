@@ -1,4 +1,6 @@
-# <img src="assets/ars_logo_32x32.png" alt="ARS" width="24" height="24"> MiniGDrive          ![Deploy](https://github.com/Aswin-AR5055/MiniGDrive/actions/workflows/pytest-update-ec2.yml/badge.svg)
+# <img src="assets/ars_logo_32x32.png" alt="ARS" width="24" height="24"> MiniGDrive          
+
+![Deploy](https://github.com/Aswin-AR5055/MiniGDrive/actions/workflows/pytest-update-ec2.yml/badge.svg)
 
 ![Status](https://img.shields.io/badge/status-under_frequent_development-orange)
 
