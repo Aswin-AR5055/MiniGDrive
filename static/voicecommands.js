@@ -55,14 +55,19 @@ if (!SpeechRecognition) {
   } else if (command.includes('list files')) {
     listFiles();
     recognized = true;
+  } else if (command === 'logout' || command === 'log me out' || command.includes('sign out')) {
+    voiceStatus.textContent = "Logging out...";
+    window.location.href = "/logout";
+    recognized = true;
   } else {
     voiceStatus.textContent = "Command not recognized.";
   }
 
-  // Clear status after 2 seconds
-  setTimeout(() => {
-    voiceStatus.textContent = "";
-  }, 2000);
+  if (!command.includes('logout') && !command.includes('log me out') && !command.includes('sign out')) {
+    setTimeout(() => {
+      voiceStatus.textContent = "";
+    }, 2000);
+  }
 };
 
 
