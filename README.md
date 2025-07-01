@@ -57,7 +57,7 @@ Dashboard (Mobile view):
 - **Responsive UI**: Works well on both desktop and mobile screens.
 - **Profile Customization**: Add bio, age, and profile picture.
 - **Multilingual Support**: UI available in English, Tamil, and Hindi.
-- **CI/CD Pipeline**: Auto-deployment on AWS EC2 using GitHub Actions and Docker.
+
 ---
 
 ## Tech Stack
