@@ -692,7 +692,15 @@ body.dark-mode .form-check-input:checked {
     }
     .menu-toggle-btn {
         order: 1;
+        position: fixed;
+        top: 0.7rem;
+        left: 0.7rem;
+        z-index: 2300;
+        margin: 0;
+        border-radius: 50%;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.07);
     }
+    
     .drive-header h4 {
         order: 2;
         width: 100%;
@@ -1148,5 +1156,11 @@ body.dark-mode #voice-status {
   0% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0.4); }
   70% { box-shadow: 0 0 0 10px rgba(66, 133, 244, 0); }
   100% { box-shadow: 0 0 0 0 rgba(66, 133, 244, 0); }
+}
+
+@media (max-width: 576px) {
+    .sidebar-open .menu-toggle-btn {
+        display: none !important;
+    }
 }
 
