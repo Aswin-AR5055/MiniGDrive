@@ -66,7 +66,7 @@ Dashboard (Mobile view):
 |------------------------|-------------------------------------------------------------------|-------------------------------------------------------|
 | **Backend**            | Python + Flask                                                    | Web server and application logic                      |
 | **Database**           | SQLite                                                            | Storing user accounts and profiles                    |
-| **Frontend**           | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript           | Responsive UI, modals, sorting/filtering, interactivity |
+| **Frontend**           | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript           | Responsive UI, modals, voice commands, sorting/filtering, interactivity |
 | **Security**           | Werkzeug (secure filename + password hashing)                     | Secure file uploads and password management           |
 | **File Handling**      | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)            |
 | **Session Management** | Flask + `datetime`                                                | Managing user sessions (login duration)               |
