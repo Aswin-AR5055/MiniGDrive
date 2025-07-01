@@ -31,7 +31,8 @@ Dashboard (PC view):
 
 Dashboard (Mobile view):
 
-<img src="assets/dashboardmobile2.jpg" width="200"/> <img src="assets/dashboardmobile.jpg" width="200"/>
+<img src="assets/dashboardmobile2.jpg" width="200"/> 
+<img src="assets/dashboardmobile.jpg" width="200"/>
 
 ---
 
@@ -47,7 +48,8 @@ Dashboard (Mobile view):
 
 ## Features
 
-- **Voice Command Support**: Control file actions like upload, open, delete, and logout using voice recognition.
+- **Voice Command Support**: 
+Use browser-based voice commands to upload, open, delete files, or log out — hands-free interaction powered by Web Speech API.
 - **User Registration and Login**: Secure authentication with password hashing.
 - **File Upload and Download**: Users can upload and download files easily.
 - **Trash System**: Deleted files go to trash instead of being permanently removed.
