@@ -37,7 +37,7 @@ jobs:
 
     - name: SSH into EC2 and Deploy with Docker
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@43.204.216.68 << EOF
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.INSTANCE_IP }} << EOF
           set -e
           cd MiniGDrive
 
