@@ -4,6 +4,8 @@
 
 ![Status](https://img.shields.io/badge/status-under_frequent_development-orange)
 
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+
 **MiniGDrive** is a lightweight, responsive cloud storage application powered by Flask + SQLite, now with voice command support. Users can register, log in, upload, download, and manage files — all within a clean and intuitive UI.
 
 ---
@@ -19,6 +21,7 @@
 - [Run with Docker](#run-with-docker)
 - [Deployment Pipeline](#deployment-pipeline)
 - [Security Notes](#security-notes)
+- [License](#license)
 - [Acknowledgements](#acknowledgements)
 
 ---
@@ -178,6 +181,15 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 - **Password Security**: Passwords are hashed securely before being stored in the database using Werkzeug.  
 - **Session Management**: Session tokens ensure users stay logged in securely for up to 7 days.  
 - **Important:** For your safety, **do not use your real personal email address or password** when registering on this site. Use a secondary or disposable email, and a unique password that you do not use elsewhere.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+Feel free to use, modify, and distribute this project — just keep the license file and give proper credit.  
+Built for the community, with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5055).
 
 ---
 
