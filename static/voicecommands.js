@@ -1,3 +1,5 @@
+let recognition;
+
 const voiceBtn = document.getElementById('voice-command-btn');
 const voiceCancelBtn = document.getElementById('voice-cancel-btn');
 const voiceStatus = document.getElementById('voice-status');
@@ -8,7 +10,7 @@ if (!SpeechRecognition) {
   alert("Your browser does not support voice recognition.");
   voiceBtn.disabled = true;
 } else {
-  const recognition = new SpeechRecognition();
+  recognition = new SpeechRecognition();
   recognition.continuous = false;
   recognition.interimResults = false;
   recognition.lang = 'en-US';
@@ -47,10 +49,6 @@ if (!SpeechRecognition) {
   } else if (command.includes('delete') && command.includes('file')) {
     const filename = command.split('file').pop().trim();
     deleteFileByName(filename);
-    recognized = true;
-  } else if (command.includes('open') && command.includes('file')) {
-    const filename = command.split('file').pop().trim();
-    openFileByName(filename);
     recognized = true;
   } else if (command.includes('list files')) {
     listFiles();

@@ -117,7 +117,6 @@ Below are the voice commands you can use in MiniGDrive:
 |----------------------------------------|---------------------------------------------|
 | upload file                            | Open file upload dialog                     |
 | delete file [filename]                 | Delete the specified file                   |
-| open file [filename]                   | Open the specified file                     |
 | list files                             | Highlight/list all files                    |
 | logout / log me out / sign out         | Log out of your account                     |
 | trash / go to trash / view trash       | Go to Trash page                            |
