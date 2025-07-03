@@ -196,10 +196,12 @@ function listFiles() {
 
 // Add this helper function at the end of the file
 function setLanguage(langCode) {
-  // Example: change recognition language and reload UI if needed
+  // Change recognition language
   recognition.lang = langCode === 'en' ? 'en-US' : langCode === 'ta' ? 'ta-IN' : langCode === 'hi' ? 'hi-IN' : 'en-US';
-  // Optionally, update UI or make an API call to persist language preference
-  // location.reload(); // Uncomment if you want to reload UI on language change
+  // Update the URL's lang parameter and reload the page
+  const url = new URL(window.location.href);
+  url.searchParams.set('lang', langCode);
+  window.location.href = url.toString();
 }
 
 // Add this helper function at the end of the file
