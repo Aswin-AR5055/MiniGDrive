@@ -108,6 +108,31 @@ MiniGDrive/
 
 ---
 
+## 🗣️ Voice Commands Supported
+
+Below are the voice commands you can use in MiniGDrive:
+
+| Command Example                        | Action                                      |
+|----------------------------------------|---------------------------------------------|
+| upload file                            | Open file upload dialog                     |
+| delete file [filename]                 | Delete the specified file                   |
+| open file [filename]                   | Open the specified file                     |
+| list files                             | Highlight/list all files                    |
+| logout / log me out / sign out         | Log out of your account                     |
+| trash / go to trash / view trash       | Go to Trash page                            |
+| go to dashboard / view/open dashboard  | Go to Dashboard page                        |
+| go to profile / view/open profile      | Go to Profile page                          |
+| switch language to english             | Change app language to English              |
+| switch language to tamil               | Change app language to Tamil                |
+| switch language to hindi               | Change app language to Hindi                |
+| switch to dark mode / enable dark mode | Switch to Dark Mode                         |
+| switch to light mode / enable light mode| Switch to Light Mode                        |
+| search for [filename]                  | Search for a file by name                   |
+
+> [filename] = Replace with your file's name (e.g., "open file report.pdf")
+
+---
+
 ## How to Run Locally
 
 1. **Clone the repository**:
@@ -198,4 +223,6 @@ Built for the community, with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5
 Full Stack Development and DevOps: [Aswin Raj A](https://www.instagram.com/ar_aswinraj)  
 Design Suggestions: [Mohamed Suhail S](https://github.com/octatrix008)  
 
-Built with love, sweat and coffee ☕ 
+Built with love, sweat and coffee ☕
+
+

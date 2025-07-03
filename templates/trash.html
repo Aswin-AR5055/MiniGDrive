@@ -67,6 +67,11 @@
                 <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle menu">
                     <span class="material-icons-outlined">menu</span>
                 </button>
+                <div class="voice-command-top">
+                    <button id="voice-command-btn" class="btn-outline-google" title="Start Voice Command">🎤</button>
+                    <button id="voice-cancel-btn" class="btn-outline-google" style="display:none;">✖ Cancel</button>
+                    <div id="voice-status" class="text-muted small mt-1"></div>
+                </div>
                 <h4 class="mb-0">{{ translations["trash_bin"] | default("Trash") }}</h4>
                 <div class="header-actions">
                     <div class="language-switch">
@@ -124,6 +129,7 @@
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script src="{{ url_for('static', filename='voicecommands.js') }}"></script>
     
     <script>
     // Mobile Sidebar Toggle - This needs to run immediately, not in DOMContentLoaded
