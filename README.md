@@ -17,6 +17,7 @@
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
+- [Voice Commands Supported](#voice-commands-supported)
 - [How to Run Locally](#how-to-run-locally)
 - [Run with Docker](#run-with-docker)
 - [Deployment Pipeline](#deployment-pipeline)
@@ -108,7 +109,7 @@ MiniGDrive/
 
 ---
 
-## 🗣️ Voice Commands Supported
+## Voice Commands Supported
 
 Below are the voice commands you can use in MiniGDrive:
 
