@@ -156,6 +156,46 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>"
     <script src="{{ url_for('static', filename='voicecommands.js') }}"></script>
     <script>
+        function setupSidebarToggle() {
+        const menuToggleBtn = document.getElementById('menuToggleBtn');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const body = document.body;
+
+        function openSidebar() {
+            body.classList.add('sidebar-open');
+        }
+
+        function closeSidebar() {
+            body.classList.remove('sidebar-open');
+        }
+
+        if (menuToggleBtn) {
+            menuToggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (body.classList.contains('sidebar-open')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+        }
+
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+
+        // Close sidebar when clicking on sidebar items on mobile
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', function() {
+                if (window.innerWidth <= 992) {
+                    closeSidebar();
+                }
+            });
+        });
+    }
+    setupSidebarToggle();
+    
     function applyTheme(theme) {
         if (theme === "dark") {
             document.body.classList.add("dark-mode");
