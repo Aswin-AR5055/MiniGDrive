@@ -29,6 +29,14 @@ def init_db():
             profile_pic TEXT
         )
     """)
+    # Add favourites table
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS favourites (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
+            filename TEXT NOT NULL
+        )
+    """)
     conn.commit()
     conn.close()
 
@@ -209,6 +217,8 @@ def dashboard():
             file_dates[f] = ""
             file_sizes[f] = 0
 
+    favourites = get_user_favourites()
+
     return render_template("index.html",
                            user=session["username"],
                            files=files,
@@ -221,6 +231,8 @@ def dashboard():
                            profile_pic=profile["profile_pic"],
                            file_dates=file_dates,
                            file_sizes=file_sizes,
+                           trashed=trashed,
+                           favourites=favourites,
                            active_page="dashboard")
 
 
@@ -381,6 +393,51 @@ def trash():
                            translations=translations,
                            lang=lang,
                            active_page="trash")
+@app.route('/favourites')
+def favourites():
+    if "username" not in session:
+        return redirect("/login")
+
+    lang = request.args.get("lang", "en")
+    translations = get_translations(lang)
+
+    files = get_user_favourites()
+    upload_folder = get_user_folder()
+    file_dates = {}
+    file_sizes = {}
+    for f in files:
+        try:
+            path = os.path.join(upload_folder, f)
+            file_dates[f] = datetime.utcfromtimestamp(os.path.getmtime(path)).isoformat()
+            file_sizes[f] = os.path.getsize(path)
+        except Exception:
+            file_dates[f] = ""
+            file_sizes[f] = 0
+
+    profile = get_user_profile()
+    used_mb, max_mb, percent_used = get_storage_info()
+
+    return render_template("favourites.html",
+                           user=session["username"],
+                           files=files,
+                           file_dates=file_dates,
+                           file_sizes=file_sizes,
+                           bio=profile["bio"],
+                           profile_pic=profile["profile_pic"],
+                           used_mb=used_mb,
+                           max_mb=max_mb,
+                           percent_used=percent_used,
+                           translations=translations,
+                           lang=lang,
+                           active_page="favourites")
+
+def get_user_favourites():
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    c.execute("SELECT filename FROM favourites WHERE username=?", (session["username"],))
+    rows = c.fetchall()
+    conn.close()
+    return [row[0] for row in rows]
 
 
 def get_translations(lang):
@@ -437,6 +494,7 @@ def get_translations(lang):
         "my_files": {"en": "My Files", "ta": "எனது கோப்புகள்", "hi": "मेरी फाइलें"},
         "download": {"en": "Download", "ta": "பதிவிறக்கு", "hi": "डाउनलोड"},
         "trash": {"en": "Trash", "ta": "அகற்றுக", "hi": "ट्रैश"},
+        "favourites": {"en": "Favourites", "ta": "பிடித்தவை", "hi": "पसंदीदा"},
         "share": {"en": "Share", "ta": "பகிர்", "hi": "साझा करें"},
         "no_files": {"en": "No files uploaded.", "ta": "எந்த கோப்புகளும் இல்லை.", "hi": "कोई फ़ाइल अपलोड नहीं की गई"},
         "download_selected": {"en": "Download Selected as ZIP", "ta": "ZIP ஆக பதிவிறக்கு", "hi": "चयनित ज़िप डाउनलोड करें"},
@@ -455,6 +513,36 @@ def get_translations(lang):
         "back_to_dashboard": {"en": "Back to Dashboard", "ta": "டாஷ்போர்டுக்கு திரும்புக", "hi": "डैशबोर्ड पर वापस जाएं"},
     }
     return {key: val.get(lang, val["en"]) for key, val in translations.items()}
+
+@app.route('/star/<filename>', methods=['POST'])
+def star_file(filename):
+    if "username" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    safe_filename = secure_filename(normalize_filename(filename))
+    add_favourite(safe_filename)
+    return jsonify({"success": True})
+
+def add_favourite(filename):
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    c.execute("INSERT OR IGNORE INTO favourites (username, filename) VALUES (?, ?)", (session["username"], filename))
+    conn.commit()
+    conn.close()
+
+@app.route('/unstar/<filename>', methods=['POST'])
+def unstar_file(filename):
+    if "username" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    safe_filename = secure_filename(normalize_filename(filename))
+    remove_favourite(safe_filename)
+    return jsonify({"success": True})
+
+def remove_favourite(filename):
+    conn = sqlite3.connect("users.db")
+    c = conn.cursor()
+    c.execute("DELETE FROM favourites WHERE username=? AND filename=?", (session["username"], filename))
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

@@ -41,6 +41,12 @@
 
             <div class="sidebar-divider"></div>
 
+            <a href="/favourites?lang={{ lang }}" class="sidebar-item {% if active_page == 'favourites' %}active{% endif %}">
+                <span class="material-icons-outlined">star</span>
+                <span>{{ translations["favourites"] | default("Favourites") }}</span>
+            </a>
+            <div class="sidebar-divider"></div>
+
             <a href="/trash?lang={{ lang }}" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
                 <span class="material-icons-outlined">delete</span>
                 <span>{{ translations["trash_bin"] | default("Trash") }}</span>

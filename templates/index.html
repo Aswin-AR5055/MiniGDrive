@@ -11,7 +11,7 @@
 </head>
 <body id="body">
 
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+     <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <div class="drive-wrapper">
         <aside class="drive-sidebar" id="driveSidebar">
@@ -26,21 +26,35 @@
                 <div><strong>{{ user }}</strong></div>
                 <small class="text-muted">{{ bio or "No bio yet" }}</small>
             </div>
+
             <a href="/profile?lang={{ lang }}" class="sidebar-item">
                 <span class="material-icons-outlined">person</span>
                 <span>{{ translations["profile"] | default("Profile") }}</span>
             </a>
+
             <div class="sidebar-divider"></div>
-            <a href="/dashboard?lang={{ lang }}" class="sidebar-item active">
+
+            <a href="/dashboard?lang={{ lang }}" class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
                 <span class="material-icons-outlined">folder_open</span>
                 <span>{{ translations["my_files"] | default("My Files") }}</span>
             </a>
+
             <div class="sidebar-divider"></div>
-            <a href="/trash?lang={{ lang }}" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
-            <span class="material-icons-outlined">delete</span>
-            <span>{{ translations["trash_bin"] | default("Trash") }}</span>
+
+            <a href="/favourites?lang={{ lang }}" class="sidebar-item {% if active_page == 'favourites' %}active{% endif %}">
+            <span class="material-icons-outlined">star</span>
+            <span>{{ translations["favourites"] | default("Favourites") }}</span>
             </a>
+
             <div class="sidebar-divider"></div>
+
+            <a href="/trash?lang={{ lang }}" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
+                <span class="material-icons-outlined">delete</span>
+                <span>{{ translations["trash_bin"] | default("Trash") }}</span>
+            </a>
+
+            <div class="sidebar-divider"></div>
+
             <div class="storage-info">
                 <label>
                     <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: bottom; margin-right: 5px;">cloud</span>
@@ -162,6 +176,11 @@
                                     <a href="{{ url_for('delete', filename=file) }}" class="btn-action" title="{{ translations['trash'] | default('Move to Trash') }}">
                                         <span class="material-icons-outlined">delete_outline</span>
                                     </a>
+                                    <button type="button" class="btn-action star-btn" data-filename="{{ file }}" title="{% if favourites and file in favourites %}Unstar{% else %}Star{% endif %}">
+                                        <span class="material-icons-outlined" style="color:{% if favourites and file in favourites %}gold{% else %}gray{% endif %};">
+                                            {% if favourites and file in favourites %}star{% else %}star_outline{% endif %}
+                                        </span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -239,5 +258,18 @@
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script src="{{ url_for('static', filename='voicecommands.js') }}"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.star-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const filename = btn.getAttribute('data-filename');
+            const isStarred = btn.querySelector('span').textContent.trim() === 'star';
+            fetch(`/${isStarred ? 'unstar' : 'star'}/${encodeURIComponent(filename)}`, {method: 'POST'})
+                .then(r => r.json())
+                .then(() => window.location.reload());
+        });
+    });
+});
+</script>
 </body>
 </html>
