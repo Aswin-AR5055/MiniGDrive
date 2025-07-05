@@ -48,6 +48,9 @@ jobs:
           sudo docker stop gdrive || true
           sudo docker rm gdrive || true
 
+          echo "[+] Removing existing Docker image..."
+          sudo docker rmi -f gdrive || true
+
           echo "[+] Creating persistent data directories..."
           mkdir -p /home/ubuntu/minigdrive_data/uploads
           mkdir -p /home/ubuntu/minigdrive_data/trash
