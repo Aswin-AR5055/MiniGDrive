@@ -1169,3 +1169,31 @@ body.dark-mode #voice-status {
     }
 }
 
+/* ===== Sidebar Layout Fixes ===== */
+/* General fix for all screen sizes */
+.drive-sidebar {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Ensures sidebar takes full viewport height */
+}
+
+.storage-info {
+    margin-top: auto; /* Pushes storage to bottom */
+    padding-bottom: 1rem; /* Adds breathing room at bottom */
+}
+
+.sidebar-divider:last-child {
+    margin-bottom: 0; /* Removes extra space after last divider */
+}
+
+/* Specific adjustment for 1366x768 and similar resolutions */
+@media (min-width: 992px) and (max-width: 1400px) {
+    .drive-sidebar {
+        min-height: 500px; /* Prevents content compression */
+    }
+    
+    .storage-info {
+        padding-top: 1rem; /* Extra separation from content above */
+    }
+}
+
