@@ -109,7 +109,7 @@ MiniGDrive/
 
 ---
 
-## 🎙️ Voice Commands Supported
+## Voice Commands Supported
 
 Below are the voice commands you can use in **MiniGDrive**:
 
