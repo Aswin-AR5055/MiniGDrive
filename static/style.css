@@ -219,6 +219,15 @@ body.dark-mode .sidebar-divider {
     bottom: 0;
     background: inherit; /* Match sidebar background */
     z-index: 1; /* Ensure it stays above other elements */
+    background: var(--drive-surface); /* Force exact sidebar color */
+    margin-left: -1rem; /* Counteract sidebar padding */
+    margin-right: -1rem; /* Counteract sidebar padding */
+    padding-left: 1rem; /* Restore inner padding */
+    padding-right: 1rem; /* Restore inner padding */
+}
+
+body.dark-mode .storage-info {
+    background: var(--dark-surface); /* Dark mode fix */
 }
 
 .storage-info label {
