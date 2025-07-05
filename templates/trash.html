@@ -34,6 +34,7 @@
 
             <div class="sidebar-divider"></div>
 
+
             <a href="/dashboard?lang={{ lang }}" class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
                 <span class="material-icons-outlined">folder_open</span>
                 <span>{{ translations["my_files"] | default("My Files") }}</span>
@@ -41,10 +42,12 @@
 
             <div class="sidebar-divider"></div>
 
+
             <a href="/favourites?lang={{ lang }}" class="sidebar-item {% if active_page == 'favourites' %}active{% endif %}">
                 <span class="material-icons-outlined">star</span>
                 <span>{{ translations["favourites"] | default("Favourites") }}</span>
             </a>
+
             <div class="sidebar-divider"></div>
 
             <a href="/trash?lang={{ lang }}" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
@@ -53,6 +56,7 @@
             </a>
 
             <div class="sidebar-divider"></div>
+
 
             <div class="storage-info">
                 <label>

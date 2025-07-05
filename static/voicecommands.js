@@ -35,95 +35,123 @@ if (!SpeechRecognition) {
   };
 
   recognition.onresult = (event) => {
-  let command = event.results[0][0].transcript.toLowerCase().replace(/[.,!?]$/g, '').trim();
-  voiceStatus.textContent = `Heard: "${command}"`;
-  voiceBtn.disabled = false;
-  voiceCancelBtn.style.display = "none";
-  voiceBtn.classList.remove('listening');
+    let command = event.results[0][0].transcript.toLowerCase().replace(/[.,!?]$/g, '').trim();
+    voiceStatus.textContent = `Heard: "${command}"`;
+    voiceBtn.disabled = false;
+    voiceCancelBtn.style.display = "none";
+    voiceBtn.classList.remove('listening');
 
-  let recognized = false;
+    let recognized = false;
 
-  if (command.includes('upload') && command.includes('file')) {
-    document.getElementById('fileInput').click();
-    recognized = true;
-  } else if (command.includes('delete') && command.includes('file')) {
-    const filename = command.split('file').pop().trim();
-    deleteFileByName(filename);
-    recognized = true;
-  } else if (command.includes('list files')) {
-    listFiles();
-    recognized = true;
-  } else if (command === 'logout' || command === 'log me out' || command.includes('sign out')) {
-    voiceStatus.textContent = "Logging out...";
-    window.location.href = "/logout";
-    recognized = true;
-  } else if (command === 'trash' || command === 'go to trash' || command.includes('view trash')) {
-    const trashLink = document.querySelector('a[href*="trash"]');
-    if (trashLink) {
-      trashLink.click();
-      voiceStatus.textContent = "Opening Trash...";
+    if (command.includes('upload') && command.includes('file')) {
+      document.getElementById('fileInput').click();
       recognized = true;
-    } else {
-      voiceStatus.textContent = "Trash link not found.";
-    }
-  } else if (command === 'go to dashboard' || command.includes('view dashboard') || command.includes('open dashboard') || command.includes('dashboard')) {
-    const dashboardLink = document.querySelector('a[href*="dashboard"]');
-    if (dashboardLink) {
-      dashboardLink.click();
-      voiceStatus.textContent = "Opening Dashboard...";
+    } else if (command.includes('delete') && command.includes('file')) {
+      const filename = command.split('file').pop().trim();
+      deleteFileByName(filename);
       recognized = true;
-    } else {
-      voiceStatus.textContent = "Dashboard link not found.";
-    }
-  } else if (command === 'go to profile' || command.includes('view profile') || command.includes('open profile') || command.includes('profile')) {
-    const profileLink = document.querySelector('a[href*="profile"]');
-    if (profileLink) {
-      profileLink.click();
-      voiceStatus.textContent = "Opening Profile...";
+    } else if (command.includes('list files')) {
+      listFiles();
       recognized = true;
-    } else {
-      voiceStatus.textContent = "Profile link not found.";
-    }
-  } else if (command === 'switch language to english' || command === 'change language to english' || command === 'english language') {
-    setLanguage('en');
-    voiceStatus.textContent = "Switched language to English.";
-    recognized = true;
-  } else if (command === 'switch language to tamil' || command === 'change language to tamil' || command === 'tamil language') {
-    setLanguage('ta');
-    voiceStatus.textContent = "மொழி தமிழ் ஆக மாற்றப்பட்டது.";
-    recognized = true;
-  } else if (command === 'switch language to hindi' || command === 'change language to hindi' || command === 'hindi language') {
-    setLanguage('hi');
-    voiceStatus.textContent = "भाषा हिंदी में बदल गई है।";
-    recognized = true;
-  } else if (command === 'switch to dark mode' || command === 'enable dark mode' || command === 'dark mode') {
-    setTheme('dark');
-    voiceStatus.textContent = "Switched to Dark Mode.";
-    recognized = true;
-  } else if (command === 'switch to light mode' || command === 'enable light mode' || command === 'light mode') {
-    setTheme('light');
-    voiceStatus.textContent = "Switched to Light Mode.";
-    recognized = true;
-  } else if (command.startsWith('search for')) {
-    const searchTerm = command.replace('search for', '').trim();
-    if (searchTerm) {
-      searchFileByName(searchTerm);
-      voiceStatus.textContent = `Searching for "${searchTerm}"...`;
+    } else if (command === 'logout' || command === 'log me out' || command.includes('sign out')) {
+      voiceStatus.textContent = "Logging out...";
+      window.location.href = "/logout";
       recognized = true;
+    } else if (
+      command.includes('trash') &&
+      (
+        command.includes('view') ||
+        command.includes('open') ||
+        command.includes('go to') ||
+        command.includes('show') ||
+        command.includes('check') ||
+        command.includes('my') ||
+        command.includes('take me to') ||
+        command === 'trash'
+      )
+    ) {
+      const trashLink = document.querySelector('a[href*="trash"]');
+      if (trashLink) {
+        trashLink.click();
+        voiceStatus.textContent = "Opening Trash...";
+        recognized = true;
+      } else {
+        voiceStatus.textContent = "Trash link not found.";
+      }
+    } else if (command === 'go to dashboard' || command.includes('view dashboard') || command.includes('open dashboard') || command.includes('dashboard')) {
+      const dashboardLink = document.querySelector('a[href*="dashboard"]');
+      if (dashboardLink) {
+        dashboardLink.click();
+        voiceStatus.textContent = "Opening Dashboard...";
+        recognized = true;
+      } else {
+        voiceStatus.textContent = "Dashboard link not found.";
+      }
+    } else if (command === 'go to profile' || command.includes('view profile') || command.includes('open profile') || command.includes('profile')) {
+      const profileLink = document.querySelector('a[href*="profile"]');
+      if (profileLink) {
+        profileLink.click();
+        voiceStatus.textContent = "Opening Profile...";
+        recognized = true;
+      } else {
+        voiceStatus.textContent = "Profile link not found.";
+      }
+    } else if (command === 'switch language to english' || command === 'change language to english' || command === 'english language') {
+      setLanguage('en');
+      voiceStatus.textContent = "Switched language to English.";
+      recognized = true;
+    } else if (command === 'switch language to tamil' || command === 'change language to tamil' || command === 'tamil language') {
+      setLanguage('ta');
+      voiceStatus.textContent = "மொழி தமிழ் ஆக மாற்றப்பட்டது.";
+      recognized = true;
+    } else if (command === 'switch language to hindi' || command === 'change language to hindi' || command === 'hindi language') {
+      setLanguage('hi');
+      voiceStatus.textContent = "भाषा हिंदी में बदल गई है।";
+      recognized = true;
+    } else if (command === 'switch to dark mode' || command === 'enable dark mode' || command === 'dark mode') {
+      setTheme('dark');
+      voiceStatus.textContent = "Switched to Dark Mode.";
+      recognized = true;
+    } else if (command === 'switch to light mode' || command === 'enable light mode' || command === 'light mode') {
+      setTheme('light');
+      voiceStatus.textContent = "Switched to Light Mode.";
+      recognized = true;
+    } else if (command.startsWith('search for')) {
+      const searchTerm = command.replace('search for', '').trim();
+      if (searchTerm) {
+        searchFileByName(searchTerm);
+        voiceStatus.textContent = `Searching for "${searchTerm}"...`;
+        recognized = true;
+      } else {
+        voiceStatus.textContent = "Please specify a filename to search for.";
+      }
+    } else if (
+      command.includes('favourite') || 
+      command.includes('favorite') ||
+      command.includes('view favourites') ||
+      command.includes('open favourites') ||
+      command.includes('go to favourites') ||
+      command.includes('show favourites') ||
+      command.includes('my favourites')
+    ) {
+      const favouritesLink = document.querySelector('a[href*="favourites"], a[href*="favorites"]');
+      if (favouritesLink) {
+        favouritesLink.click();
+        voiceStatus.textContent = "Opening Favourites...";
+        recognized = true;
+      } else {
+        voiceStatus.textContent = "Favourites link not found.";
+      }
     } else {
-      voiceStatus.textContent = "Please specify a filename to search for.";
+      voiceStatus.textContent = "Command not recognized.";
     }
-  } else {
-    voiceStatus.textContent = "Command not recognized.";
-  }
 
-  if (!command.includes('logout') && !command.includes('log me out') && !command.includes('sign out')) {
-    setTimeout(() => {
-      voiceStatus.textContent = "";
-    }, 2000);
-  }
-};
-
+    if (!command.includes('logout') && !command.includes('log me out') && !command.includes('sign out')) {
+      setTimeout(() => {
+        voiceStatus.textContent = "";
+      }, 2000);
+    }
+  };
 
   recognition.onerror = (event) => {
     voiceStatus.textContent = `Error: ${event.error}`;
@@ -139,7 +167,7 @@ if (!SpeechRecognition) {
   };
 }
 
-// --- Actual implementations ---
+// --- Helper Functions ---
 
 function deleteFileByName(filename) {
   const fileCards = document.querySelectorAll('.file-card');
@@ -194,22 +222,17 @@ function listFiles() {
   voiceStatus.textContent = `Listed ${fileCards.length} files.`;
 }
 
-// Add this helper function at the end of the file
 function setLanguage(langCode) {
-  // Change recognition language
   recognition.lang = langCode === 'en' ? 'en-US' : langCode === 'ta' ? 'ta-IN' : langCode === 'hi' ? 'hi-IN' : 'en-US';
-  // Update the URL's lang parameter and reload the page
   const url = new URL(window.location.href);
   url.searchParams.set('lang', langCode);
   window.location.href = url.toString();
 }
 
-// Add this helper function at the end of the file
 function setTheme(mode) {
   if (mode === 'dark') {
     document.body.classList.add('dark-mode');
     document.body.classList.remove('light-mode');
-    // Optionally, persist theme preference
     localStorage.setItem('theme', 'dark');
   } else {
     document.body.classList.add('light-mode');
@@ -218,16 +241,13 @@ function setTheme(mode) {
   }
 }
 
-// Add this helper function at the end of the file
 function searchFileByName(filename) {
-  // Focus the search input if it exists
   const searchInput = document.querySelector('input[type="search"], input[name*="search"], input#search');
   if (searchInput) {
     searchInput.value = filename;
     searchInput.dispatchEvent(new Event('input', { bubbles: true }));
     searchInput.focus();
   }
-  // Optionally, highlight matching file cards
   const fileCards = document.querySelectorAll('.file-card');
   let found = false;
   fileCards.forEach(card => {

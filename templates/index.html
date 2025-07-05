@@ -34,12 +34,14 @@
 
             <div class="sidebar-divider"></div>
 
+
             <a href="/dashboard?lang={{ lang }}" class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
                 <span class="material-icons-outlined">folder_open</span>
                 <span>{{ translations["my_files"] | default("My Files") }}</span>
             </a>
 
             <div class="sidebar-divider"></div>
+
 
             <a href="/favourites?lang={{ lang }}" class="sidebar-item {% if active_page == 'favourites' %}active{% endif %}">
             <span class="material-icons-outlined">star</span>
@@ -48,12 +50,14 @@
 
             <div class="sidebar-divider"></div>
 
+
             <a href="/trash?lang={{ lang }}" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
                 <span class="material-icons-outlined">delete</span>
                 <span>{{ translations["trash_bin"] | default("Trash") }}</span>
             </a>
 
             <div class="sidebar-divider"></div>
+
 
             <div class="storage-info">
                 <label>
@@ -195,42 +199,6 @@
                 <p class="text-muted text-center mt-4">{{ translations["no_files"] | default("No files uploaded yet.") }}</p>
                 {% endif %}
             </section>
-
-            {% if trashed and trashed|length > 0 %}
-            <section id="trash-section" class="mt-5">
-                <h5 class="section-title">{{ translations["trash_bin"] | default("Trash Bin") }}</h5>
-                <form id="trashForm">
-                    <div class="d-flex flex-wrap align-items-center mb-2 gap-2">
-                        <input type="checkbox" id="selectAllTrash" class="form-check-input me-2">
-                        <label for="selectAllTrash" class="me-2">{{ translations["select_all"] | default("Select All") }}</label>
-                        <button type="button" id="restoreSelectedTrashBtn" class="btn btn-sm btn-outline-google me-2">{{ translations["restore_selected"] | default("Restore Selected") }}</button>
-                        <button type="button" id="deleteSelectedTrashBtn" class="btn btn-outline-danger btn-sm">{{ translations["delete_selected"] | default("Delete Selected") }}</button>
-                    </div>
-                    <ul class="trash-list">
-                        {% for file in trashed %}
-                        <li class="trash-item">
-                            <input class="form-check-input me-2" type="checkbox" name="selected_trash_files" value="{{ file }}" id="trashCheck{{ loop.index }}">
-                            <span class="trash-item-name">
-                                <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: text-bottom; margin-right: 8px;">article</span>
-                                {{ file }}
-                            </span>
-                            <div class="trash-actions">
-                                <a href="{{ url_for('restore', filename=file) }}" class="btn btn-sm btn-outline-google" title="{{ translations['restore'] | default('Restore') }}">
-                                    <span class="material-icons-outlined" style="font-size: 1.1rem; vertical-align: text-bottom;">restore_from_trash</span>
-                                    <span class="d-none d-md-inline ms-1">{{ translations["restore"] | default("Restore") }}</span>
-                                </a>
-                                <a href="{{ url_for('permadelete', filename=file) }}" class="btn btn-sm btn-outline-danger" title="{{ translations['delete_forever'] | default('Delete Forever') }}">
-                                    <span class="material-icons-outlined" style="font-size: 1.1rem; vertical-align: text-bottom;">delete_forever</span>
-                                    <span class="d-none d-md-inline ms-1">{{ translations["delete_forever"] | default("Delete Forever") }}</span>
-                                </a>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </form>
-            </section>
-            {% endif %}
-
         </main>
     </div>
     <script src="{{ url_for('static', filename='script.js') }}"></script>

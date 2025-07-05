@@ -109,27 +109,29 @@ MiniGDrive/
 
 ---
 
-## Voice Commands Supported
+## 🎙️ Voice Commands Supported
 
-Below are the voice commands you can use in MiniGDrive:
+Below are the voice commands you can use in **MiniGDrive**:
 
-| Command Example                        | Action                                      |
-|----------------------------------------|---------------------------------------------|
-| upload file                            | Open file upload dialog                     |
-| delete file [filename]                 | Delete the specified file                   |
-| list files                             | Highlight/list all files                    |
-| logout / log me out / sign out         | Log out of your account                     |
-| trash / go to trash / view trash       | Go to Trash page                            |
-| go to dashboard / view/open dashboard  | Go to Dashboard page                        |
-| go to profile / view/open profile      | Go to Profile page                          |
-| switch language to english             | Change app language to English              |
-| switch language to tamil               | Change app language to Tamil                |
-| switch language to hindi               | Change app language to Hindi                |
-| switch to dark mode / enable dark mode | Switch to Dark Mode                         |
-| switch to light mode / enable light mode| Switch to Light Mode                        |
-| search for [filename]                  | Search for a file by name                   |
+| Command Example                            | Action                                      |
+|--------------------------------------------|---------------------------------------------|
+| `upload file`                              | Open file upload dialog                     |
+| `delete file [filename]`                   | Delete the specified file                   |
+| `list files`                               | Highlight/list all files                    |
+| `logout` / `log me out` / `sign out`       | Log out of your account                     |
+| `trash` / `go to trash` / `view/open/show trash` | Go to Trash page                    |
+| `go to dashboard` / `view/open dashboard`  | Go to Dashboard page                        |
+| `go to profile` / `view/open profile`      | Go to Profile page                          |
+| `switch language to english`               | Change app language to English              |
+| `switch language to tamil`                 | Change app language to Tamil                |
+| `switch language to hindi`                 | Change app language to Hindi                |
+| `switch to dark mode` / `enable dark mode` | Switch to Dark Mode                         |
+| `switch to light mode` / `enable light mode`| Switch to Light Mode                        |
+| `search for [filename]`                    | Search for a file by name                   |
+| `favourites` / `open/view/show my favourites` | Go to Favourites page                    |
 
-> [filename] = Replace with your file's name (e.g., "open file report.pdf")
+> 🔎 **Note:** Replace `[filename]` with the actual file name, e.g., `delete file report.pdf`.
+
 
 ---
 

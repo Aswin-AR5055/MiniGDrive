@@ -25,12 +25,13 @@
                 <div><strong>{{ user }}</strong></div>
                 <small class="text-muted">{{ bio or "No bio yet" }}</small>
             </div>
-
+            
+            
             <a href="/profile?lang={{ lang }}" class="sidebar-item">
                 <span class="material-icons-outlined">person</span>
                 <span>{{ translations["profile"] | default("Profile") }}</span>
             </a>
-
+            
             <div class="sidebar-divider"></div>
 
             <a href="/dashboard?lang={{ lang }}" class="sidebar-item {% if active_page == 'dashboard' %}active{% endif %}">
@@ -44,16 +45,16 @@
             <span class="material-icons-outlined">star</span>
             <span>{{ translations["favourites"] | default("Favourites") }}</span>
             </a>
-
+            
             <div class="sidebar-divider"></div>
 
             <a href="/trash?lang={{ lang }}" class="sidebar-item {% if active_page == 'trash' %}active{% endif %}">
                 <span class="material-icons-outlined">delete</span>
                 <span>{{ translations["trash_bin"] | default("Trash") }}</span>
             </a>
-
+            
             <div class="sidebar-divider"></div>
-
+            
             <div class="storage-info">
                 <label>
                     <span class="material-icons-outlined" style="font-size: 1.2rem; vertical-align: bottom; margin-right: 5px;">cloud</span>
@@ -67,7 +68,8 @@
                 <small class="text-muted">{{ used_mb }} MB / {{ max_mb }} GB {{ translations["used"] | default("used") }}</small>
             </div>
         </aside>
-                <main class="drive-main-content">
+
+        <main class="drive-main-content">
             <header class="drive-header">
                 <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle menu">
                     <span class="material-icons-outlined">menu</span>
@@ -91,11 +93,7 @@
                     <a href="/logout" class="btn btn-outline-danger btn-sm logout-mobile-right">{{ translations["logout"] | default("Logout") }}</a>
                 </div>
             </header>
-        <main class="drive-main-content">
-            <header class="drive-header">
-                <h4 class="mb-0">{{ translations["favourites"] | default("Favourites") }}</h4>
-                <a href="/dashboard?lang={{ lang }}" class="btn btn-outline-google btn-sm ms-2">&larr; {{ translations["back_to_dashboard"] | default("Back to Dashboard") }}</a>
-            </header>
+
             <section id="favourites-section">
                 <h5 class="section-title">{{ translations["favourites"] | default("Favourites") }}</h5>
                 {% if files %}
@@ -153,7 +151,7 @@
             </section>
         </main>
     </div>
-    <script src="{{ url_for('static', filename='script.js') }}"></script>"
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script src="{{ url_for('static', filename='voicecommands.js') }}"></script>
     <script>
         function setupSidebarToggle() {

@@ -56,8 +56,6 @@ body.dark-mode {
     flex-direction: column;
     flex-shrink: 0;
     transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease-out;
-    overflow-y: auto;
-    height: 100%;
     position: relative;
     z-index: 1001;
 }
@@ -202,12 +200,17 @@ body.dark-mode .sidebar-item.active {
 
 .sidebar-divider {
     height: 1px;
-    background-color: var(--drive-border);
+    min-height: 1px;
+    background-color: #dadce0;
+    flex-shrink: 0;
+    width: 100%;
     margin: 1rem 0;
 }
 body.dark-mode .sidebar-divider {
-    background-color: var(--dark-border);
+    background-color: #5f6368;
 }
+
+
 
 .storage-info {
     margin-top: auto;
