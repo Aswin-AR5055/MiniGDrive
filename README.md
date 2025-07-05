@@ -53,7 +53,7 @@ Dashboard (Mobile view):
 ## Features
 
 - **Voice Command Support**: 
-Use browser-based voice commands to upload, open, delete files, or log out — hands-free interaction powered by Web Speech API.
+Use browser-based voice commands, hands-free interaction powered by Web Speech API.
 - **User Registration and Login**: Secure authentication with password hashing.
 - **File Upload and Download**: Users can upload and download files easily.
 - **Trash System**: Deleted files go to trash instead of being permanently removed.

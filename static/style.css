@@ -214,6 +214,11 @@ body.dark-mode .sidebar-divider {
 
 .storage-info {
     padding-top: 1rem;
+    margin-top: auto; /* This pushes it to the bottom */
+    position: sticky;
+    bottom: 0;
+    background: inherit; /* Match sidebar background */
+    z-index: 1; /* Ensure it stays above other elements */
 }
 
 .storage-info label {
