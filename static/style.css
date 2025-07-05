@@ -615,7 +615,7 @@ body.dark-mode .language-switch a:hover {
 
 /* --- Utilities & Animations --- */
 .text-muted {
-    color: var(--drive-text-secondary) !important;
+    color: rgb(38, 38, 38) !important;
 }
 .hidden {
     visibility: hidden;
