@@ -1,6 +1,5 @@
 name: CI/CD - Docker
 
-
 on:
   push:
     branches:
@@ -55,6 +54,7 @@ jobs:
           mkdir -p /home/ubuntu/minigdrive_data/uploads
           mkdir -p /home/ubuntu/minigdrive_data/trash
           mkdir -p /home/ubuntu/minigdrive_data/storage
+          mkdir -p /home/ubuntu/minigdrive_data/profiles
           touch /home/ubuntu/minigdrive_data/users.db
           sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
 
@@ -68,6 +68,7 @@ jobs:
             -v /home/ubuntu/minigdrive_data/trash:/app/trash \
             -v /home/ubuntu/minigdrive_data/storage:/app/storage \
             -v /home/ubuntu/minigdrive_data/users.db:/app/users.db \
+            -v /home/ubuntu/minigdrive_data/profiles:/app/static/profiles \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
             gdrive
 
