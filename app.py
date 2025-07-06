@@ -75,6 +75,9 @@ def logo():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if "username" in session:
+        return redirect("/dashboard")
+    
     if request.method == "POST":
         uname = request.form["username"]
         passwd = request.form["password"]
@@ -101,6 +104,9 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+    if "username" in session:
+        return redirect("/dashboard")
+     
     if request.method == "POST":
         uname = request.form["username"]
         passwd = request.form["password"]
