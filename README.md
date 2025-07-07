@@ -42,10 +42,7 @@ Dashboard (Mobile view):
 
 ## Live Demo
 
-<a href="https://d2r6fbb0wu8aqt.cloudfront.net" target="_blank">
-  <img src="https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue" alt="Live Demo">
-</a>
-
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://d2r6fbb0wu8aqt.cloudfront.net)
 > **Hosted:** AWS EC2 instance using Docker and GitHub Actions  
 > **Secured via:** CloudFront CDN (HTTPS)  
 > **Note:** This is a demo site. Please avoid uploading sensitive or personal data.  
