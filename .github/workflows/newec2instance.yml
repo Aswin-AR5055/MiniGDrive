@@ -3,7 +3,7 @@ name: create ec2 instance
 on:
   push:
     branches:
-      - master
+      - ec2
   workflow_dispatch:
 
 jobs:
