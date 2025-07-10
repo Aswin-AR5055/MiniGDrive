@@ -21,16 +21,16 @@ resource "tls_private_key" "privatekey" {
 
 resource "local_file" "my_private_key" {
     content = tls_private_key.privatekey.private_key_pem
-    filename = "newubuntukeypair.pem"
+    filename = "newubuntukeypair_2.pem"
 }
 
 resource "aws_key_pair" "myubuntukey" {
-    key_name = "newubuntukeypair"
+    key_name = "newubuntukeypair_2"
     public_key = tls_private_key.privatekey.public_key_openssh
 }
 
-resource "aws_security_group" "my_sg" {
-  name        = "mysecuritygroup"
+resource "aws_security_group" "my_sg_new" {
+  name        = "mysecuritygroup_new"
   description = "Allow HTTP and SSH inbound; all outbound"
 
   ingress {
@@ -44,6 +44,13 @@ resource "aws_security_group" "my_sg" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 8000
+    to_port = 8000
+    protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
