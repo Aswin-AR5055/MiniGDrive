@@ -15,6 +15,7 @@
 - [Screenshots](#screenshots)
 - [Live Demo](#live-demo)
 - [Features](#features)
+- [ER Diagram](#entity-relationshiper-diagram)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
 - [Voice Commands Supported](#voice-commands-supported)
@@ -65,6 +66,10 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 - **Multilingual Support**: UI available in English, Tamil, and Hindi.
 
 ---
+
+## Entity Relationship(ER) Diagram
+
+![ER Diagram](assets/ER%20Diagram.jpg)
 
 ## Tech Stack
 
