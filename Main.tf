@@ -66,7 +66,7 @@ resource "aws_instance" "my_instance" {
     ami = data.aws_ami.my_ubuntu_ami.id
     instance_type = "t2.micro"
     key_name = aws_key_pair.myubuntukey.key_name
-    vpc_security_group_ids = [aws_security_group.my_sg.id] 
+    vpc_security_group_ids = [aws_security_group.my_sg_new.id] 
 }
 
 output "instance_public_ip" {
