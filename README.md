@@ -69,7 +69,8 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 
 ## Entity Relationship(ER) Diagram
 
-![ER Diagram](assets/ER%20Diagram.svg)
+<img src="assets/ER%20Diagram.svg" alt="ER Diagram" width="250"/>
+
 
 ## Tech Stack
 
