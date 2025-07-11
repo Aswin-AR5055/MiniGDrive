@@ -52,7 +52,10 @@ resource "aws_instance" "my_instance" {
     ami = data.aws_ami.my_ubuntu_ami.id
     instance_type = "t2.micro"
     key_name = "newubuntukeypair"
-    vpc_security_group_ids = [aws_security_group.my_sg_new.id] 
+    vpc_security_group_ids = [aws_security_group.my_sg_new.id]
+    tags = {
+    Name = "ERDiagramGeneratorserver"
+    }
 }
 
 output "instance_public_ip" {
