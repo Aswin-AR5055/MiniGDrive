@@ -1,6 +1,7 @@
 provider "aws" {
     region = "ap-south-1"
 }
+
 data "aws_ami" "my_ubuntu_ami" {
     most_recent = true
     filter {
@@ -12,21 +13,6 @@ data "aws_ami" "my_ubuntu_ami" {
         values = ["hvm"]
     }
     owners = ["099720109477"]
-}
-
-resource "tls_private_key" "privatekey" {
-    algorithm = "RSA"
-    rsa_bits = 4096
-}
-
-resource "local_file" "my_private_key" {
-    content = tls_private_key.privatekey.private_key_pem
-    filename = "newubuntukeypair_2.pem"
-}
-
-resource "aws_key_pair" "myubuntukey" {
-    key_name = "newubuntukeypair_2"
-    public_key = tls_private_key.privatekey.public_key_openssh
 }
 
 resource "aws_security_group" "my_sg_new" {
@@ -65,7 +51,7 @@ resource "aws_security_group" "my_sg_new" {
 resource "aws_instance" "my_instance" {
     ami = data.aws_ami.my_ubuntu_ami.id
     instance_type = "t2.micro"
-    key_name = aws_key_pair.myubuntukey.key_name
+    key_name = "newubuntukeypair.pem"
     vpc_security_group_ids = [aws_security_group.my_sg_new.id] 
 }
 
