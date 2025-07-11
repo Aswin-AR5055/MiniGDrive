@@ -15,8 +15,8 @@ data "aws_ami" "my_ubuntu_ami" {
     owners = ["099720109477"]
 }
 
-resource "aws_security_group" "my_sg_new" {
-  name        = "mysecuritygroup_new"
+resource "aws_security_group" "my_sg_new_2" {
+  name        = "mysecuritygroup_new_2"
   description = "Allow HTTP and SSH inbound; all outbound"
 
   ingress {
