@@ -57,7 +57,7 @@ jobs:
           mkdir -p /home/ubuntu/minigdrive_data/storage
           mkdir -p /home/ubuntu/minigdrive_data/profiles
           touch /home/ubuntu/minigdrive_data/users.db
-          chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
+          sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
 
           echo "[+] Building Docker image..."
           docker build -t gdrive .
