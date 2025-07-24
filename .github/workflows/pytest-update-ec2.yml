@@ -29,14 +29,14 @@ jobs:
         pytest
 
     - name: Set up SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
 
     - name: SSH into EC2 and Deploy with Docker
       run: |
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@${{ secrets.INSTANCE_IP }} << EOF
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
           set -e
           cd MiniGDrive
 
@@ -44,11 +44,11 @@ jobs:
           git pull
 
           echo "[+] Stopping and removing existing container..."
-          sudo docker stop gdrive || true
-          sudo docker rm gdrive || true
+          docker stop gdrive || true
+          docker rm gdrive || true
 
           echo "[+] Removing existing Docker image..."
-          sudo docker rmi -f gdrive || true
+          docker rmi -f gdrive || true
 
           echo "[+] Creating persistent data directories..."
           mkdir -p /home/ubuntu/minigdrive_data/uploads
@@ -56,13 +56,13 @@ jobs:
           mkdir -p /home/ubuntu/minigdrive_data/storage
           mkdir -p /home/ubuntu/minigdrive_data/profiles
           touch /home/ubuntu/minigdrive_data/users.db
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
+          chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
 
           echo "[+] Building Docker image..."
-          sudo docker build -t gdrive .
+          docker build -t gdrive .
 
           echo "[+] Running container with volume mounts and secret key..."
-          sudo docker run -d --name gdrive \
+          docker run -d --name gdrive \
             -p 80:5000 \
             -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
             -v /home/ubuntu/minigdrive_data/trash:/app/trash \
@@ -73,5 +73,5 @@ jobs:
             gdrive
 
           echo "[+] Done. Current running containers:"
-          sudo docker ps
+          docker ps
         EOF
