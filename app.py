@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, send_from_directory, url_for, session, flash, jsonify, abort
 from werkzeug.utils import secure_filename
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, timezone
 import os, shutil, zipfile, sqlite3, uuid, unicodedata, mimetypes
 
 app = Flask(__name__)
@@ -388,6 +388,20 @@ def trash():
     profile = get_user_profile()
     used_mb, max_mb, percent_used = get_storage_info()
 
+    old_files = []
+    threshold_days = 7
+    now = datetime.now(timezone.utc)
+    for f in trashed:
+        try:
+            path = os.path.join(get_trash_folder(), f)
+            mtime = datetime.fromtimestamp(os.path.getmtime(path), timezone.utc)
+            print(f"{f}: {(now - mtime).days} days old")
+            if (now - mtime).days >= threshold_days:
+                old_files.append(f)
+        except Exception:
+            pass
+
+
     return render_template("trash.html",
                            user=session["username"],
                            trashed=trashed,
@@ -398,7 +412,8 @@ def trash():
                            percent_used=percent_used,
                            translations=translations,
                            lang=lang,
-                           active_page="trash")
+                           active_page="trash",
+                           old_files=old_files)
 @app.route('/favourites')
 def favourites():
     if "username" not in session:

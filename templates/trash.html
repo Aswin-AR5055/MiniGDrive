@@ -105,6 +105,11 @@
 
             <section id="trash-section">
                 <h5 class="section-title">{{ translations["trash_bin"] | default("Trash Bin") }}</h5>
+                {% if old_files and old_files|length > 0 %}
+                <div class="alert alert-warning">
+                    ⚠️ Some files have been in trash for over 7 days and you may want to delete them!
+                </div>
+                {% endif %}
                 <form id="trashForm">
                     <div class="d-flex flex-wrap align-items-center mb-2 gap-2">
                         <input type="checkbox" id="selectAllTrash" class="form-check-input me-2">
