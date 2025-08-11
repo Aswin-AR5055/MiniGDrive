@@ -38,6 +38,12 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
           set -e
+
+          echo "[+] Cloning or pulling latest code..."
+            if [ ! -d "MiniGDrive" ]; then
+              git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
+            fi
+
           cd MiniGDrive
 
           echo "[+] Pulling latest changes..."
