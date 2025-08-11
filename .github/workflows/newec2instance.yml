@@ -1,9 +1,6 @@
 name: create ec2 instance
 
 on:
-  push:
-    branches:
-      - ec2
   workflow_dispatch:
 
 jobs:
