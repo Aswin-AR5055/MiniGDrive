@@ -2,7 +2,7 @@
 
 ![Deploy](https://github.com/Aswin-AR5055/MiniGDrive/actions/workflows/pytest-update-ec2.yml/badge.svg)
 
-![Status](https://img.shields.io/badge/status-under_frequent_development-orange)
+![Status](https://img.shields.io/badge/status-completed-green)
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
