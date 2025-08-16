@@ -1,7 +1,7 @@
 from routes import app
 from db_schema import init_db
 
-# Initialize database
+
 init_db()
 
 if __name__ == "__main__":
