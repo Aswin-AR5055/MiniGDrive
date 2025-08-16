@@ -48,7 +48,20 @@ def get_user_favourites():
     c.execute("SELECT filename FROM favourites WHERE username=?", (session["username"],))
     rows = c.fetchall()
     conn.close()
-    return [row[0] for row in rows]
+    
+    
+    upload_folder = get_user_folder()
+    existing_files = []
+    for row in rows:
+        filename = row[0]
+        file_path = os.path.join(upload_folder, filename)
+        if os.path.exists(file_path):
+            existing_files.append(filename)
+        else:
+            
+            remove_favourite(filename)
+            
+    return existing_files
 
 def add_favourite(filename):
     conn = sqlite3.connect("users.db")
