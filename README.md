@@ -97,23 +97,55 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 ```plaintext
 MiniGDrive/
 │
-├── .github/workflows/pytest-update-ec2.yml   # GitHub Actions workflow file
-├── Dockerfile            # Docker configuration
-├── requirements.txt      # Python dependencies
-├── assets/               # Logo and Screenshots
-├── app.py                # Main Flask application
-├── users.db              # SQLite DB (created at runtime)
-├── test_app.py           # Unit tests
-├── templates/            # HTML templates
+├── .github/
+│   └── workflows/        # GitHub Actions workflows
+├── app.py               # Main Flask application
+├── db_schema.py         # Database schema definitions
+├── file_utils.py        # File handling utilities
+├── translations.py      # Internationalization support
+├── test_app.py         # Unit tests
+├── users.db            # SQLite database (created at runtime)
+├── routes/             # Route handlers
+│   ├── __init__.py
+│   ├── dashboard.py
+│   ├── del_restore_permadelete.py
+│   ├── download.py
+│   ├── favourites.py
+│   ├── home.py
+│   ├── login.py
+│   ├── logo.py
+│   ├── permadelete.py
+│   ├── profile.py
+│   ├── register.py
+│   ├── share.py
+│   ├── star_unstar.py
+│   ├── trash.py
+│   ├── trash_del_restore.py
+│   ├── upload.py
+│   └── zip.py
+├── static/             # Static assets
+│   ├── script.js
+│   ├── style.css
+│   └── voicecommands.js
+├── templates/          # HTML templates
+│   ├── favourites.html
 │   ├── index.html
 │   ├── login.html
 │   ├── logo.html
 │   ├── profile.html
-│   └── register.html
-├── uploads/             # Uploaded files (generated)
-├── trash/               # Trashed files (generated)
-├── storage/             # User storage dir (generated)
-└── static/              # Static assets (profile images, etc.)
+│   ├── register.html
+│   └── trash.html
+├── assets/            # Images and logos
+│   ├── ars_logo_32x32.png
+│   ├── dashboard.png
+│   ├── dashboardmobile.jpg
+│   ├── dashboardmobile2.jpg
+│   └── ER Diagram.svg
+├── uploads/           # User uploaded files
+├── trash/            # Deleted files
+├── storage/          # User storage directory
+├── Dockerfile        # Docker configuration
+└── requirements.txt  # Python dependencies
 ```
 
 ---
