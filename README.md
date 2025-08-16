@@ -60,6 +60,7 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 - **Trash System**: Deleted files go to trash instead of being permanently removed.
 - **Restore and Permanent Delete**: Restore files from trash or delete them forever.
 - **Bulk Actions**: Select multiple files to delete, restore, or download as ZIP.
+- **Star Files as Favourites**: Mark      important files with a star to easily access and manage your favourite files in a dedicated Favourites page.
 - **Storage Monitoring**: View used storage with a visual progress bar.
 - **Responsive UI**: Works well on both desktop and mobile screens.
 - **Profile Customization**: Add bio, age, and profile picture.
