@@ -120,8 +120,8 @@ MiniGDrive/
 │   ├── register.py
 │   ├── share.py
 │   ├── star_unstar.py
-│   ├── trash.py
 │   ├── trash_del_restore.py
+│   ├── trash.py
 │   ├── upload.py
 │   └── zip.py
 ├── static/             # Static assets
