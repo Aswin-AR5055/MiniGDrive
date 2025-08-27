@@ -1,0 +1,39 @@
+version: "3.9"
+
+services:
+  web:
+    build: .
+    container_name: gdrive_web
+    restart: always
+    networks:
+      - app-network
+    volumes:
+      - uploads:/app/uploads
+      - trash:/app/trash
+      - storage:/app/storage
+      - users:/app/users.db
+      - profiles:/app/static/profiles
+
+  nginx:
+    image: nginx:latest
+    container_name: gdrive_nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  uploads:
+  trash:
+  storage:
+  users:
+  profiles:

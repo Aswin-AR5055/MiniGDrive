@@ -1,9 +1,9 @@
-name: CI/CD - Docker
+name: CI/CD - Docker Compose
 
 on:
   push:
     branches:
-      - master
+      - testbranch
 
 jobs:
   deploy:
@@ -33,52 +33,27 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-
-    - name: SSH into EC2 and Deploy with Docker
+    - name: SSH into EC2 and Deploy with Docker Compose
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
 
-          echo "[+] Cloning or pulling latest code..."
-            if [ ! -d "MiniGDrive" ]; then
-              git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
-            fi
+          # Clone or update repo
+          if [ ! -d "MiniGDrive" ]; then
+            git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
+          fi
 
           cd MiniGDrive
-
-          echo "[+] Pulling latest changes..."
           git fetch --all
-          git reset --hard origin/master
+          git reset --hard origin/testbranch
 
-          echo "[+] Stopping and removing existing container..."
-          docker stop gdrive || true
-          docker rm gdrive || true
+          # Stop existing containers
+          docker-compose down
 
-          echo "[+] Removing existing Docker image..."
-          docker rmi -f gdrive || true
+          # Build and start containers
+          docker-compose build
+          docker-compose up -d
 
-          echo "[+] Creating persistent data directories..."
-          mkdir -p /home/ubuntu/minigdrive_data/uploads
-          mkdir -p /home/ubuntu/minigdrive_data/trash
-          mkdir -p /home/ubuntu/minigdrive_data/storage
-          mkdir -p /home/ubuntu/minigdrive_data/profiles
-          touch /home/ubuntu/minigdrive_data/users.db
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
-
-          echo "[+] Building Docker image..."
-          docker build -t gdrive .
-
-          echo "[+] Running container with volume mounts and secret key..."
-          docker run -d --name gdrive \
-            -p 80:5000 \
-            -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
-            -v /home/ubuntu/minigdrive_data/trash:/app/trash \
-            -v /home/ubuntu/minigdrive_data/storage:/app/storage \
-            -v /home/ubuntu/minigdrive_data/users.db:/app/users.db \
-            -v /home/ubuntu/minigdrive_data/profiles:/app/static/profiles \
-            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-            gdrive
-
-          echo "[+] Done. Current running containers:"
+          echo "[+] Deployment complete. Running containers:"
           docker ps
         EOF
