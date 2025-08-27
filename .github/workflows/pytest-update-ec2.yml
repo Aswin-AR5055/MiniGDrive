@@ -38,8 +38,10 @@ jobs:
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
 
-          if ! command -v docker &> /dev/null
-          then
+          # ---------------------------
+          # Ensure Docker is installed
+          # ---------------------------
+          if ! command -v docker &> /dev/null; then
             echo "Docker not found. Installing..."
             sudo apt update
             sudo apt install -y docker.io
@@ -49,8 +51,10 @@ jobs:
             echo "Docker already installed. Skipping."
           fi
 
-          if ! command -v docker-compose &> /dev/null
-          then
+          # ---------------------------
+          # Ensure Docker Compose is installed
+          # ---------------------------
+          if ! command -v docker-compose &> /dev/null; then
             echo "Docker Compose not found. Installing..."
             sudo apt update
             sudo apt install -y curl jq
@@ -63,6 +67,9 @@ jobs:
 
           docker-compose --version
 
+          # ---------------------------
+          # Clone or update repo
+          # ---------------------------
           if [ ! -d "MiniGDrive" ]; then
             git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
           fi
@@ -71,6 +78,9 @@ jobs:
           git fetch --all
           git reset --hard origin/testbranch
 
+          # ---------------------------
+          # Deploy app
+          # ---------------------------
           docker-compose down
           docker-compose build
           docker-compose up -d
