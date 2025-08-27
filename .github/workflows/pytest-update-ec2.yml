@@ -35,7 +35,7 @@ jobs:
 
     - name: SSH into EC2 and Deploy with Docker Compose
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << EOF
           set -e
 
           # ---------------------------
