@@ -22,6 +22,7 @@
 - [How to Run Locally](#how-to-run-locally)
 - [Run with Docker](#run-with-docker)
 - [Deployment Pipeline](#deployment-pipeline)
+- [Infrastructure Setup](#infrastructure-setup)
 - [Security Notes](#security-notes)
 - [License](#license)
 - [Acknowledgements](#acknowledgements)
@@ -60,7 +61,7 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 - **Trash System**: Deleted files go to trash instead of being permanently removed.
 - **Restore and Permanent Delete**: Restore files from trash or delete them forever.
 - **Bulk Actions**: Select multiple files to delete, restore, or download as ZIP.
-- **Star Files as Favourites**: Mark      important files with a star to easily access and manage your favourite files in a dedicated Favourites page.
+- **Star Files as Favourites**: Mark important files with a star to easily access and manage your favourite files in a dedicated Favourites page.
 - **Storage Monitoring**: View used storage with a visual progress bar.
 - **Responsive UI**: Works well on both desktop and mobile screens.
 - **Profile Customization**: Add bio, age, and profile picture.
@@ -74,7 +75,7 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
   <img src="assets/ER%20Diagram.svg" alt="ER Diagram" width="250"/>
 </div>
 
-
+---
 
 ## Tech Stack
 
@@ -82,9 +83,9 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 |------------------------|-------------------------------------------------------------------|-------------------------------------------------------|
 | **Backend**            | Python + Flask                                                    | Web server and application logic                      |
 | **Database**           | SQLite                                                            | Storing user accounts and profiles                    |
-| **Frontend**           | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript, Web Speech API           | Responsive UI, modals, voice commands, sorting/filtering, interactivity |
+| **Frontend**           | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript, Web Speech API | Responsive UI, modals, voice commands, sorting/filtering, interactivity |
 | **Security**           | Werkzeug (secure filename + password hashing)                     | Secure file uploads and password management           |
-| **File Handling**      | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)            |
+| **File Handling**      | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)             |
 | **Session Management** | Flask + `datetime`                                                | Managing user sessions (login duration)               |
 | **Hosting**            | AWS EC2                                                           | Server for running the app                            |
 | **HTTPS/CDN**          | AWS CloudFront                                                    | Secure global access over HTTPS with CDN caching      |
@@ -104,9 +105,9 @@ MiniGDrive/
 ├── db_schema.py         # Database schema definitions
 ├── file_utils.py        # File handling utilities
 ├── translations.py      # Internationalization support
-├── test_app.py         # Unit tests
-├── users.db            # SQLite database (created at runtime)
-├── routes/             # Route handlers
+├── test_app.py          # Unit tests
+├── users.db             # SQLite database (created at runtime)
+├── routes/              # Route handlers
 │   ├── __init__.py
 │   ├── dashboard.py
 │   ├── del_restore_permadelete.py
@@ -124,11 +125,11 @@ MiniGDrive/
 │   ├── trash.py
 │   ├── upload.py
 │   └── zip.py
-├── static/             # Static assets
+├── static/              # Static assets
 │   ├── script.js
 │   ├── style.css
 │   └── voicecommands.js
-├── templates/          # HTML templates
+├── templates/           # HTML templates
 │   ├── favourites.html
 │   ├── index.html
 │   ├── login.html
@@ -136,17 +137,18 @@ MiniGDrive/
 │   ├── profile.html
 │   ├── register.html
 │   └── trash.html
-├── assets/            # Images and logos
+├── assets/              # Images and logos
 │   ├── ars_logo_32x32.png
 │   ├── dashboard.png
 │   ├── dashboardmobile.jpg
 │   ├── dashboardmobile2.jpg
 │   └── ER Diagram.svg
-├── uploads/           # User uploaded files
-├── trash/            # Deleted files
-├── storage/          # User storage directory
-├── Dockerfile        # Docker configuration
-└── requirements.txt  # Python dependencies
+├── uploads/             # User uploaded files
+├── trash/               # Deleted files
+├── storage/             # User storage directory
+├── Dockerfile           # Docker configuration
+└── requirements.txt     # Python dependencies 
+
 ```
 
 ---
@@ -242,6 +244,17 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 - Existing container is stopped and removed
 - New container is started on port 80
 - Hosted securely via AWS CloudFront (HTTPS)
+
+---
+
+## Infrastructure Setup
+
+We use **Terraform** to provision AWS resources, with secrets securely managed via **GitHub Actions**:
+
+- **Infrastructure as Code (IaC):** All AWS resources are defined in Terraform configuration files.  
+- **Secure Secrets:** AWS credentials and other sensitive values are stored in **GitHub Secrets**, never in code.  
+- **Automated Provisioning:** GitHub Actions automatically runs Terraform to apply infrastructure changes.  
+- **Consistency:** Ensures the same environment setup across dev, staging, and production.
 
 ---
 
