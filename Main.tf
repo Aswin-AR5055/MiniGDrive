@@ -15,8 +15,8 @@ data "aws_ami" "my_ubuntu_ami" {
     owners = ["099720109477"]
 }
 
-resource "aws_security_group" "my_sg_new_2" {
-  name        = "mysecuritygroup_new_2"
+resource "aws_security_group" "my_sg_group" {
+  name        = "mysecuritygroup_ar"
   description = "Allow HTTP and SSH inbound; all outbound"
 
   ingress {
@@ -34,8 +34,8 @@ resource "aws_security_group" "my_sg_new_2" {
   }
 
   ingress {
-    from_port = 8000
-    to_port = 8000
+    from_port = 5000
+    to_port = 5000
     protocol = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -52,9 +52,10 @@ resource "aws_instance" "my_instance" {
     ami = data.aws_ami.my_ubuntu_ami.id
     instance_type = "t2.micro"
     key_name = "newubuntukeypair"
-    vpc_security_group_ids = [aws_security_group.my_sg_new_2.id]
+    vpc_security_group_ids = [aws_security_group.my_sg_group.id]
+
     tags = {
-    Name = "ERDiagramGeneratorserver"
+      Name = "MiniGDrive_Test_Instance"
     }
 }
 

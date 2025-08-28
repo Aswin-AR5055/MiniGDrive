@@ -2,3 +2,11 @@ users.db
 trash/
 uploads/
 storage/
+*.tfstate
+*.tfstate.*
+.terraform/
+*.key
+*.pfx
+*.jks
+id_*
+
