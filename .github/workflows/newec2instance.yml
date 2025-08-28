@@ -1,8 +1,10 @@
 name: create ec2 instance
 
 on:
-  workflow_dispatch:
-
+  push:
+    branches:
+      - ec2
+      
 jobs:
   ec2:
     runs-on: ubuntu-latest
