@@ -45,7 +45,7 @@ Dashboard (Mobile view):
 ## Live Demo
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://d2r6fbb0wu8aqt.cloudfront.net)
-> **Hosted:** AWS EC2 instance using Docker and GitHub Actions  
+> **Hosted:** AWS EC2 instance using Docker, Gunicorn, and Nginx 
 > **Secured via:** CloudFront CDN (HTTPS)  
 > **Note:** This is a demo site. Please avoid uploading sensitive or personal data.  
 > **Disclaimer:** I am not responsible for any data theft, loss, or misuse.
@@ -87,6 +87,8 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 | **Security**           | Werkzeug (secure filename + password hashing)                     | Secure file uploads and password management           |
 | **File Handling**      | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)             |
 | **Session Management** | Flask + `datetime`                                                | Managing user sessions (login duration)               |
+| **Application Server** | Gunicorn                                                          | WSGI server for running the Flask app                 |
+| **Web Server / Proxy** | Nginx                                                             | Reverse proxy, serving static files   |
 | **Hosting**            | AWS EC2                                                           | Server for running the app                            |
 | **HTTPS/CDN**          | AWS CloudFront                                                    | Secure global access over HTTPS with CDN caching      |
 | **Containerization**   | Docker                                                            | Packaging and running the app                         |
@@ -100,7 +102,7 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 MiniGDrive/
 │
 ├── .github/
-│   └── workflows/        # GitHub Actions workflows
+│   └── workflows/pytest-update-ec2.yml        # GitHub Actions workflows
 ├── app.py               # Main Flask application
 ├── db_schema.py         # Database schema definitions
 ├── file_utils.py        # File handling utilities
@@ -143,6 +145,9 @@ MiniGDrive/
 │   ├── dashboardmobile.jpg
 │   ├── dashboardmobile2.jpg
 │   └── ER Diagram.svg
+├── nginx/               #
+Nginx config
+    ├── minigdrive.conf 
 ├── uploads/             # User uploaded files
 ├── trash/               # Deleted files
 ├── storage/             # User storage directory
@@ -203,7 +208,7 @@ Below are the voice commands you can use in **MiniGDrive**:
 
 4. **Visit the application**:
    ```bash
-   http://127.0.0.1:5000 
+   http://127.0.0.1:6000 
    ```
 
 ---
@@ -225,24 +230,55 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 3. **Run the container**:
    ```bash
-   docker run -p 5000:5000 minigdrive
+   docker run -d -p 6000:6000 minigdrive
    ```
 
-4. **Access the application**:
+4. **Configure Nginx**:
    ```bash
-   http://localhost:5000
+   server {
+      listen 80;
+      server_name yourdomain.com;
+
+      location / {
+         proxy_pass http://127.0.0.1:6000;
+         proxy_set_header Host $host;
+         proxy_set_header X-Real-IP $remote_addr;
+         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+         proxy_set_header X-Forwarded-Proto $scheme;
+      }
+   }
+   ```
+
+5. **Restart Nginx**:
+   ```bash
+   sudo nginx -t
+   sudo systemctl reload nginx
+   ```
+
+
+6. **Access the app via your domain or EC2 public IP**:
+   ```bash
+   http://yourdomain.com
    ```
 
 ---
 
 ## Deployment Pipeline
 
-- Code pushed to `master` branch
+- Push code to master branch
+
 - GitHub Actions runs unit tests
+
 - SSH into AWS EC2 instance
-- Docker image is rebuilt using latest code
+
+- Docker image rebuilds with latest code
+
 - Existing container is stopped and removed
-- New container is started on port 80
+
+- New container starts on port 6000
+
+- Nginx proxies requests from port 80 → 6000
+
 - Hosted securely via AWS CloudFront (HTTPS)
 
 ---
@@ -253,7 +289,7 @@ We use **Terraform** to provision AWS resources, with secrets securely managed v
 
 - **Infrastructure as Code (IaC):** All AWS resources are defined in Terraform configuration files.  
 - **Secure Secrets:** AWS credentials and other sensitive values are stored in **GitHub Secrets**, never in code.  
-- **Automated Provisioning:** GitHub Actions automatically runs Terraform to apply infrastructure changes.  
+- **Automated Provisioning:** GitHub Actions workflow(on Ec2 branch) automatically runs Terraform to apply infrastructure changes.  
 - **Consistency:** Ensures the same environment setup across dev, staging, and production.
 
 ---
