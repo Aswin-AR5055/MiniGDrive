@@ -33,27 +33,32 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: SSH into EC2 and Deploy with Docker + Nginx
+    - name: SSH into EC2 and Install Docker + Nginx
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
           set -e
+          echo "[+] Updating packages..."
+          sudo apt-get update -y
 
           echo "[+] Installing Docker if not installed..."
           if ! command -v docker &> /dev/null; then
             sudo rm -f /etc/apt/sources.list.d/docker.list
-            sudo apt-get update -y
             sudo apt-get install -y docker.io
             sudo usermod -aG docker ubuntu
           fi
 
-          echo "[+] Installing nginx if not installed..."
-          sudo apt-get update -y
-          sudo apt-get install -y nginx
+          echo "[+] Installing Nginx if not installed..."
+          if ! command -v nginx &> /dev/null; then
+            sudo apt-get install -y nginx
+          fi
         EOF
 
-        echo "[+] Uploading nginx config..."
+    - name: Upload nginx config
+      run: |
         scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP }}:/tmp/minigdrive.conf
 
+    - name: SSH into EC2 and Deploy App
+      run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
           set -e
 
@@ -61,7 +66,7 @@ jobs:
           sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
           sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
           sudo rm -f /etc/nginx/sites-enabled/default
-          sudo nginx -t
+          sudo nginx -t && sudo fuser -k 80/tcp || true
           sudo systemctl restart nginx
 
           echo "[+] Cloning or pulling latest code..."
@@ -73,7 +78,7 @@ jobs:
 
           echo "[+] Pulling latest changes..."
           git fetch --all
-          git reset --hard origin/master
+          git reset --hard origin/${GITHUB_REF_NAME}
 
           echo "[+] Stopping and removing existing container..."
           docker stop gdrive || true
@@ -91,7 +96,7 @@ jobs:
           sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
 
           echo "[+] Building Docker image..."
-          docker build -t gdrive .
+          docker build --pull -t gdrive .
 
           echo "[+] Running container with Gunicorn on localhost:5000..."
           docker run -d --name gdrive \
