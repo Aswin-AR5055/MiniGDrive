@@ -98,9 +98,9 @@ jobs:
           echo "[+] Building Docker image..."
           docker build --pull -t gdrive .
 
-          echo "[+] Running container with Gunicorn on localhost:5000..."
+          echo "[+] Running container with Gunicorn on localhost:6000..."
           docker run -d --name gdrive \
-            -p 127.0.0.1:5000:5000 \
+            -p 127.0.0.1:6000:6000 \
             -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
             -v /home/ubuntu/minigdrive_data/trash:/app/trash \
             -v /home/ubuntu/minigdrive_data/storage:/app/storage \
