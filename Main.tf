@@ -15,7 +15,7 @@ data "aws_ami" "my_ubuntu_ami" {
     owners = ["099720109477"]
 }
 
-resource "aws_security_group" "my_sg_group" {
+resource "aws_security_group" "my_sg_group_ar" {
   name        = "mysecuritygroup_ar"
   description = "Allow HTTP and SSH inbound; all outbound"
 
@@ -52,7 +52,7 @@ resource "aws_instance" "my_instance" {
     ami = data.aws_ami.my_ubuntu_ami.id
     instance_type = "t2.micro"
     key_name = "newubuntukeypair"
-    vpc_security_group_ids = [aws_security_group.my_sg_group.id]
+    vpc_security_group_ids = [aws_security_group.my_sg_group_ar.id]
 
     tags = {
       Name = "MiniGDrive_Test_Instance"

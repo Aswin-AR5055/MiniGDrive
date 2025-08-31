@@ -1,6 +1,8 @@
 users.db
 trash/
 uploads/
+routes/
+__pycache__
 storage/
 *.tfstate
 *.tfstate.*
@@ -9,4 +11,6 @@ storage/
 *.pfx
 *.jks
 id_*
-
+storage/
+venv/
+.pytest_cache/
