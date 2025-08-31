@@ -36,7 +36,7 @@ html, body {
   overflow-y: auto;
 }
 body {
-  font-family: 'Roboto', sans-serif;
+  font-family: 'Roboto', 'Noto Sans Tamil', 'Latha', 'Nirmala UI', sans-serif;
   background-color: var(--drive-bg);
   color: var(--drive-text);
   display: flex;
