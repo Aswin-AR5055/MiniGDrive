@@ -88,7 +88,7 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 | **File Handling**      | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)             |
 | **Session Management** | Flask + `datetime`                                                | Managing user sessions (login duration)               |
 | **Application Server** | Gunicorn                                                          | WSGI server for running the Flask app                 |
-| **Web Server / Proxy** | Nginx                                                             | Reverse proxy, serving static files   |
+| **Web Server / Proxy** | Nginx                                                             | Reverse proxy   |
 | **Hosting**            | AWS EC2                                                           | Server for running the app                            |
 | **HTTPS/CDN**          | AWS CloudFront                                                    | Secure global access over HTTPS with CDN caching      |
 | **Containerization**   | Docker                                                            | Packaging and running the app                         |
