@@ -78,7 +78,7 @@ jobs:
 
           echo "[+] Pulling latest changes..."
           git fetch --all
-          git reset --hard origin/${GITHUB_REF_NAME}
+          git reset --hard origin/master
 
           echo "[+] Stopping and removing existing container..."
           docker stop gdrive || true
