@@ -1,9 +1,9 @@
-name: CI/CD - Docker
+name: CI/CD - Docker + Nginx
 
 on:
   push:
     branches:
-      - master
+      - testbranch
 
 jobs:
   deploy:
@@ -33,16 +33,41 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-
-    - name: SSH into EC2 and Deploy with Docker
+    - name: SSH into EC2 and Deploy with Docker + Nginx
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
           set -e
 
+          echo "[+] Installing Docker if not installed..."
+          if ! command -v docker &> /dev/null; then
+            sudo rm -f /etc/apt/sources.list.d/docker.list
+            sudo apt-get update -y
+            sudo apt-get install -y docker.io
+            sudo usermod -aG docker ubuntu
+          fi
+
+          echo "[+] Installing nginx if not installed..."
+          sudo apt-get update -y
+          sudo apt-get install -y nginx
+        EOF
+
+        echo "[+] Uploading nginx config..."
+        scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP }}:/tmp/minigdrive.conf
+
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
+          set -e
+
+          echo "[+] Moving nginx config into place..."
+          sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
+          sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
+          sudo rm -f /etc/nginx/sites-enabled/default
+          sudo nginx -t
+          sudo systemctl restart nginx
+
           echo "[+] Cloning or pulling latest code..."
-            if [ ! -d "MiniGDrive" ]; then
-              git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
-            fi
+          if [ ! -d "MiniGDrive" ]; then
+            git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
+          fi
 
           cd MiniGDrive
 
@@ -68,9 +93,9 @@ jobs:
           echo "[+] Building Docker image..."
           docker build -t gdrive .
 
-          echo "[+] Running container with volume mounts and secret key..."
+          echo "[+] Running container with Gunicorn on localhost:5000..."
           docker run -d --name gdrive \
-            -p 80:5000 \
+            -p 127.0.0.1:5000:5000 \
             -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
             -v /home/ubuntu/minigdrive_data/trash:/app/trash \
             -v /home/ubuntu/minigdrive_data/storage:/app/storage \
