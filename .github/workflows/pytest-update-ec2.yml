@@ -3,7 +3,7 @@ name: CI/CD - Docker + Nginx
 on:
   push:
     branches:
-      - testbranch
+      - master
 
 jobs:
   deploy:
