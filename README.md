@@ -282,7 +282,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 - Push code to master branch
 
-- GitHub Actions runs unit tests
+- GitHub Actions runs tests
 
 - SSH into AWS EC2 instance
 
@@ -300,7 +300,7 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
 
 ## Infrastructure Setup
 
-We use **Terraform** to provision AWS resources, with secrets securely managed via **GitHub Actions**:
+Used **Terraform** to provision AWS resources, with secrets securely managed via **GitHub Actions**:
 
 - **Infrastructure as Code (IaC):** All AWS resources are defined in Terraform configuration files.  
 - **Secure Secrets:** AWS credentials and other sensitive values are stored in **GitHub Secrets**, never in code.  
