@@ -62,6 +62,7 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 - **Restore and Permanent Delete**: Restore files from trash or delete them forever.
 - **Bulk Actions**: Select multiple files to delete, restore, or download as ZIP.
 - **Star Files as Favourites**: Mark important files with a star to easily access and manage your favourite files in a dedicated Favourites page.
+- **Optimized Static Delivery**: Static files and user profile pictures are served directly via Nginx for faster performance. - **Result**: Static assets now load almost instantly compared to Flask serving.
 - **Storage Monitoring**: View used storage with a visual progress bar.
 - **Responsive UI**: Works well on both desktop and mobile screens.
 - **Profile Customization**: Add bio, age, and profile picture.
@@ -81,14 +82,14 @@ Use browser-based voice commands, hands-free interaction powered by Web Speech A
 
 | Layer                  | Technology Used                                                   | Purpose                                               |
 |------------------------|-------------------------------------------------------------------|-------------------------------------------------------|
-| **Backend**            | Python + Flask                                                    | Web server and application logic                      |
-| **Database**           | SQLite                                                            | Storing user accounts and profiles                    |
+| **Backend**            | Python + Flask                                                    |Application logic                      |
+| **Database**           | SQLite                                                            | Storing user accounts, favourite files and profiles                    |
 | **Frontend**           | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript, Web Speech API | Responsive UI, modals, voice commands, sorting/filtering, interactivity |
 | **Security**           | Werkzeug (secure filename + password hashing)                     | Secure file uploads and password management           |
 | **File Handling**      | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`)| File operations (uploads, storage, trash)             |
 | **Session Management** | Flask + `datetime`                                                | Managing user sessions (login duration)               |
 | **Application Server** | Gunicorn                                                          | WSGI server for running the Flask app                 |
-| **Web Server / Proxy** | Nginx                                                             | Reverse proxy   |
+| **Web Server / Proxy** | Nginx                                                             | Reverse proxy, Serve static files   |
 | **Hosting**            | AWS EC2                                                           | Server for running the app                            |
 | **HTTPS/CDN**          | AWS CloudFront                                                    | Secure global access over HTTPS with CDN caching      |
 | **Containerization**   | Docker                                                            | Packaging and running the app                         |
@@ -127,10 +128,12 @@ MiniGDrive/
 │   ├── trash.py
 │   ├── upload.py
 │   └── zip.py
-├── static/              # Static assets
+├── static/             # Static assets
 │   ├── script.js
 │   ├── style.css
-│   └── voicecommands.js
+│   ├── voicecommands.js
+    └── profiles/        #
+    User profile pictures(Generated Dynamically) 
 ├── templates/           # HTML templates
 │   ├── favourites.html
 │   ├── index.html
@@ -239,14 +242,26 @@ If you have Docker installed, you can run MiniGDrive without installing dependen
       listen 80;
       server_name yourdomain.com;
 
+      location /static/ {
+         alias /home/ubuntu/MiniGDrive/static/;
+         expires 30d;
+         access_log off;
+      }
+
+      location /static/profiles/ {
+         alias /home/ubuntu/minigdrive_data/profiles/;
+         expires 30d;
+         access_log off;
+      }
+
       location / {
          proxy_pass http://127.0.0.1:6000;
          proxy_set_header Host $host;
          proxy_set_header X-Real-IP $remote_addr;
          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-         proxy_set_header X-Forwarded-Proto $scheme;
       }
    }
+
    ```
 
 5. **Restart Nginx**:
