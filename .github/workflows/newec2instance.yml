@@ -27,5 +27,5 @@ jobs:
       - name: terraform init
         run: terraform init
 
-      - name: terraform destory
-        run: terraform destroy -auto-approve
+      - name: terraform apply
+        run: terraform apply -auto-approve

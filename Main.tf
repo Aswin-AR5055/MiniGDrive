@@ -15,44 +15,19 @@ data "aws_ami" "my_ubuntu_ami" {
     owners = ["099720109477"]
 }
 
-resource "aws_security_group" "my_sg_group_ar" {
-  name        = "mysecuritygroup_ar"
-  description = "Allow HTTP and SSH inbound; all outbound"
-
-  ingress {
-    from_port   = 22
-    to_port     = 22
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+data "aws_security_group" "existing_sg" {
+  filter {
+    name = "group-name"
+    values = ["mysecuritygroup_ar"]
   }
 
-  ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    from_port = 5000
-    to_port = 5000
-    protocol = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
 }
 
 resource "aws_instance" "my_instance" {
     ami = data.aws_ami.my_ubuntu_ami.id
     instance_type = "t2.micro"
     key_name = "newubuntukeypair"
-    vpc_security_group_ids = [aws_security_group.my_sg_group_ar.id]
+    vpc_security_group_ids = [aws_security_group.existing_sg.id]
 
     tags = {
       Name = "MiniGDrive_Test_Instance"
