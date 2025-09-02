@@ -670,7 +670,11 @@ body.dark-mode .form-select {
   .logout-mobile-right {
     margin-left: auto !important;
     margin-right: 0 !important;
-    display: inline-block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2rem;
+    line-height: normal;
     width: auto;
     text-align: right;
     order: 4;
