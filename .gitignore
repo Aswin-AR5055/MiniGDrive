@@ -11,7 +11,7 @@ storage/
 *.pfx
 *.jks
 id_*
-storage
+storage/
 venv/
 .pytest_cache/
 .env
