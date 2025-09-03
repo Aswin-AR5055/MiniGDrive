@@ -13,7 +13,6 @@ def download_file(filename):
     path = os.path.join(get_user_folder(), safe_filename)
     if not os.path.exists(path):
         abort(404)
-    # Serve text files as plain text for preview, otherwise as attachment
     ext = safe_filename.split('.')[-1].lower()
     as_attachment = not ext in ['txt', 'md', 'py', 'js', 'css', 'html']
     mimetype, _ = mimetypes.guess_type(path)

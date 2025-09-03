@@ -1,7 +1,14 @@
 from flask import render_template, flash, session, redirect, request
 from . import app
-import sqlite3
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from werkzeug.security import check_password_hash
+import os
+
+database_url = os.environ.get("DATABASE_URL")
+
+def get_conn():
+    return psycopg2.connect(database_url, cursor_factory=RealDictCursor)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -13,13 +20,14 @@ def login():
         passwd = request.form["password"]
         remember = request.form.get("remember")
 
-        conn = sqlite3.connect("users.db")
+        conn = get_conn()
         c = conn.cursor()
-        c.execute("select password from users where username=?", (uname,))
+
+        c.execute("select password from users where username=%s", (uname,))
         row = c.fetchone()
         conn.close()
 
-        if row and check_password_hash(row[0], passwd):
+        if row and check_password_hash(row["password"], passwd):
             session["username"] = uname
             session.permanent = True if remember else False
             return redirect("/dashboard")

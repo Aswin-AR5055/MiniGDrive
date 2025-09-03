@@ -1,7 +1,8 @@
 from routes import app
 from db_schema import init_db
+from dotenv import load_dotenv
 
-
+load_dotenv()
 init_db()
 
 if __name__ == "__main__":

@@ -1,9 +1,9 @@
-name: CI/CD - Docker + Nginx
+name: CI/CD - Docker + Nginx + PostgreSQL
 
 on:
   push:
     branches:
-      - master
+      - extras
 
 jobs:
   deploy:
@@ -35,14 +35,13 @@ jobs:
 
     - name: SSH into EC2 and Install Docker + Nginx
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
           echo "[+] Updating packages..."
           sudo apt-get update -y
 
           echo "[+] Installing Docker if not installed..."
           if ! command -v docker &> /dev/null; then
-            sudo rm -f /etc/apt/sources.list.d/docker.list
             sudo apt-get install -y docker.io
             sudo usermod -aG docker ubuntu
           fi
@@ -55,11 +54,11 @@ jobs:
 
     - name: Upload nginx config
       run: |
-        scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP }}:/tmp/minigdrive.conf
+        scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP2 }}:/tmp/minigdrive.conf
 
     - name: SSH into EC2 and Deploy App
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
 
           echo "[+] Moving nginx config into place..."
@@ -80,33 +79,42 @@ jobs:
           git fetch --all
           git reset --hard origin/master
 
-          echo "[+] Stopping and removing existing container..."
+          echo "[+] Stopping and removing existing containers..."
           docker stop gdrive || true
           docker rm gdrive || true
-
-          echo "[+] Removing existing Docker image..."
-          docker rmi -f gdrive || true
+          docker stop minigdrive_postgres || true
+          docker rm minigdrive_postgres || true
 
           echo "[+] Creating persistent data directories..."
           mkdir -p /home/ubuntu/minigdrive_data/uploads
           mkdir -p /home/ubuntu/minigdrive_data/trash
           mkdir -p /home/ubuntu/minigdrive_data/storage
           mkdir -p /home/ubuntu/minigdrive_data/profiles
-          touch /home/ubuntu/minigdrive_data/users.db
+          mkdir -p /home/ubuntu/minigdrive_data/postgres
           sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
 
-          echo "[+] Building Docker image..."
+          echo "[+] Starting PostgreSQL container..."
+          docker run -d --name minigdrive_postgres \
+            -e POSTGRES_DB=${{ secrets.DB_NAME }} \
+            -e POSTGRES_USER=${{ secrets.DB_USER }} \
+            -e POSTGRES_PASSWORD=${{ secrets.DB_PASSWORD }} \
+            -p 5432:5432 \
+            -v /home/ubuntu/minigdrive_data/postgres:/var/lib/postgresql/data \
+            postgres:15
+
+          echo "[+] Building Docker image for app..."
           docker build --pull -t gdrive .
 
-          echo "[+] Running container with Gunicorn on localhost:6000..."
+          echo "[+] Running app container with Gunicorn on localhost:6000..."
           docker run -d --name gdrive \
             -p 127.0.0.1:6000:6000 \
             -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
             -v /home/ubuntu/minigdrive_data/trash:/app/trash \
             -v /home/ubuntu/minigdrive_data/storage:/app/storage \
-            -v /home/ubuntu/minigdrive_data/users.db:/app/users.db \
             -v /home/ubuntu/minigdrive_data/profiles:/app/static/profiles \
             -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
+            -e DATABASE_URL=postgresql://${{ secrets.DB_USER }}:${{ secrets.DB_PASSWORD }}@minigdrive_postgres:5432/${{ secrets.DB_NAME }} \
+            --link minigdrive_postgres:db \
             gdrive
 
           echo "[+] Done. Current running containers:"
