@@ -24,14 +24,18 @@ def profile():
 
     if request.method == "POST":
         bio = request.form.get("bio", "")
-        age = request.form.get("age", "")
+        age_input = request.form.get("age", "")
         remove_pic = request.form.get("remove_pic") == "on"
         profile_pic = request.files.get("profile_pic")
+
+        # FIX: Convert empty age to None (NULL in database)
+        age = int(age_input) if age_input and age_input.isdigit() else None
 
         filename = None
         if profile_pic and profile_pic.filename:
             filename = secure_filename(profile_pic.filename)
-            profile_pic_path = os.path.join("static", "profiles", filename)
+            # FIX: Use absolute path for Docker volume
+            profile_pic_path = os.path.join("/app/static/profiles", filename)
             os.makedirs(os.path.dirname(profile_pic_path), exist_ok=True)
             profile_pic.save(profile_pic_path)
             c.execute(
@@ -46,15 +50,18 @@ def profile():
 
         if remove_pic:
             c.execute("SELECT profile_pic FROM users WHERE username=%s", (session["username"],))
-            current_pic = c.fetchone()["profile_pic"]
+            row = c.fetchone()
+            current_pic = row["profile_pic"] if row else None
             if current_pic:
                 try:
-                    os.remove(os.path.join("static", "profiles", current_pic))
+                    # FIX: Use absolute path for Docker volume
+                    os.remove(os.path.join("/app/static/profiles", current_pic))
                 except FileNotFoundError:
                     pass
             c.execute("UPDATE users SET profile_pic=NULL WHERE username=%s", (session["username"],))
 
         conn.commit()
+        flash("Profile updated successfully!", "success")
 
     c.execute("SELECT bio, age, profile_pic FROM users WHERE username=%s", (session["username"],))
     row = c.fetchone()
