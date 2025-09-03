@@ -112,6 +112,13 @@ jobs:
             --link minigdrive_postgres:db \
             gdrive
 
+            
+          echo "[+] Waiting for PostgreSQL to be ready..."
+          sleep 10
+
+          echo "[+] Initializing database tables..."
+          docker exec gdrive python db_schema.py
+
           echo "[+] Done. Current running containers:"
           docker ps
         EOF
