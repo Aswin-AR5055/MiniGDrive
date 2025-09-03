@@ -2,7 +2,7 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 import os
 
-database_url = os.environ.get("database_url", "postgresql://gdriveuser:romanempire@localhost:5432/minigdrive")
+database_url = os.environ.get("DATABASE_URL", "postgresql://gdriveuser:romanempire@localhost:5432/minigdrive")
 
 def init_db():
     conn = psycopg2.connect(database_url, cursor_factory=RealDictCursor)
