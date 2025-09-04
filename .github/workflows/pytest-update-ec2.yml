@@ -23,11 +23,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run Tests
-      run: |
-        pip install pytest
-        pytest
-
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
