@@ -4,6 +4,7 @@ from translations import get_translations
 from db import get_connection
 from werkzeug.utils import secure_filename
 import os
+from psycopg2.extras import RealDictCursor
 
 PROFILE_FOLDER = os.path.join(app.static_folder, "profiles")
 os.makedirs(PROFILE_FOLDER, exist_ok=True)
@@ -74,15 +75,9 @@ def profile():
 
 
 def get_user_profile():
-    if "username" not in session:
-        return {"bio": "", "profile_pic": None}
-
-    username = session["username"]
     conn = get_connection()
-    try:
-        with conn.cursor() as cur:
-            cur.execute("SELECT bio, profile_pic FROM users WHERE username=%s", (username,))
-            row = cur.fetchone()
-            return {"bio": row[0], "profile_pic": row[1]} if row else {"bio": "", "profile_pic": None}
-    finally:
-        conn.close()
+    cur = conn.cursor(cursor_factory=RealDictCursor)
+    cur.execute("SELECT bio, profile_pic FROM users WHERE username=%s", (session["username"],))
+    row = cur.fetchone()
+    conn.close()
+    return {"bio": row["bio"], "profile_pic": row["profile_pic"]} if row else {"bio": "", "profile_pic": None}

@@ -1,5 +1,6 @@
 from flask import render_template, session, redirect, request
-import os, shutil, datetime
+import os
+import datetime
 from file_utils import get_user_folder, get_trash_folder, get_storage_info
 from .profile import get_user_profile
 from translations import get_translations
@@ -31,7 +32,7 @@ def dashboard():
     for f in files:
         try:
             path = os.path.join(upload_folder, f)
-            file_dates[f] = datetime.utcfromtimestamp(os.path.getmtime(path)).isoformat()
+            file_dates[f] = datetime.datetime.utcfromtimestamp(os.path.getmtime(path)).isoformat()
             file_sizes[f] = os.path.getsize(path)
         except Exception:
             file_dates[f] = ""
@@ -39,19 +40,20 @@ def dashboard():
 
     favourites = get_user_favourites()
 
-    return render_template("index.html",
-                           user=session["username"],
-                           files=files,
-                           used_mb=used_mb,
-                           max_mb=max_mb,
-                           percent_used=percent_used,
-                           translations=translations,
-                           lang=lang,
-                           bio=profile["bio"],
-                           profile_pic=profile["profile_pic"],
-                           file_dates=file_dates,
-                           file_sizes=file_sizes,
-                           trashed=trashed,
-                           favourites=favourites,
-                           active_page="dashboard")
-
+    return render_template(
+        "index.html",
+        user=session["username"],
+        files=files,
+        used_mb=used_mb,
+        max_mb=max_mb,
+        percent_used=percent_used,
+        translations=translations,
+        lang=lang,
+        bio=profile.get("bio", ""),
+        profile_pic=profile.get("profile_pic"),
+        file_dates=file_dates,
+        file_sizes=file_sizes,
+        trashed=trashed,
+        favourites=favourites,
+        active_page="dashboard"
+    )
