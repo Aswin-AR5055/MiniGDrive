@@ -1,6 +1,6 @@
 from flask import session, redirect, request, flash, render_template
 from . import app, UPLOAD_BASE, TRASH_BASE
-import sqlite3
+from db import get_connection
 import os, shutil
 from werkzeug.security import generate_password_hash
 
@@ -14,15 +14,15 @@ def register():
         uname = request.form["username"]
         passwd = request.form["password"]
 
-        conn = sqlite3.connect("users.db")
-        c = conn.cursor()
-        c.execute("select * from users where username=?", (uname,))
-        if c.fetchone():
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("select * from users where username=%s", (uname,))
+        if cur.fetchone():
             conn.close()
             flash("Username already taken", "danger")
             return redirect("/register")
         hashed = generate_password_hash(passwd)
-        c.execute("insert into users (username, password) values (?, ?)", (uname, hashed))
+        cur.execute("insert into users (username, password) values (%s, %s)", (uname, hashed))
         conn.commit()
         conn.close()
 

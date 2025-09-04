@@ -1,6 +1,6 @@
 from flask import render_template, flash, session, redirect, request
 from . import app
-import sqlite3
+from db import get_connection
 from werkzeug.security import check_password_hash
 
 @app.route("/login", methods=["GET", "POST"])
@@ -13,10 +13,10 @@ def login():
         passwd = request.form["password"]
         remember = request.form.get("remember")
 
-        conn = sqlite3.connect("users.db")
-        c = conn.cursor()
-        c.execute("select password from users where username=?", (uname,))
-        row = c.fetchone()
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("select password from users where username=%s", (uname,))
+        row = cur.fetchone()
         conn.close()
 
         if row and check_password_hash(row[0], passwd):

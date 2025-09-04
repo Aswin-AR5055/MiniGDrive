@@ -1,26 +1,28 @@
-import sqlite3
+from db import get_connection
 
 def init_db():
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
-    c.execute("""
-            create table if not exists users (
-                id integer primary key,
-                username text,
+    conn = get_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+                create table if not exists users(   
+                id serial primary key,
+                username text unique,
                 password text,
                 bio text,
                 age integer,
                 profile_pic text
-            )
-        """)
-    c.execute("""
-        create table if not exists favourites (
-              id integer primary key autoincrement,
-              username text not null,
-              filename text not null
-            )
-        """)
-    conn.commit()
-    conn.close()
+                )
+            """)
+    cur.execute("""
+                create table if not exists favourites (
+                id serial primary key,
+                username text not null,
+                filename text not null,
+                unique(username, filename)
+                )
+            """)
     
-init_db()
+    conn.commit()
+    cur.close()
+    conn.close()
