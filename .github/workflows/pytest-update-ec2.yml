@@ -20,7 +20,7 @@ jobs:
 
     - name: Upload Nginx config
       run: |
-        scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP2 }}:/tmp/minigdrive.conf
+        scp -o StrictHostKeyChecking=no ./nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP2 }}:/tmp/minigdrive.conf
 
     - name: SSH into EC2 and Deploy App
       run: |
@@ -40,34 +40,36 @@ jobs:
             sudo chmod +x /usr/local/bin/docker-compose
           fi
 
-          echo "[+] Cloning or updating repository..."
-          if [ ! -d "MiniGDrive" ]; then
-            git clone https://github.com/Aswin-AR5055/MiniGDrive.git
-          fi
-          cd MiniGDrive
-          git fetch --all
-          git reset --hard origin/testbranch
-
-          echo "[+] Creating persistent data directories..."
-          mkdir -p ./minigdrive_data/uploads ./minigdrive_data/trash ./minigdrive_data/storage ./minigdrive_data/profiles
-          sudo chown -R ubuntu:ubuntu ./minigdrive_data
+          echo "[+] Ensuring persistent directories exist..."
+          mkdir -p ~/MiniGDrive/minigdrive_data/{uploads,trash,storage,profiles}
+          sudo chown -R ubuntu:ubuntu ~/MiniGDrive/minigdrive_data
 
           echo "[+] Moving Nginx config into place..."
+          sudo mkdir -p /etc/nginx/sites-available /etc/nginx/sites-enabled
           sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
           sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
           sudo rm -f /etc/nginx/sites-enabled/default
-          sudo nginx -t && sudo fuser -k 80/tcp || true
+          sudo nginx -t
+          sudo fuser -k 80/tcp || true
           sudo systemctl restart nginx
+
+          echo "[+] Cloning or updating repository..."
+          if [ ! -d "~/MiniGDrive" ]; then
+            git clone https://github.com/Aswin-AR5055/MiniGDrive.git ~/MiniGDrive
+          fi
+          cd ~/MiniGDrive
+          git fetch --all
+          git reset --hard origin/testbranch
 
           echo "[+] Stopping existing containers..."
           docker-compose down || true
 
-          echo "[+] Starting Docker Compose with secrets passed inline..."
-          POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
-          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-          POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
-          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
-          SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          echo "[+] Starting Docker Compose with environment variables..."
+          export POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          export POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          export POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          export POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+          export SECRET_KEY=${{ secrets.SECRET_KEY }}
           docker-compose up -d --build
 
           echo "[+] Deployment complete. Current running containers:"
