@@ -10,22 +10,25 @@ def login():
         return redirect("/dashboard")
     
     if request.method == "POST":
-        uname = request.form["username"]
-        passwd = request.form["password"]
+        uname = request.form.get("username", "").strip()
+        passwd = request.form.get("password", "")
         remember = request.form.get("remember")
 
         conn = get_connection()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute("select password from users where username=%s", (uname,))
-        row = cur.fetchone()
-        conn.close()
+        try:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("SELECT password FROM users WHERE username=%s", (uname,))
+                row = cur.fetchone()
+        finally:
+            conn.close()
 
         if row and check_password_hash(row['password'], passwd):
             session["username"] = uname
-            session.permanent = True if remember else False
+            session.permanent = bool(remember)
             return redirect("/dashboard")
+        
+        flash("Invalid credentials", "danger")
     
-        flash("invalid credentials", "danger")
     return render_template("login.html")
 
 @app.route("/logout")

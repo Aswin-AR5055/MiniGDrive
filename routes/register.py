@@ -1,9 +1,8 @@
 from flask import session, redirect, request, flash, render_template
 from . import app, UPLOAD_BASE, TRASH_BASE
 from db import get_connection
-import os, shutil
+import os
 from werkzeug.security import generate_password_hash
-
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
@@ -11,24 +10,38 @@ def register():
         return redirect("/dashboard")
     
     if request.method == "POST":
-        uname = request.form["username"]
-        passwd = request.form["password"]
+        uname = request.form.get("username", "").strip()
+        passwd = request.form.get("password", "").strip()
+
+        if not uname or not passwd:
+            flash("Username and password are required.", "danger")
+            return redirect("/register")
 
         conn = get_connection()
-        cur = conn.cursor()
-        cur.execute("select * from users where username=%s", (uname,))
-        if cur.fetchone():
+        try:
+            with conn.cursor() as cur:
+                cur.execute("SELECT 1 FROM users WHERE username=%s", (uname,))
+                if cur.fetchone():
+                    flash("Username already taken.", "danger")
+                    return redirect("/register")
+                
+                hashed = generate_password_hash(passwd)
+                cur.execute(
+                    "INSERT INTO users (username, password) VALUES (%s, %s)",
+                    (uname, hashed)
+                )
+                conn.commit()
+        finally:
             conn.close()
-            flash("Username already taken", "danger")
-            return redirect("/register")
-        hashed = generate_password_hash(passwd)
-        cur.execute("insert into users (username, password) values (%s, %s)", (uname, hashed))
-        conn.commit()
-        conn.close()
 
-        os.makedirs(os.path.join(UPLOAD_BASE, uname), exist_ok=True)
-        os.makedirs(os.path.join(TRASH_BASE, uname), exist_ok=True)
-        flash("Account created. Please Login.", "success")
+        # Create user directories safely
+        try:
+            os.makedirs(os.path.join(UPLOAD_BASE, uname), exist_ok=True)
+            os.makedirs(os.path.join(TRASH_BASE, uname), exist_ok=True)
+        except Exception as e:
+            flash(f"Failed to create user directories: {e}", "warning")
+
+        flash("Account created successfully. Please login.", "success")
         return redirect("/login")
     
     return render_template("register.html")
