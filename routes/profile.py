@@ -1,4 +1,4 @@
-from flask import request, redirect, render_template, session, flash
+from flask import request, redirect, render_template, session
 from . import app
 from translations import get_translations
 from db import get_connection
@@ -20,7 +20,7 @@ def profile():
 
     conn = get_connection()
     try:
-        with conn.cursor() as cur:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
             if request.method == "POST":
                 bio = request.form.get("bio", "")
                 age = request.form.get("age")
@@ -47,9 +47,9 @@ def profile():
                 if remove_pic:
                     cur.execute("SELECT profile_pic FROM users WHERE username=%s", (username,))
                     row = cur.fetchone()
-                    if row and row[0]:
+                    if row and row.get("profile_pic"):
                         try:
-                            os.remove(os.path.join(PROFILE_FOLDER, row[0]))
+                            os.remove(os.path.join(PROFILE_FOLDER, row["profile_pic"]))
                         except FileNotFoundError:
                             pass
                     cur.execute("UPDATE users SET profile_pic=NULL WHERE username=%s", (username,))
@@ -66,9 +66,9 @@ def profile():
     return render_template(
         "profile.html",
         user=username,
-        bio=row[0] if row else "",
-        age=row[1] if row else "",
-        profile_pic=row[2] if row else None,
+        bio=row.get("bio") if row else "",
+        age=row.get("age") if row else "",
+        profile_pic=row.get("profile_pic") if row else None,
         translations=translations,
         lang=lang
     )
@@ -76,8 +76,11 @@ def profile():
 
 def get_user_profile():
     conn = get_connection()
-    cur = conn.cursor(cursor_factory=RealDictCursor)
-    cur.execute("SELECT bio, profile_pic FROM users WHERE username=%s", (session["username"],))
-    row = cur.fetchone()
-    conn.close()
-    return {"bio": row["bio"], "profile_pic": row["profile_pic"]} if row else {"bio": "", "profile_pic": None}
+    try:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
+            cur.execute("SELECT bio, profile_pic FROM users WHERE username=%s", (session["username"],))
+            row = cur.fetchone()
+    finally:
+        conn.close()
+
+    return {"bio": row.get("bio"), "profile_pic": row.get("profile_pic")} if row else {"bio": "", "profile_pic": None}
