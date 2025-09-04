@@ -5,6 +5,7 @@ from translations import get_translations
 from .profile import get_user_profile
 from file_utils import get_user_folder, get_storage_info
 from . import app
+from psycopg2.extras import RealDictCursor
 
 @app.route('/favourites')
 def favourites():
@@ -56,7 +57,7 @@ def get_user_favourites():
 
     conn = get_connection()
     try:
-        with conn.cursor() as cur:
+        with conn.cursor(cursor_factory=RealDictCursor) as cur:
             cur.execute("SELECT filename FROM favourites WHERE username=%s", (username,))
             rows = cur.fetchall()
     finally:
@@ -66,7 +67,7 @@ def get_user_favourites():
     existing_files = []
 
     for row in rows:
-        filename = row[0]
+        filename = row["filename"]  # access by column name
         file_path = os.path.join(upload_folder, filename)
         if os.path.exists(file_path):
             existing_files.append(filename)
@@ -78,6 +79,7 @@ def get_user_favourites():
                 pass
 
     return existing_files
+
 
 
 def add_favourite(filename):
