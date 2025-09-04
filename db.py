@@ -8,3 +8,4 @@ def get_connection():
         host=os.environ["POSTGRES_HOST"],
         port=os.environ.get("POSTGRES_PORT", "5432")
     )
+#
