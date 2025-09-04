@@ -1,4 +1,4 @@
-name: CI/CD - Docker + Nginx + PostgreSQL
+name: CI/CD - Docker Compose + Nginx
 
 on:
   push:
@@ -13,72 +13,12 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
-
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: SSH into EC2 and Prepare Environment
-      run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
-          set -e
-          echo "[+] Updating packages..."
-          if ! command -v docker &> /dev/null || ! command -v nginx &> /dev/null || ! command -v psql &> /dev/null; then
-              sudo apt-get update -y
-          fi
-
-          echo "[+] Installing Docker if not installed..."
-          if ! command -v docker &> /dev/null; then
-            sudo apt-get install -y docker.io
-            sudo usermod -aG docker ubuntu
-          fi
-
-          echo "[+] Installing Nginx if not installed..."
-          if ! command -v nginx &> /dev/null; then
-            sudo apt-get install -y nginx
-          fi
-
-          echo "[+] Installing PostgreSQL if not installed..."
-          if ! command -v psql &> /dev/null; then
-            sudo apt-get install -y postgresql postgresql-contrib
-            sudo systemctl enable postgresql
-            sudo systemctl start postgresql
-          fi
-
-          echo "[+] Ensuring PostgreSQL database and user exist..."
-          sudo -u postgres psql <<EOSQL
-          DO $$
-          BEGIN
-            IF NOT EXISTS (SELECT FROM pg_database WHERE datname = '${{ secrets.POSTGRES_DB }}') THEN
-                EXECUTE format('CREATE DATABASE %I', '${{ secrets.POSTGRES_DB }}');
-            END IF;
-          END
-          $$;
-
-          DO $$
-          BEGIN
-            IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = '${{ secrets.POSTGRES_USER }}') THEN
-                CREATE ROLE ${{ secrets.POSTGRES_USER }} LOGIN PASSWORD '${{ secrets.POSTGRES_PASSWORD }}';
-            END IF;
-          END
-          $$;
-
-          GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};
-          ALTER SCHEMA public OWNER TO ${{ secrets.POSTGRES_USER }};
-          EOSQL
-        EOF
-
-    - name: Upload nginx config
+    - name: Upload Nginx config
       run: |
         scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP2 }}:/tmp/minigdrive.conf
 
@@ -87,56 +27,49 @@ jobs:
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
 
-          echo "[+] Moving nginx config into place..."
+          echo "[+] Updating packages..."
+          sudo apt-get update -y
+
+          echo "[+] Installing Docker & Docker Compose..."
+          if ! command -v docker &> /dev/null; then
+            sudo apt-get install -y docker.io
+            sudo usermod -aG docker ubuntu
+          fi
+          if ! command -v docker-compose &> /dev/null; then
+            sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+          fi
+
+          echo "[+] Cloning or updating repository..."
+          if [ ! -d "MiniGDrive" ]; then
+            git clone https://github.com/Aswin-AR5055/MiniGDrive.git
+          fi
+          cd MiniGDrive
+          git fetch --all
+          git reset --hard origin/testbranch
+
+          echo "[+] Creating persistent data directories..."
+          mkdir -p ./minigdrive_data/uploads ./minigdrive_data/trash ./minigdrive_data/storage ./minigdrive_data/profiles
+          sudo chown -R ubuntu:ubuntu ./minigdrive_data
+
+          echo "[+] Moving Nginx config into place..."
           sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
           sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
           sudo rm -f /etc/nginx/sites-enabled/default
           sudo nginx -t && sudo fuser -k 80/tcp || true
           sudo systemctl restart nginx
 
-          echo "[+] Cloning or pulling latest code..."
-          if [ ! -d "MiniGDrive" ]; then
-            git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
-          fi
+          echo "[+] Stopping existing containers..."
+          docker-compose down || true
 
-          cd MiniGDrive
+          echo "[+] Starting Docker Compose with secrets passed inline..."
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
+          SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          docker-compose up -d --build
 
-          echo "[+] Pulling latest changes..."
-          git fetch --all
-          git reset --hard origin/testbranch
-
-          echo "[+] Stopping and removing existing container..."
-          docker stop gdrive || true
-          docker rm gdrive || true
-
-          echo "[+] Removing existing Docker image..."
-          docker rmi -f gdrive || true
-
-          echo "[+] Creating persistent data directories..."
-          mkdir -p /home/ubuntu/minigdrive_data/uploads
-          mkdir -p /home/ubuntu/minigdrive_data/trash
-          mkdir -p /home/ubuntu/minigdrive_data/storage
-          mkdir -p /home/ubuntu/minigdrive_data/profiles
-          sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
-
-          echo "[+] Building Docker image..."
-          docker build --pull -t gdrive .
-
-          echo "[+] Running container with Gunicorn on localhost:6000..."
-          docker run -d --name gdrive \
-            -p 6000:6000 \
-            -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
-            -v /home/ubuntu/minigdrive_data/trash:/app/trash \
-            -v /home/ubuntu/minigdrive_data/storage:/app/storage \
-            -v /home/ubuntu/minigdrive_data/profiles:/app/static/profiles \
-            -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-            -e POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
-            -e POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
-            -e POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-            -e POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
-            -e POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
-            gdrive
-
-          echo "[+] Done. Current running containers:"
+          echo "[+] Deployment complete. Current running containers:"
           docker ps
         EOF
