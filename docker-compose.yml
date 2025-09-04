@@ -33,7 +33,8 @@ services:
       - ./minigdrive_data/uploads:/app/uploads
       - ./minigdrive_data/trash:/app/trash
       - ./minigdrive_data/storage:/app/storage
-      - ./minigdrive_data/profiles:/app/static/profiles
+      - ./minigdrive_data/profiles:/app/minigdrive_data/profiles
+      - ./minigdrive_data/profiles:/app/static/profiles:ro
 
 volumes:
   minigdrive_db_data:
