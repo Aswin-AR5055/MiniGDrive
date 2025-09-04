@@ -2,7 +2,6 @@ from flask import Flask
 import os
 from datetime import timedelta
 
-# --- Flask app setup ---
 app = Flask(
     __name__,
     template_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates"),
@@ -11,7 +10,6 @@ app = Flask(
 app.secret_key = os.environ.get("SECRET_KEY", os.urandom(24))
 app.permanent_session_lifetime = timedelta(days=7)
 
-# --- Directories ---
 BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 UPLOAD_BASE = os.path.join(BASE_DIR, "uploads")
 TRASH_BASE = os.path.join(BASE_DIR, "trash")
@@ -21,11 +19,6 @@ os.makedirs(STORAGE_DIR, exist_ok=True)
 os.makedirs(UPLOAD_BASE, exist_ok=True)
 os.makedirs(TRASH_BASE, exist_ok=True)
 
-# --- Initialize Database ---
-from db_schema import init_db
-init_db()  # <-- this ensures tables are created whenever the app is imported
-
-# --- Routes ---
 from . import home
 from . import login
 from . import register
