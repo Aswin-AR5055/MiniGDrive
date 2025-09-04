@@ -1,11 +1,10 @@
-import psycopg2
-import psycopg2.extras
+import os, psycopg2
 
 def get_connection():
     return psycopg2.connect(
-        dbname = "minigdrive",
-        user = "minigdrive_user",
-        password = "romanempire",
-        host = "localhost",
-        port = "5432",
+        dbname=os.environ["POSTGRES_DB"],
+        user=os.environ["POSTGRES_USER"],
+        password=os.environ["POSTGRES_PASSWORD"],
+        host=os.environ["POSTGRES_HOST"],
+        port=os.environ.get("POSTGRES_PORT", "5432")
     )

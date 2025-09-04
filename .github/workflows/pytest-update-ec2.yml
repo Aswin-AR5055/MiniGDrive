@@ -35,7 +35,7 @@ jobs:
 
     - name: SSH into EC2 and Prepare Environment
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
           echo "[+] Updating packages..."
           if ! command -v docker &> /dev/null || ! command -v nginx &> /dev/null || ! command -v psql &> /dev/null; then
@@ -78,18 +78,18 @@ jobs:
           END
           $$;
 
-          GRANT ALL PRIVILEGES ON DATABASE ${ secrets.POSTGRES_DB } TO ${ secrets.POSTGRES_USER };
-          ALTER SCHEMA public OWNER TO ${ secrets.POSTGRES_USER };
+          GRANT ALL PRIVILEGES ON DATABASE ${{ secrets.POSTGRES_DB }} TO ${{ secrets.POSTGRES_USER }};
+          ALTER SCHEMA public OWNER TO ${{ secrets.POSTGRES_USER }};
           EOSQL
         EOF
 
     - name: Upload nginx config
       run: |
-        scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP }}:/tmp/minigdrive.conf
+        scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP2 }}:/tmp/minigdrive.conf
 
     - name: SSH into EC2 and Deploy App
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
 
           echo "[+] Moving nginx config into place..."
