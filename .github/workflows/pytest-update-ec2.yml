@@ -74,7 +74,7 @@ jobs:
     - name: SSH into EC2 and Deploy App
       if: success()
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << EOF
           set -e
 
           if ! command -v docker &> /dev/null || ! command -v nginx &> /dev/null; then
@@ -121,7 +121,7 @@ jobs:
           sudo systemctl restart nginx
 
           echo "[+] Stopping existing containers..."
-          docker-compose down || true
+          sudo docker-compose down || true
 
           echo "[+] Starting Docker Compose with secrets..."
           POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
@@ -130,7 +130,7 @@ jobs:
           POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
           POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
           SECRET_KEY=${{ secrets.SECRET_KEY }} \
-          docker-compose up -d --build
+          sudo docker-compose up -d --build
 
           echo "[+] Deployment complete. Current running containers:"
           docker ps
