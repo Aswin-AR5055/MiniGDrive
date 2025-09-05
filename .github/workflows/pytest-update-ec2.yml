@@ -9,6 +9,21 @@ jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U testuser -d testdb"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -24,51 +39,76 @@ jobs:
         pip install -r requirements.txt
         pip install pytest psycopg2-binary
 
+    - name: Initialize database schema
+      env:
+        POSTGRES_USER: testuser
+        POSTGRES_PASSWORD: testpass
+        POSTGRES_DB: testdb
+        POSTGRES_HOST: localhost
+        POSTGRES_PORT: 5432
+      run: |
+        python -c "from db_schema import init_db; init_db()"
+
     - name: Run tests
       env:
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: testuser
+        POSTGRES_PASSWORD: testpass
+        POSTGRES_DB: testdb
         POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
         FLASK_ENV: testing
-      run: pytest -v
+      run: |
+        pytest -v
 
     - name: Set up SSH
+      if: success()
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Upload Nginx config
+      if: success()
       run: |
         scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP2 }}:/tmp/minigdrive.conf
 
+    - name: Create .env file on EC2
+      if: success()
+      run: |
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
+          cat > MiniGDrive/.env <<'ENV'
+          POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+          POSTGRES_HOST=db
+          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+          SECRET_KEY=${{ secrets.SECRET_KEY }}
+          ENV
+        EOF
+
     - name: SSH into EC2 and Deploy App
+      if: success()
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
 
-          # Update packages
-          sudo apt-get update -y
-
-          # Install Docker if missing
+          # Install Docker & Docker Compose if not present
           if ! command -v docker &> /dev/null; then
+            sudo apt-get update -y
             sudo apt-get install -y docker.io
             sudo usermod -aG docker ubuntu
           fi
 
-          # Install Docker Compose if missing
           if ! command -v docker-compose &> /dev/null; then
             sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
           fi
 
-          # Install Nginx if missing
+          # Install Nginx if not present
           if ! command -v nginx &> /dev/null; then
             sudo apt-get install -y nginx
           fi
           sudo systemctl enable nginx
-          sudo systemctl restart nginx
+          sudo systemctl start nginx
 
           # Clone or update repo
           if [ ! -d "MiniGDrive" ]; then
@@ -89,20 +129,8 @@ jobs:
           sudo nginx -t && sudo fuser -k 80/tcp || true
           sudo systemctl restart nginx
 
-          # Stop existing containers
+          # Deploy Docker Compose app
           sudo docker-compose down || true
-
-          # Write secrets to .env
-          cat > .env << ENV
-POSTGRES_USER=${{ secrets.POSTGRES_USER }}
-POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
-POSTGRES_DB=${{ secrets.POSTGRES_DB }}
-POSTGRES_HOST=db
-POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
-SECRET_KEY=${{ secrets.SECRET_KEY }}
-ENV
-
-          # Start Docker Compose
           sudo docker-compose up -d --build
 
           echo "[+] Deployment complete. Current running containers:"
