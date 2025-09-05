@@ -19,22 +19,26 @@ def register():
 
         conn = get_connection()
         try:
-            with conn.cursor() as cur:
-                cur.execute("SELECT 1 FROM users WHERE username=%s", (uname,))
-                if cur.fetchone():
-                    flash("Username already taken.", "danger")
-                    return redirect("/register")
-                
-                hashed = generate_password_hash(passwd)
-                cur.execute(
-                    "INSERT INTO users (username, password) VALUES (%s, %s) RETURNING id",
-                    (uname, hashed)
-                )
-                user_id = cur.fetchone()[0]
-                conn.commit()
+            with conn:
+                with conn.cursor() as cur:
+                    cur.execute("SELECT 1 FROM users WHERE username=%s", (uname,))
+                    if cur.fetchone():
+                        flash("Username already taken.", "danger")
+                        return redirect("/register")
+                    
+                    hashed = generate_password_hash(passwd)
+                    cur.execute(
+                        "INSERT INTO users (username, password) VALUES (%s, %s) RETURNING id",
+                        (uname, hashed)
+                    )
+                    row = cur.fetchone()
+                    if row is None:
+                        flash("Failed to create user.", "danger")
+                        return redirect("/register")
+                    
+                    user_id = row["id"] if isinstance(row, dict) else row[0]
         finally:
             conn.close()
-
         try:
             os.makedirs(os.path.join(UPLOAD_BASE, uname), exist_ok=True)
             os.makedirs(os.path.join(TRASH_BASE, uname), exist_ok=True)
