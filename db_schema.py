@@ -19,7 +19,7 @@ def init_db():
                 id serial primary key,
                 user_id integer not null references users(id),
                 filename text not null,
-                unique(username, filename)
+                unique(user_id, filename)
                 )
             """)
     
