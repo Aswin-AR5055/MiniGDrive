@@ -3,5 +3,5 @@ from . import app
 
 @app.route("/logo")
 def logo():
-    is_logged_in = "username" in session
+    is_logged_in = "username" in session and "user_id" in session
     return render_template("logo.html", logged_in = is_logged_in)

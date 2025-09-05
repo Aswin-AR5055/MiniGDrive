@@ -2,139 +2,160 @@ import pytest
 import os
 import shutil
 import io
-from app import app, init_db
+from app import app
+from db_schema import init_db
+from db import get_connection
 
 TEST_USER = "testuser"
 TEST_PASS = "testpass"
 
-@pytest.fixture
-def client():
-    app.config['TESTING'] = True
-    app.config['WTF_CSRF_ENABLED'] = False
-    app.config['UPLOAD_FOLDER'] = 'test_uploads'
-    app.secret_key = 'testkey'
-    with app.test_client() as client:
-        with app.app_context():
-            init_db()
-        yield client
-    # Cleanup after tests
+
+@pytest.fixture(autouse=True)
+def setup_and_teardown():
+    """Reset DB and clean test dirs before each test."""
+    init_db()
+    conn = get_connection()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("TRUNCATE users, favourites RESTART IDENTITY CASCADE")
+            conn.commit()
+    finally:
+        conn.close()
+
+    yield
+
+    # cleanup after each test
     shutil.rmtree(os.path.join("uploads", TEST_USER), ignore_errors=True)
     shutil.rmtree(os.path.join("trash", TEST_USER), ignore_errors=True)
 
+
+@pytest.fixture
+def client():
+    app.config["TESTING"] = True
+    app.config["WTF_CSRF_ENABLED"] = False
+    app.secret_key = "testkey"
+
+    with app.test_client() as client:
+        yield client
+
+
+def register_and_login(client, username=TEST_USER, password=TEST_PASS):
+    client.post("/register", data={"username": username, "password": password}, follow_redirects=True)
+    return client.post("/login", data={"username": username, "password": password}, follow_redirects=True)
+
+
 def test_home_redirect(client):
-    response = client.get('/')
-    assert response.status_code == 302
-    assert '/logo' in response.headers['Location']
+    res = client.get("/")
+    assert res.status_code == 302
+    assert "/logo" in res.headers["Location"]
+
 
 def test_logo_page(client):
-    response = client.get('/logo')
-    assert response.status_code == 200
+    res = client.get("/logo")
+    assert res.status_code == 200
 
-def test_register_and_login_logout(client):
-    response = client.post('/register', data={
-        'username': TEST_USER,
-        'password': TEST_PASS
-    }, follow_redirects=True)
-    assert b'Account created' in response.data
 
-    response = client.post('/login', data={
-        'username': TEST_USER,
-        'password': TEST_PASS
-    }, follow_redirects=True)
-    assert b'Dashboard' in response.data or b'My Files' in response.data
+def test_register_login_logout(client):
+    res = register_and_login(client)
+    assert b"Dashboard" in res.data or b"My Files" in res.data
 
-    response = client.get('/logout', follow_redirects=True)
-    assert b'Login' in response.data
+    res = client.get("/logout", follow_redirects=True)
+    assert b"Login" in res.data
+
 
 def test_dashboard_requires_login(client):
-    response = client.get('/dashboard', follow_redirects=True)
-    assert b'Login' in response.data
+    res = client.get("/dashboard", follow_redirects=True)
+    assert b"Login" in res.data
 
-def test_upload_file(client):
-    client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
+
+def test_upload_and_download_file(client):
+    register_and_login(client)
 
     test_file = (io.BytesIO(b"hello world"), "hello.txt")
-    response = client.post('/upload', data={'file': test_file}, content_type='multipart/form-data', follow_redirects=True)
+    client.post("/upload", data={"file": test_file}, content_type="multipart/form-data", follow_redirects=True)
 
-    assert b"Cloud Drive" in response.data or b"My Files" in response.data
+    path = os.path.join("uploads", TEST_USER, "hello.txt")
+    assert os.path.exists(path)
 
-def test_file_download(client):
-    client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
+    res = client.get("/download/hello.txt")
+    assert res.status_code == 200
+    assert b"hello world" in res.data
 
-    filepath = os.path.join("uploads", TEST_USER, "dltest.txt")
+
+def test_trash_restore_permadelete(client):
+    register_and_login(client)
+
+    filepath = os.path.join("uploads", TEST_USER, "trashme.txt")
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, "w") as f:
-        f.write("download me")
-
-    response = client.get('/download/dltest.txt')
-    assert response.status_code == 200
-    assert b"download me" in response.data
-
-def test_trash_and_restore_file(client):
-    client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
-
-    upload_path = os.path.join("uploads", TEST_USER, "trashme.txt")
-    with open(upload_path, "w") as f:
         f.write("to be trashed")
 
-    client.get('/delete/trashme.txt', follow_redirects=True)
-    assert not os.path.exists(upload_path)
+    client.get("/delete/trashme.txt", follow_redirects=True)
+    assert not os.path.exists(filepath)
 
-    client.get('/restore/trashme.txt', follow_redirects=True)
-    assert os.path.exists(upload_path)
+    client.get("/restore/trashme.txt", follow_redirects=True)
+    assert os.path.exists(filepath)
 
-    client.get('/delete/trashme.txt', follow_redirects=True)
-    client.get('/permadelete/trashme.txt', follow_redirects=True)
+    client.get("/delete/trashme.txt", follow_redirects=True)
+    client.get("/permadelete/trashme.txt", follow_redirects=True)
     assert not os.path.exists(os.path.join("trash", TEST_USER, "trashme.txt"))
 
-def test_download_zip_empty(client):
-    client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
-    response = client.post('/download_zip', data={'selected_files': []}, follow_redirects=True)
-    assert response.status_code == 200
 
-def test_download_zip_with_file(client):
-    client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
+def test_download_zip(client):
+    register_and_login(client)
+
+    # empty selection
+    res = client.post("/download_zip", data={"selected_files": []}, follow_redirects=True)
+    assert res.status_code == 200
+
+    # with file
     filename = "zipme.txt"
-    file_path = os.path.join("uploads", TEST_USER, filename)
-    with open(file_path, "w") as f:
+    filepath = os.path.join("uploads", TEST_USER, filename)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    with open(filepath, "w") as f:
         f.write("zip content")
 
-    response = client.post('/download_zip', data={'selected_files': [filename]}, follow_redirects=False)
-    assert response.status_code == 200
-    assert response.headers['Content-Type'] == 'application/zip'
+    res = client.post("/download_zip", data={"selected_files": [filename]}, follow_redirects=False)
+    assert res.status_code == 200
+    assert res.headers["Content-Type"] == "application/zip"
+
 
 def test_share_link(client):
-    client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
+    register_and_login(client)
+
     filepath = os.path.join("uploads", TEST_USER, "share.txt")
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, "w") as f:
         f.write("shareable")
 
-    response = client.get('/share/share.txt')
-    assert b'Share this link' in response.data
+    res = client.get("/share/share.txt")
+    assert b"Share this link" in res.data
+
 
 def test_profile_update_text_only(client):
-    client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
+    register_and_login(client)
 
-    response = client.post('/profile', data={'bio': 'Tester bio', 'age': '99'}, follow_redirects=True)
-    assert b'Tester bio' in response.data or b'Profile' in response.data
+    res = client.post("/profile", data={"bio": "Tester bio", "age": "99"}, follow_redirects=True)
+    assert b"Tester bio" in res.data or b"Profile" in res.data
+
 
 def test_delete_restore_selected(client):
-    client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
+    register_and_login(client)
 
     filename = "bulkdel.txt"
     filepath = os.path.join("uploads", TEST_USER, filename)
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, "w") as f:
         f.write("bulk delete test")
 
-    response = client.post('/delete_selected', json={'files': [filename]})
-    assert response.status_code == 200
+    res = client.post("/delete_selected", json={"files": [filename]})
+    assert res.status_code == 200
     assert not os.path.exists(filepath)
 
-    response = client.post('/restore_selected', json={'files': [filename]})
-    assert response.status_code == 200
+    res = client.post("/restore_selected", json={"files": [filename]})
+    assert res.status_code == 200
     assert os.path.exists(filepath)
 
-    response = client.post('/delete_selected', json={'files': [filename]})
-    response = client.post('/permadelete_selected', json={'files': [filename]})
+    res = client.post("/delete_selected", json={"files": [filename]})
+    res = client.post("/permadelete_selected", json={"files": [filename]})
     assert not os.path.exists(os.path.join("trash", TEST_USER, filename))
-

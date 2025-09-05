@@ -9,7 +9,7 @@ from . import app
 
 @app.route("/dashboard")
 def dashboard():
-    if "username" not in session:
+    if "username" not in session or "user_id" not in session:
         return redirect("/login")
 
     lang = request.args.get("lang", "en")

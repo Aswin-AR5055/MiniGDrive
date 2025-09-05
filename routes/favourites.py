@@ -9,7 +9,7 @@ from psycopg2.extras import RealDictCursor
 
 @app.route('/favourites')
 def favourites():
-    if "username" not in session:
+    if "username" not in session or "user_id" not in session:
         return redirect("/login")
 
     lang = request.args.get("lang", "en")
@@ -51,14 +51,14 @@ def favourites():
 
 def get_user_favourites():
     """Fetch favourite files that actually exist on disk."""
-    username = session.get("username")
-    if not username:
+    user_id = session.get("user_id")
+    if not user_id:
         return []
 
     conn = get_connection()
     try:
         with conn.cursor(cursor_factory=RealDictCursor) as cur:
-            cur.execute("SELECT filename FROM favourites WHERE username=%s", (username,))
+            cur.execute("SELECT filename FROM favourites WHERE user_id=%s", (user_id,))
             rows = cur.fetchall()
     finally:
         conn.close()
@@ -67,12 +67,11 @@ def get_user_favourites():
     existing_files = []
 
     for row in rows:
-        filename = row["filename"]  # access by column name
+        filename = row["filename"]
         file_path = os.path.join(upload_folder, filename)
         if os.path.exists(file_path):
             existing_files.append(filename)
         else:
-            # Remove broken favourite safely
             try:
                 remove_favourite(filename)
             except Exception:
@@ -81,11 +80,10 @@ def get_user_favourites():
     return existing_files
 
 
-
 def add_favourite(filename):
     """Add a file to user's favourites (idempotent)."""
-    username = session.get("username")
-    if not username or not filename:
+    user_id = session.get("user_id")
+    if not user_id or not filename:
         return
 
     conn = get_connection()
@@ -93,11 +91,11 @@ def add_favourite(filename):
         with conn.cursor() as cur:
             cur.execute(
                 """
-                INSERT INTO favourites (username, filename)
+                INSERT INTO favourites (user_id, filename)
                 VALUES (%s, %s)
-                ON CONFLICT (username, filename) DO NOTHING
+                ON CONFLICT (user_id, filename) DO NOTHING
                 """,
-                (username, filename)
+                (user_id, filename)
             )
             conn.commit()
     finally:
@@ -106,16 +104,16 @@ def add_favourite(filename):
 
 def remove_favourite(filename):
     """Remove a file from user's favourites."""
-    username = session.get("username")
-    if not username or not filename:
+    user_id = session.get("user_id")
+    if not user_id or not filename:
         return
 
     conn = get_connection()
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "DELETE FROM favourites WHERE username=%s AND filename=%s",
-                (username, filename)
+                "DELETE FROM favourites WHERE user_id=%s AND filename=%s",
+                (user_id, filename)
             )
             conn.commit()
     finally:

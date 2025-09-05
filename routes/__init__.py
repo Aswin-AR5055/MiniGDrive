@@ -1,7 +1,9 @@
 from flask import Flask
 import os
 from datetime import timedelta
+from dotenv import load_dotenv
 
+load_dotenv()
 app = Flask(
     __name__,
     template_folder=os.path.join(os.path.dirname(os.path.dirname(__file__)), "templates"),
@@ -19,8 +21,16 @@ os.makedirs(STORAGE_DIR, exist_ok=True)
 os.makedirs(UPLOAD_BASE, exist_ok=True)
 os.makedirs(TRASH_BASE, exist_ok=True)
 
+try:
+    from db_schema import init_db
+    init_db()
+    print("[+] Database schema ensured.")
+except Exception as e:
+    print(f"[!] Failed to initialize DB schema: {e}")
+
 from . import home
 from . import login
+from . import logout
 from . import register
 from . import dashboard
 from . import upload

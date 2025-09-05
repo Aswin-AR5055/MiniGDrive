@@ -6,11 +6,11 @@ from werkzeug.security import generate_password_hash
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    if "username" in session:
+    if "username" in session and "user_id" in session:
         return redirect("/dashboard")
     
     if request.method == "POST":
-        uname = request.form.get("username", "").strip()
+        uname = request.form.get("username", "").strip().lower()
         passwd = request.form.get("password", "").strip()
 
         if not uname or not passwd:
@@ -27,14 +27,14 @@ def register():
                 
                 hashed = generate_password_hash(passwd)
                 cur.execute(
-                    "INSERT INTO users (username, password) VALUES (%s, %s)",
+                    "INSERT INTO users (username, password) VALUES (%s, %s) RETURNING id",
                     (uname, hashed)
                 )
+                user_id = cur.fetchone()[0]
                 conn.commit()
         finally:
             conn.close()
 
-        # Create user directories safely
         try:
             os.makedirs(os.path.join(UPLOAD_BASE, uname), exist_ok=True)
             os.makedirs(os.path.join(TRASH_BASE, uname), exist_ok=True)

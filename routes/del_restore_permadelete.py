@@ -6,9 +6,9 @@ from werkzeug.utils import secure_filename
 
 @app.route("/delete_selected", methods=["POST"])
 def delete_selected():
-    if "username" not in session:
+    if "username" not in session or "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     files = data.get("files", [])
     user_folder = get_user_folder()
     trash_folder = get_trash_folder()
@@ -22,9 +22,9 @@ def delete_selected():
 
 @app.route("/permadelete_selected", methods=["POST"])
 def permadelete_selected():
-    if "username" not in session:
+    if "username" not in session or "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     files = data.get("files", [])
     trash_folder = get_trash_folder()
     for filename in files:
@@ -36,9 +36,9 @@ def permadelete_selected():
 
 @app.route("/restore_selected", methods=["POST"])
 def restore_selected():
-    if "username" not in session:
+    if "username" not in session or "user_id" not in session:
         return jsonify({"error": "Not logged in"}), 401
-    data = request.get_json()
+    data = request.get_json(silent=True) or {}
     files = data.get("files", [])
     trash_folder = get_trash_folder()
     user_folder = get_user_folder()

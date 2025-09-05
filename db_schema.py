@@ -7,8 +7,8 @@ def init_db():
     cur.execute("""
                 create table if not exists users(   
                 id serial primary key,
-                username text unique,
-                password text,
+                username text unique not null,
+                password text not null,
                 bio text,
                 age integer,
                 profile_pic text
@@ -17,7 +17,7 @@ def init_db():
     cur.execute("""
                 create table if not exists favourites (
                 id serial primary key,
-                username text not null,
+                user_id integer not null references users(id),
                 filename text not null,
                 unique(username, filename)
                 )
