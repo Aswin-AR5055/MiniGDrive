@@ -9,21 +9,6 @@ jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:15
-        env:
-          POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpass
-          POSTGRES_DB: testdb
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd="pg_isready -U testuser -d testdb"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
-
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -39,69 +24,53 @@ jobs:
         pip install -r requirements.txt
         pip install pytest psycopg2-binary
 
-    - name: Initialize database schema
-      env:
-        POSTGRES_USER: testuser
-        POSTGRES_PASSWORD: testpass
-        POSTGRES_DB: testdb
-        POSTGRES_HOST: localhost
-        POSTGRES_PORT: 5432
-      run: |
-        python -c "from db_schema import init_db; init_db()"
-
     - name: Run tests
       env:
-        POSTGRES_USER: testuser
-        POSTGRES_PASSWORD: testpass
-        POSTGRES_DB: testdb
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         POSTGRES_HOST: localhost
         POSTGRES_PORT: 5432
         FLASK_ENV: testing
-      run: |
-        pytest -v
+      run: pytest -v
 
     - name: Set up SSH
-      if: success()
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Upload Nginx config
-      if: success()
       run: |
         scp -o StrictHostKeyChecking=no nginx/minigdrive.conf ubuntu@${{ secrets.INSTANCE_IP2 }}:/tmp/minigdrive.conf
 
     - name: SSH into EC2 and Deploy App
-      if: success()
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << EOF
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP2 }} << 'EOF'
           set -e
 
-          if ! command -v docker &> /dev/null || ! command -v nginx &> /dev/null; then
-              echo "[+] Updating packages..."
-              sudo apt-get update -y
-          fi
+          # Update packages
+          sudo apt-get update -y
 
-          echo "[+] Installing Docker if not installed..."
+          # Install Docker if missing
           if ! command -v docker &> /dev/null; then
             sudo apt-get install -y docker.io
             sudo usermod -aG docker ubuntu
           fi
 
-          echo "[+] Installing Docker Compose if not installed..."
+          # Install Docker Compose if missing
           if ! command -v docker-compose &> /dev/null; then
             sudo curl -L "https://github.com/docker/compose/releases/download/v2.20.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
             sudo chmod +x /usr/local/bin/docker-compose
           fi
 
-          echo "[+] Installing Nginx if not installed..."
+          # Install Nginx if missing
           if ! command -v nginx &> /dev/null; then
             sudo apt-get install -y nginx
           fi
           sudo systemctl enable nginx
-          sudo systemctl start nginx
+          sudo systemctl restart nginx
 
-          echo "[+] Cloning or updating repository..."
+          # Clone or update repo
           if [ ! -d "MiniGDrive" ]; then
             git clone https://github.com/Aswin-AR5055/MiniGDrive.git
           fi
@@ -109,27 +78,31 @@ jobs:
           git fetch --all
           git reset --hard origin/testbranch
 
-          echo "[+] Creating persistent data directories..."
+          # Persistent directories
           mkdir -p ./minigdrive_data/uploads ./minigdrive_data/trash ./minigdrive_data/storage ./minigdrive_data/profiles
           sudo chown -R ubuntu:ubuntu ./minigdrive_data
 
-          echo "[+] Moving Nginx config into place..."
+          # Move Nginx config
           sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
           sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
           sudo rm -f /etc/nginx/sites-enabled/default
           sudo nginx -t && sudo fuser -k 80/tcp || true
           sudo systemctl restart nginx
 
-          echo "[+] Stopping existing containers..."
+          # Stop existing containers
           sudo docker-compose down || true
 
-          echo "[+] Starting Docker Compose with secrets..."
-          POSTGRES_USER=${{ secrets.POSTGRES_USER }} \
-          POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-          POSTGRES_DB=${{ secrets.POSTGRES_DB }} \
-          POSTGRES_PORT=${{ secrets.POSTGRES_PORT }} \
-          POSTGRES_HOST=${{ secrets.POSTGRES_HOST }} \
-          SECRET_KEY=${{ secrets.SECRET_KEY }} \
+          # Write secrets to .env
+          cat > .env << ENV
+POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+POSTGRES_DB=${{ secrets.POSTGRES_DB }}
+POSTGRES_HOST=db
+POSTGRES_PORT=${{ secrets.POSTGRES_PORT }}
+SECRET_KEY=${{ secrets.SECRET_KEY }}
+ENV
+
+          # Start Docker Compose
           sudo docker-compose up -d --build
 
           echo "[+] Deployment complete. Current running containers:"
