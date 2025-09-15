@@ -129,11 +129,16 @@ MiniGDrive/
 │   ├── upload.py
 │   └── zip.py
 ├── static/             # Static assets
+│   ├── login.css
+│   ├── logo.css
+│   ├── profile.css
+│   ├── register.css
+│   ├── reset_password.css
 │   ├── script.js
 │   ├── style.css
 │   ├── voicecommands.js
-    └── profiles/        #
-    User profile pictures(Generated Dynamically) 
+│    └── profiles/        #
+│    User profile pictures(Generated Dynamically) 
 ├── templates/           # HTML templates
 │   ├── favourites.html
 │   ├── index.html
