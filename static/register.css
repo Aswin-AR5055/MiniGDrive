@@ -1,0 +1,103 @@
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f1f3f5, #e3e9ef);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    position: relative;
+}
+
+.register-box {
+    width: 100%;
+    max-width: 400px;
+    padding: 30px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 1;
+}
+
+.register-box h2 {
+    font-weight: 600;
+}
+
+.form-control {
+    border-radius: 6px;
+}
+
+.btn-success {
+    background-color: #28a745;
+    border-color: #28a745;
+    border-radius: 6px;
+}
+
+.toggle-theme {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: inherit;
+    cursor: pointer;
+}
+
+@media (max-width: 400px) {
+    .register-box {
+    padding: 20px;
+    }
+}
+
+/* DARK MODE */
+body.dark-mode {
+    background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+    color: #fff;
+}
+
+.dark-mode .register-box {
+    background-color: #2b2b2b;
+    color: #fff;
+}
+
+.dark-mode .form-control {
+    background-color: #3c3c3c;
+    color: #fff;
+    border-color: #666;
+}
+
+.dark-mode .form-control::placeholder {
+    color: #bbb;
+}
+
+.dark-mode .btn-success {
+    background-color: #00bcd4;
+    border-color: #00bcd4;
+    color: #fff;
+}
+
+.dark-mode a {
+    color: #00bcd4;
+}
+
+.dark-mode .alert {
+    background-color: #2a2a2a;
+    border-color: #444;
+    color: #eee;
+}
+
+.watermark {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #888;
+    z-index: 0;
+}
+
+.dark-mode .watermark {
+    color: #555;
+}

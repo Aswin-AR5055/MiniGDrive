@@ -1,0 +1,134 @@
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+    color: #202124;
+    padding: 2rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body.dark-mode {
+    background-color: #1f1f1f;
+    color: #e8eaed;
+}
+
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    color: #202124;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.3s ease, color 0.3s ease;
+    position: relative;
+}
+
+body.dark-mode .form-container {
+    background-color: #2d2d2d;
+    color: #e8eaed;
+}
+
+.form-title {
+    font-size: 1.5rem;
+    font-weight: 500;
+    margin-bottom: 1.3rem;
+    margin-top: 0.5rem;
+    text-align: center;
+}
+
+.form-control {
+    font-size: 0.95rem;
+    background-color: #fff;
+    color: #000;
+}
+
+.form-control::placeholder {
+    color: #6c757d;
+}
+
+body.dark-mode .form-control {
+    background-color: #3c4043;
+    color: #e8eaed;
+    border: 1px solid #5f6368;
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #b0b0b0;
+}
+
+.btn {
+    font-weight: 500;
+}
+
+.profile-preview {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.profile-preview img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #dadce0;
+}
+
+body.dark-mode .profile-preview img {
+    border-color: #5f6368;
+}
+
+.back-link a {
+    color: #1a73e8;
+    text-decoration: none;
+}
+
+body.dark-mode .back-link a {
+    color: #8ab4f8;
+}
+
+.watermark {
+    position: fixed;
+    bottom: 10px;
+    right: 15px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #888;
+    z-index: 0;
+}
+
+.dark-mode .watermark {
+    color: #555;
+}
+
+/* Language Switch Styles */
+.language-switch {
+    font-size: 0.85rem;
+    margin-left: 0.5rem;
+}
+.language-switch a {
+    color: #6c757d;
+    text-decoration: none;
+    margin: 0 0.2rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+body.dark-mode .language-switch a {
+    color: #b0b0b0;
+}
+.language-switch a:hover {
+    background-color: rgba(0,0,0,0.05);
+    color: #202124;
+}
+body.dark-mode .language-switch a:hover {
+    background-color: rgba(255,255,255,0.1);
+    color: #e8eaed;
+}
+
+.header-actions {
+    text-align: center;
+    top: 20px;
+    right: 20px;
+}

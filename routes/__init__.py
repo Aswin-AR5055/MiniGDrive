@@ -28,6 +28,7 @@ __all__ = ['app', 'UPLOAD_BASE', 'TRASH_BASE', 'STORAGE_DIR', 'BASE_DIR']
 from . import home
 from . import login
 from . import register
+from . import reset_password
 from . import dashboard
 from . import upload
 from . import download
