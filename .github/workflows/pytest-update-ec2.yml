@@ -74,7 +74,7 @@ jobs:
         git reset --hard origin/master
         cd ..
 
-        echo "[+] Copying Nginx config..."
+        echo "[+] Setting up Nginx config..."
         if [ -f "MiniGDrive/nginx/minigdrive.conf" ]; then
           sudo cp MiniGDrive/nginx/minigdrive.conf /etc/nginx/sites-available/minigdrive
           sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
@@ -85,9 +85,19 @@ jobs:
           echo "[!] Nginx config not found, skipping..."
         fi
 
-        echo "[+] Copying Docker Compose and Prometheus configs..."
+        echo "[+] Setting up Prometheus..."
+        sudo mkdir -p /home/ubuntu/prometheus
+        sudo cp MiniGDrive/prometheus/prometheus.yml /home/ubuntu/prometheus/prometheus.yml
+
+        echo "[+] Setting up gdrive data volumes..."
+        sudo mkdir -p /home/ubuntu/minigdrive_data/uploads
+        sudo mkdir -p /home/ubuntu/minigdrive_data/trash
+        sudo mkdir -p /home/ubuntu/minigdrive_data/storage
+        sudo touch /home/ubuntu/minigdrive_data/users.db
+        sudo mkdir -p /home/ubuntu/minigdrive_data/profiles
+
+        echo "[+] Copying Docker Compose file..."
         cp MiniGDrive/docker-compose.yml docker-compose.yml
-        cp MiniGDrive/prometheus/prometheus.yml prometheus.yml
 
         echo "[+] Stopping old containers if any..."
         sudo docker-compose down || true
