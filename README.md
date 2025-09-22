@@ -97,7 +97,105 @@ Dashboard (Mobile view):
 
 ---
 
-## Deployment Pipeline (Updated)
+## Project Structure
+
+```plaintext
+MiniGDrive/
+│
+├── .github/
+│   └── workflows/pytest-update-ec2.yml        # GitHub Actions workflows
+├── app.py               # Main Flask application
+├── db_schema.py         # Database schema definitions
+├── file_utils.py        # File handling utilities
+├── translations.py      # Internationalization support
+├── test_app.py          # Unit tests
+├── users.db             # SQLite database (created at runtime)
+├── routes/              # Route handlers
+│   ├── __init__.py
+│   ├── dashboard.py
+│   ├── del_restore_permadelete.py
+│   ├── download.py
+│   ├── favourites.py
+│   ├── home.py
+│   ├── login.py
+│   ├── logo.py
+│   ├── permadelete.py
+│   ├── profile.py
+│   ├── register.py
+│   ├── share.py
+│   ├── star_unstar.py
+│   ├── trash_del_restore.py
+│   ├── trash.py
+│   ├── upload.py
+│   └── zip.py
+├── static/             # Static assets
+│   ├── login.css
+│   ├── logo.css
+│   ├── profile.css
+│   ├── register.css
+│   ├── reset_password.css
+│   ├── script.js
+│   ├── style.css
+│   ├── voicecommands.js
+│    └── profiles/        #
+│    User profile pictures(Generated Dynamically) 
+├── templates/           # HTML templates
+│   ├── favourites.html
+│   ├── index.html
+│   ├── login.html
+│   ├── logo.html
+│   ├── profile.html
+│   ├── register.html
+│   └── trash.html
+├── assets/              # Images and logos
+│   ├── ars_logo_32x32.png
+│   ├── dashboard.png
+│   ├── dashboardmobile.jpg
+│   ├── dashboardmobile2.jpg
+│   └── ER Diagram.svg
+├── nginx/               #
+Nginx config
+    ├── minigdrive.conf
+├── prometheus/          #
+#prometheus setup
+    ├── prometheus.yml 
+├── uploads/             # User uploaded files
+├── trash/               # Deleted files
+├── storage/             # User storage directory
+├── docker-compose.yml   # Docker compose for running multiple containers
+├── Dockerfile           # Docker configuration
+└── requirements.txt     # Python dependencies 
+
+```
+
+---
+
+## Voice Commands Supported
+
+Below are the voice commands you can use in **MiniGDrive**:
+
+| Command Example                            | Action                                      |
+|--------------------------------------------|---------------------------------------------|
+| `upload file`                              | Open file upload dialog                     |
+| `delete file [filename]`                   | Delete the specified file                   |
+| `list files`                               | Highlight/list all files                    |
+| `logout` / `log me out` / `sign out`       | Log out of your account                     |
+| `trash` / `go to trash` / `view/open/show trash` | Go to Trash page                    |
+| `go to dashboard` / `view/open dashboard`  | Go to Dashboard page                        |
+| `go to profile` / `view/open profile`      | Go to Profile page                          |
+| `switch language to english`               | Change app language to English              |
+| `switch language to tamil`                 | Change app language to Tamil                |
+| `switch language to hindi`                 | Change app language to Hindi                |
+| `switch to dark mode` / `enable dark mode` | Switch to Dark Mode                         |
+| `switch to light mode` / `enable light mode`| Switch to Light Mode                        |
+| `search for [filename]`                    | Search for a file by name                   |
+| `favourites` / `open/view/show my favourites` | Go to Favourites page                    |
+
+> 🔎 **Note:** Replace `[filename]` with the actual file name, e.g., `delete file report.pdf`.
+
+---
+
+## Deployment Pipeline
 
 1. Push code to **master branch** triggers GitHub Actions.  
 2. Automated **tests run** using pytest.  
@@ -181,7 +279,10 @@ Dashboard (Mobile view):
 
 ## License
 
-MIT License — built with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5055).
+This project is licensed under the [MIT License](LICENSE).
+
+Feel free to use, modify, and distribute this project — just keep the license file and give proper credit.  
+Built for the community, with ❤️ by [Aswin Raj](https://github.com/Aswin-AR5055).
 
 ---
 
