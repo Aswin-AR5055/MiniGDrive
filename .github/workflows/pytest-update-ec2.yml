@@ -33,92 +33,70 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Deploy to EC2 with Docker Compose + Fallback
+    - name: Deploy to EC2 with Docker Compose
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
-          set -e
+        set -e
 
-          echo "[+] Updating packages..."
-          sudo apt-get update -y
-          sudo apt-get install -y git curl wget software-properties-common apt-transport-https ca-certificates
+        echo "[+] Updating packages..."
+        sudo apt-get update -y
+        sudo apt-get install -y git curl wget software-properties-common apt-transport-https ca-certificates
 
-          echo "[+] Installing Docker if missing..."
-          if ! command -v docker &> /dev/null; then
-            sudo apt-get install -y docker.io
-            sudo usermod -aG docker ubuntu
-          fi
+        echo "[+] Installing Docker if missing..."
+        if ! command -v docker &> /dev/null; then
+          sudo apt-get install -y docker.io
+          sudo usermod -aG docker ubuntu
+        fi
 
-          echo "[+] Installing Docker Compose v2..."
-          if ! command -v docker-compose &> /dev/null; then
-            sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            sudo chmod +x /usr/local/bin/docker-compose
-          fi
+        echo "[+] Installing Docker Compose v2..."
+        if ! command -v docker-compose &> /dev/null; then
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
+        fi
 
-          echo "[+] Fixing Grafana GPG key..."
-          wget -q -O - https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
-          sudo apt-get update -y
+        echo "[+] Updating Grafana GPG key..."
+        wget -q -O - https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
+        echo "deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+        sudo apt-get update -y
 
-          echo "[+] Installing Nginx if missing..."
-          if ! command -v nginx &> /dev/null; then
-            sudo apt-get install -y nginx
-          fi
+        echo "[+] Installing Nginx if missing..."
+        if ! command -v nginx &> /dev/null; then
+          sudo apt-get install -y nginx
+        fi
 
-          echo "[+] Deploying application..."
+        echo "[+] Copying Nginx config..."
+        scp -o StrictHostKeyChecking=no MiniGDrive/nginx/minigdrive.conf /tmp/minigdrive.conf
+        sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
+        sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
+        sudo rm -f /etc/nginx/sites-enabled/default
+        sudo nginx -t
+        sudo systemctl restart nginx
 
-          # Clone or update repo
-          if [ ! -d "MiniGDrive" ]; then
-            git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
-          fi
-          cd MiniGDrive
-          git fetch --all
-          git reset --hard origin/master
+        echo "[+] Deploying application..."
 
-          # Copy docker-compose and Prometheus config
-          cd ..
-          mkdir -p monitoring
-          cp MiniGDrive/docker-compose.yml docker-compose.yml || true
-          cp MiniGDrive/prometheus/prometheus.yml prometheus.yml || true
+        # Clone or update repo
+        if [ ! -d "MiniGDrive" ]; then
+          git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
+        fi
+        cd MiniGDrive
+        git fetch --all
+        git reset --hard origin/master
+        cd ..
 
-          echo "[+] Stopping old containers..."
-          sudo docker compose down || true
+        # Copy docker-compose and Prometheus config
+        mkdir -p monitoring
+        cp MiniGDrive/docker-compose.yml docker-compose.yml || true
+        cp MiniGDrive/prometheus/prometheus.yml prometheus.yml || true
 
-          echo "[+] Starting new stack with Compose..."
-          if ! GF_USER=${{ secrets.GRAFANA_USER }} \
-              GF_PASS=${{ secrets.GRAFANA_PASS }} \
-              SECRET_KEY=${{ secrets.SECRET_KEY }} \
-              sudo docker compose up -d --build; then
+        echo "[+] Stopping old containers..."
+        sudo docker compose down || true
 
-            echo "[!] Compose failed, falling back to manual docker run..."
+        echo "[+] Starting new stack with Compose..."
+        GF_USER=${{ secrets.GF_USER }} \
+        GF_PASS=${{ secrets.GF_PASSWORD }} \
+        SECRET_KEY=${{ secrets.SECRET_KEY }} \
+        sudo docker compose up -d --build
 
-            # Stop & remove old container
-            docker stop gdrive || true
-            docker rm gdrive || true
-            docker rmi -f gdrive || true
-
-            echo "[+] Creating persistent data directories..."
-            mkdir -p /home/ubuntu/minigdrive_data/uploads
-            mkdir -p /home/ubuntu/minigdrive_data/trash
-            mkdir -p /home/ubuntu/minigdrive_data/storage
-            mkdir -p /home/ubuntu/minigdrive_data/profiles
-            touch /home/ubuntu/minigdrive_data/users.db
-            sudo chown -R ubuntu:ubuntu /home/ubuntu/minigdrive_data
-
-            echo "[+] Building Docker image..."
-            docker build -t gdrive MiniGDrive
-
-            echo "[+] Running container manually..."
-            docker run -d --name gdrive \
-              -p 127.0.0.1:6000:6000 \
-              -v /home/ubuntu/minigdrive_data/uploads:/app/uploads \
-              -v /home/ubuntu/minigdrive_data/trash:/app/trash \
-              -v /home/ubuntu/minigdrive_data/storage:/app/storage \
-              -v /home/ubuntu/minigdrive_data/users.db:/app/users.db \
-              -v /home/ubuntu/minigdrive_data/profiles:/app/static/profiles \
-              -e SECRET_KEY=${{ secrets.SECRET_KEY }} \
-              gdrive
-          fi
-
-          echo "[+] Deployment complete. Running containers:"
-          sudo docker ps
-EOF
+        echo "[+] Deployment complete. Running containers:"
+        sudo docker ps
+        EOF

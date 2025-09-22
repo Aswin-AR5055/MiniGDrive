@@ -1,23 +1,28 @@
 version: "3.8"
+
 services:
   prometheus:
-    image: prom/prometheus
+    image: prom/prometheus:latest
     container_name: prometheus
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
+    restart: unless-stopped
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:latest
     container_name: grafana
-    ports:
-      - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=${GF_USER}
-      - GF_SECURITY_PASSWORD=${GF_PASSWORD}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_PASS}
+    ports:
+      - "127.0.0.1:3000:3000"
     depends_on:
       - prometheus
+    restart: unless-stopped
+    volumes:
+      - grafana_data:/var/lib/grafana
 
   gdrive:
     build: ./MiniGDrive
@@ -25,14 +30,14 @@ services:
     ports:
       - "127.0.0.1:6000:6000"
     volumes:
-      - /home/ubuntu/mingdrive_data/uplods:/app/uploads
+      - /home/ubuntu/minigdrive_data/uploads:/app/uploads
       - /home/ubuntu/minigdrive_data/trash:/app/trash
       - /home/ubuntu/minigdrive_data/storage:/app/storage
       - /home/ubuntu/minigdrive_data/users.db:/app/users.db
       - /home/ubuntu/minigdrive_data/profiles:/app/static/profiles
     environment:
       - SECRET_KEY=${SECRET_KEY}
+    restart: unless-stopped
 
-      
-
-
+volumes:
+  grafana_data:
