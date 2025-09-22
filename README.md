@@ -43,7 +43,7 @@ Dashboard (Mobile view):
 
 ## Live Demo
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](http://35.154.34.68/)  
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://d3gl01gujethk4.cloudfront.net)  
 > **Hosted:** AWS EC2 instance using Docker, Gunicorn, and Nginx  
 > **Secured via:** CloudFront CDN (HTTPS)  
 > **Note:** This is a demo site. Please avoid uploading sensitive or personal data.  
