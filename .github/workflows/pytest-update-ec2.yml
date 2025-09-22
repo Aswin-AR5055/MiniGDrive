@@ -48,11 +48,13 @@ jobs:
           sudo usermod -aG docker ubuntu
         fi
 
-        echo "[+] Installing Docker Compose v2 plugin..."
+        echo "[+] Installing Docker Compose v2..."
         if ! docker compose version &> /dev/null; then
-          sudo apt-get install -y docker-compose-plugin
+          sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-$(uname -s)-$(uname -m)" \
+            -o /usr/local/bin/docker-compose
+          sudo chmod +x /usr/local/bin/docker-compose
         fi
-
+        
         echo "[+] Updating Grafana GPG key..."
         wget -q -O - https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
         echo "deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
