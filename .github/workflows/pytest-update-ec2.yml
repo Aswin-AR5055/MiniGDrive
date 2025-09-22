@@ -54,9 +54,9 @@ jobs:
             -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
         fi
-        
-        echo "[+] Updating Grafana GPG key..."
-        wget -q -O - https://packages.grafana.com/gpg.key | sudo gpg --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
+
+        echo "[+] Adding Grafana repository and key..."
+        wget -q -O - https://packages.grafana.com/gpg.key | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
         echo "deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
         sudo apt-get update -y
 
@@ -99,5 +99,4 @@ jobs:
 
         echo "[+] Deployment complete. Running containers:"
         sudo docker ps
-        EOF
-
+EOF
