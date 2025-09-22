@@ -48,10 +48,9 @@ jobs:
           sudo usermod -aG docker ubuntu
         fi
 
-        echo "[+] Installing Docker Compose v2..."
-        if ! command -v docker-compose &> /dev/null; then
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
+        echo "[+] Installing Docker Compose v2 plugin..."
+        if ! docker compose version &> /dev/null; then
+          sudo apt-get install -y docker-compose-plugin
         fi
 
         echo "[+] Updating Grafana GPG key..."
@@ -73,7 +72,6 @@ jobs:
         sudo systemctl restart nginx
 
         echo "[+] Deploying application..."
-
         # Clone or update repo
         if [ ! -d "MiniGDrive" ]; then
           git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
@@ -100,3 +98,4 @@ jobs:
         echo "[+] Deployment complete. Running containers:"
         sudo docker ps
         EOF
+
