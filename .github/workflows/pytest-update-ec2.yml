@@ -89,12 +89,15 @@ jobs:
         echo "[+] Stopping old containers..."
         sudo docker-compose down || true
 
-        echo "[+] Starting new stack with Compose and secrets..."
-        SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-        GF_USER="${{ secrets.GF_USER }}" \
-        GF_PASS="${{ secrets.GF_PASSWORD }}" \
+        echo "[+] Exporting secrets for Compose..."
+        export SECRET_KEY="${{ secrets.SECRET_KEY }}"
+        export GF_USER="${{ secrets.GF_USER }}"
+        export GF_PASS="${{ secrets.GF_PASSWORD }}"
+
+        echo "[+] Starting new stack with Docker Compose..."
         sudo docker-compose up -d --build
 
         echo "[+] Deployment complete. Running containers:"
         sudo docker ps
         EOF
+
