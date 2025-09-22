@@ -48,7 +48,7 @@ jobs:
           sudo usermod -aG docker ubuntu
         fi
 
-        echo "[+] Installing Docker Compose..."
+        echo "[+] Installing Docker Compose if missing..."
         if ! docker-compose version &> /dev/null; then
           sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-$(uname -s)-$(uname -m)" \
             -o /usr/local/bin/docker-compose
@@ -65,15 +65,7 @@ jobs:
           sudo apt-get install -y nginx
         fi
 
-        echo "[+] Copying Nginx config..."
-        scp -o StrictHostKeyChecking=no MiniGDrive/nginx/minigdrive.conf /tmp/minigdrive.conf
-        sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
-        sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
-        sudo rm -f /etc/nginx/sites-enabled/default
-        sudo nginx -t
-        sudo systemctl restart nginx
-
-        echo "[+] Deploying application..."
+        echo "[+] Cloning or updating repo..."
         if [ ! -d "MiniGDrive" ]; then
           git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
         fi
@@ -82,11 +74,22 @@ jobs:
         git reset --hard origin/master
         cd ..
 
-        echo "[+] Copying Compose and Prometheus configs..."
-        cp MiniGDrive/docker-compose.yml docker-compose.yml || true
-        cp MiniGDrive/prometheus/prometheus.yml prometheus.yml || true
+        echo "[+] Copying Nginx config..."
+        if [ -f "MiniGDrive/nginx/minigdrive.conf" ]; then
+          sudo cp MiniGDrive/nginx/minigdrive.conf /etc/nginx/sites-available/minigdrive
+          sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
+          sudo rm -f /etc/nginx/sites-enabled/default
+          sudo nginx -t
+          sudo systemctl restart nginx
+        else
+          echo "[!] Nginx config not found, skipping..."
+        fi
 
-        echo "[+] Stopping old containers..."
+        echo "[+] Copying Docker Compose and Prometheus configs..."
+        cp MiniGDrive/docker-compose.yml docker-compose.yml
+        cp MiniGDrive/prometheus/prometheus.yml prometheus.yml
+
+        echo "[+] Stopping old containers if any..."
         sudo docker-compose down || true
 
         echo "[+] Starting new stack with Docker Compose and secrets..."
@@ -98,5 +101,3 @@ jobs:
         echo "[+] Deployment complete. Running containers:"
         sudo docker ps
         EOF
-
-
