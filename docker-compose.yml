@@ -8,6 +8,8 @@ services:
       - /home/ubuntu/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=3h"
+      - "--storage.tsdb.min-block-duration=2h"
     ports:
       - "9090:9090"
     restart: unless-stopped
@@ -25,6 +27,10 @@ services:
     restart: unless-stopped
     volumes:
       - grafana_data:/var/lib/grafana
+    deploy:
+      resources:
+        limits:
+          memory: 256M
 
   gdrive:
     build: ./MiniGDrive
@@ -39,18 +45,6 @@ services:
       - /home/ubuntu/minigdrive_data/profiles:/app/static/profiles
     environment:
       SECRET_KEY: ${SECRET_KEY}
-    restart: unless-stopped
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor:latest
-    container_name: cadvisor
-    ports:
-      - "8080:8080"
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
     restart: unless-stopped
 
   node-exporter:
