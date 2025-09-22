@@ -6,8 +6,6 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus:/etc/prometheus
-    command:
-      - "--web.external-url=/prometheus/"
     ports:
       - "9090:9090"
     restart: unless-stopped
@@ -18,8 +16,6 @@ services:
     environment:
       GF_SECURITY_ADMIN_USER: ${GF_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GF_PASS}
-      GF_SERVER_ROOT_URL: "http://43.204.216.68/grafana"
-      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
     depends_on:
       - prometheus
     ports:
