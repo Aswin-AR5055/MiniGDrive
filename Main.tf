@@ -1,5 +1,5 @@
 provider "aws" {
-    region = "ap-south-1"
+    region = var.region
 }
 
 data "aws_ami" "my_ubuntu_ami" {
@@ -40,6 +40,27 @@ resource "aws_security_group" "my_sg_group_ar" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    from_port = 9100
+    to_port = 9100
+    protocol = "tcp"
+    cidr_blocks = [ "0.0.0.0/0" ]
+  }
+
+  ingress {
+    from_port = 9090
+    to_port = 9090
+    protocol = "tcp"
+    cidr_blocks = [ "0.0.0.0/0" ]
+  }
+
+  ingress {
+    from_port = 3000
+    to_port = 3000
+    protocol = "tcp"
+    cidr_blocks = [ "0.0.0.0/0" ]
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
@@ -50,12 +71,12 @@ resource "aws_security_group" "my_sg_group_ar" {
 
 resource "aws_instance" "my_instance" {
     ami = data.aws_ami.my_ubuntu_ami.id
-    instance_type = "t2.micro"
-    key_name = "newubuntukeypair"
+    instance_type = var.instance_type
+    key_name = var.key_name
     vpc_security_group_ids = [aws_security_group.my_sg_group_ar.id]
 
     tags = {
-      Name = "MiniGDrive_Test_Instance"
+      Name = var.tags
     }
 }
 
