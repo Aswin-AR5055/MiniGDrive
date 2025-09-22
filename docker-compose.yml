@@ -9,7 +9,7 @@ services:
     command:
       - "--web.external-url=/prometheus/"
     ports:
-      - "127.0.0.1:9090:9090"
+      - "9090:9090"
     restart: unless-stopped
 
   grafana:
@@ -21,7 +21,7 @@ services:
       GF_SERVER_ROOT_URL: "http://43.204.216.68/grafana"
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
     ports:
-      - "127.0.0.1:3000:3000"
+      - "3000:3000"
     depends_on:
       - prometheus
     restart: unless-stopped
@@ -32,7 +32,7 @@ services:
     build: ./MiniGDrive
     container_name: gdrive
     ports:
-      - "127.0.0.1:6000:6000"
+      - "6000:6000"
     volumes:
       - /home/ubuntu/minigdrive_data/uploads:/app/uploads
       - /home/ubuntu/minigdrive_data/trash:/app/trash
