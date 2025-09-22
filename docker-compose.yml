@@ -20,10 +20,10 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GF_PASS}
       GF_SERVER_ROOT_URL: "http://43.204.216.68/grafana"
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
-    ports:
-      - "3000:3000"
     depends_on:
       - prometheus
+    ports:
+      - "3000:3000"
     restart: unless-stopped
     volumes:
       - grafana_data:/var/lib/grafana
