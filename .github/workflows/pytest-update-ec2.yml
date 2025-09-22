@@ -9,6 +9,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      GF_USER: ${{ secrets.GF_USER }}
+      GF_PASSWORD: ${{ secrets.GF_PASSWORD }}
+      SECRET_KEY: ${{ secrets.SECRET_KEY }}
+      INSTANCE_IP: ${{ secrets.INSTANCE_IP }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -31,72 +38,71 @@ jobs:
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-private-key: ${{ env.SSH_PRIVATE_KEY }}
 
     - name: Deploy to EC2 with Docker Compose
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
-        set -e
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ env.INSTANCE_IP }} << EOF
+          set -e
 
-        echo "[+] Updating packages..."
-        sudo apt-get update -y
-        sudo apt-get install -y git curl wget software-properties-common apt-transport-https ca-certificates
+          echo "[+] Updating packages..."
+          sudo apt-get update -y
+          sudo apt-get install -y git curl wget software-properties-common apt-transport-https ca-certificates
 
-        echo "[+] Installing Docker if missing..."
-        if ! command -v docker &> /dev/null; then
-          sudo apt-get install -y docker.io
-          sudo usermod -aG docker ubuntu
-        fi
+          echo "[+] Installing Docker if missing..."
+          if ! command -v docker &> /dev/null; then
+            sudo apt-get install -y docker.io
+            sudo usermod -aG docker ubuntu
+          fi
 
-        echo "[+] Installing Docker Compose v2..."
-        if ! docker compose version &> /dev/null; then
-          sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-$(uname -s)-$(uname -m)" \
-            -o /usr/local/bin/docker-compose
-          sudo chmod +x /usr/local/bin/docker-compose
-        fi
+          echo "[+] Installing Docker Compose..."
+          if ! docker compose version &> /dev/null; then
+            sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.1/docker-compose-$(uname -s)-$(uname -m)" \
+              -o /usr/local/bin/docker-compose
+            sudo chmod +x /usr/local/bin/docker-compose
+          fi
 
-        echo "[+] Adding Grafana repository and key..."
-        wget -q -O - https://packages.grafana.com/gpg.key | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
-        echo "deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
-        sudo apt-get update -y
+          echo "[+] Adding Grafana repository and key..."
+          wget -q -O - https://packages.grafana.com/gpg.key | sudo gpg --batch --yes --dearmor -o /usr/share/keyrings/grafana-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/grafana-archive-keyring.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+          sudo apt-get update -y
 
-        echo "[+] Installing Nginx if missing..."
-        if ! command -v nginx &> /dev/null; then
-          sudo apt-get install -y nginx
-        fi
+          echo "[+] Installing Nginx if missing..."
+          if ! command -v nginx &> /dev/null; then
+            sudo apt-get install -y nginx
+          fi
 
-        echo "[+] Copying Nginx config..."
-        scp -o StrictHostKeyChecking=no MiniGDrive/nginx/minigdrive.conf /tmp/minigdrive.conf
-        sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
-        sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
-        sudo rm -f /etc/nginx/sites-enabled/default
-        sudo nginx -t
-        sudo systemctl restart nginx
+          echo "[+] Copying Nginx config..."
+          scp -o StrictHostKeyChecking=no MiniGDrive/nginx/minigdrive.conf /tmp/minigdrive.conf
+          sudo mv /tmp/minigdrive.conf /etc/nginx/sites-available/minigdrive
+          sudo ln -sf /etc/nginx/sites-available/minigdrive /etc/nginx/sites-enabled/minigdrive
+          sudo rm -f /etc/nginx/sites-enabled/default
+          sudo nginx -t
+          sudo systemctl restart nginx
 
-        echo "[+] Deploying application..."
-        # Clone or update repo
-        if [ ! -d "MiniGDrive" ]; then
-          git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
-        fi
-        cd MiniGDrive
-        git fetch --all
-        git reset --hard origin/master
-        cd ..
+          echo "[+] Deploying application..."
+          if [ ! -d "MiniGDrive" ]; then
+            git clone https://github.com/Aswin-AR5055/MiniGDrive.git MiniGDrive
+          fi
+          cd MiniGDrive
+          git fetch --all
+          git reset --hard origin/master
+          cd ..
 
-        # Copy docker-compose and Prometheus config
-        mkdir -p monitoring
-        cp MiniGDrive/docker-compose.yml docker-compose.yml || true
-        cp MiniGDrive/prometheus/prometheus.yml prometheus.yml || true
+          # Copy docker-compose and Prometheus config
+          mkdir -p monitoring
+          cp MiniGDrive/docker-compose.yml docker-compose.yml || true
+          cp MiniGDrive/prometheus/prometheus.yml prometheus.yml || true
 
-        echo "[+] Stopping old containers..."
-        sudo docker-compose down || true
+          echo "[+] Stopping old containers..."
+          sudo docker-compose down || true
 
-        echo "[+] Starting new stack with Compose..."
-        GF_USER=${{ secrets.GF_USER }} \
-        GF_PASS=${{ secrets.GF_PASSWORD }} \
-        SECRET_KEY=${{ secrets.SECRET_KEY }} \
-        sudo docker-compose up -d --build
+          echo "[+] Starting new stack with Compose..."
+          GF_USER=$GF_USER \
+          GF_PASS=$GF_PASSWORD \
+          SECRET_KEY=$SECRET_KEY \
+          sudo docker-compose up -d --build
 
-        echo "[+] Deployment complete. Running containers:"
-        sudo docker ps
+          echo "[+] Deployment complete. Running containers:"
+          sudo docker ps
         EOF
