@@ -10,35 +10,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ Checkout repo
     - name: Checkout Code
       uses: actions/checkout@v3
 
-    # 2️⃣ Setup Python for tests
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.10'
 
-    # 3️⃣ Install dependencies
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    # 4️⃣ Run Tests
     - name: Run Tests
       run: |
         pip install pytest
         pytest
 
-    # 5️⃣ Setup SSH
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    # 6️⃣ Deploy to EC2
     - name: Deploy to EC2 with Docker Compose
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
