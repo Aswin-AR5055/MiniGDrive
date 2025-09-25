@@ -3,7 +3,7 @@ name: CI/CD - Docker + Nginx + Prometheus/Grafana
 on:
   push:
     branches:
-      - testbranch
+      - master
 
 jobs:
   deploy:
@@ -26,11 +26,11 @@ jobs:
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY_TEST }}
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Deploy to EC2 with Docker Compose
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP_TEST }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
         set -e
 
         echo "[+] Updating packages..."
@@ -66,7 +66,7 @@ jobs:
         fi
         cd MiniGDrive
         git fetch --all
-        git reset --hard origin/testbranch
+        git reset --hard origin/master
         cd ..
 
         echo "[+] Setting up Nginx config..."

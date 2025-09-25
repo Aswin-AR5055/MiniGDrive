@@ -15,7 +15,6 @@ def init_db():
     conn = get_db_connection()
     c = conn.cursor()
     
-    # Create users table
     c.execute("""
         CREATE TABLE IF NOT EXISTS users (
             id SERIAL PRIMARY KEY,
@@ -27,7 +26,6 @@ def init_db():
         )
     """)
     
-    # Create favourites table
     c.execute("""
         CREATE TABLE IF NOT EXISTS favourites (
             id SERIAL PRIMARY KEY,
@@ -40,5 +38,4 @@ def init_db():
     c.close()
     conn.close()
 
-# Initialize tables on import
 init_db()

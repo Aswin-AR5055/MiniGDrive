@@ -1,11 +1,11 @@
 # <img src="assets/ars_logo_32x32.png" alt="ARS" width="24" height="24"> MiniGDrive          
 
 ![Deploy](https://github.com/Aswin-AR5055/MiniGDrive/actions/workflows/pytest-update-ec2.yml/badge.svg)
+
 ![Status](https://img.shields.io/badge/status-completed-green)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-**MiniGDrive** is a lightweight, responsive cloud storage application powered by Flask + SQLite, now with voice command support. Users can register, log in, upload, download, and manage files — all within a clean and intuitive UI.  
-Now includes **Prometheus + Grafana monitoring dashboards** for performance and usage metrics.
+**MiniGDrive** is a lightweight, responsive cloud storage application powered by Flask + PostgreSQL, with voice command support. Users can register, log in, upload, download, and manage files — all within a clean and intuitive UI. Includes **Prometheus + Grafana monitoring dashboards** for performance and usage metrics.
 
 ---
 
@@ -82,7 +82,7 @@ Dashboard (Mobile view):
 | Layer                  | Technology Used                                                   | Purpose                                               |
 |------------------------|-------------------------------------------------------------------|-------------------------------------------------------|
 | **Backend**            | Python + Flask                                                    | Application logic                                     |
-| **Database**           | SQLite                                                            | Storing user accounts, favourite files, and profiles |
+| **Database**           | PostgreSQL                                                            | Storing user accounts, favourite files, and profiles |
 | **Frontend**           | HTML (Flask templates), Bootstrap 5, Vanilla JavaScript, Web Speech API | Responsive UI, modals, voice commands, sorting/filtering, interactivity |
 | **Security**           | Werkzeug (secure filename + password hashing)                     | Secure file uploads and password management          |
 | **File Handling**      | Python libraries (`os`, `shutil`, `zipfile`, `uuid`, `unicodedata`) | File operations (uploads, storage, trash)           |
@@ -107,9 +107,7 @@ MiniGDrive/
 ├── app.py               # Main Flask application
 ├── db_schema.py         # Database schema definitions
 ├── file_utils.py        # File handling utilities
-├── translations.py      # Internationalization support
-├── test_app.py          # Unit tests
-├── users.db             # SQLite database (created at runtime)
+├── translations.py      # Multi-Language Support
 ├── routes/              # Route handlers
 │   ├── __init__.py
 │   ├── dashboard.py
@@ -164,6 +162,7 @@ Nginx config
 ├── storage/             # User storage directory
 ├── docker-compose.yml   # Docker compose for running multiple containers
 ├── Dockerfile           # Docker configuration
+├── LICENSE              # LICENSE file
 └── requirements.txt     # Python dependencies 
 
 ```
@@ -201,7 +200,8 @@ Below are the voice commands you can use in **MiniGDrive**:
 2. Automated **tests run** using pytest.  
 3. SSH into **AWS EC2 instance**.  
 4. Docker stack rebuilds using `docker-compose` with updated services:
-   - **MiniGDrive app**  
+   - **MiniGDrive app**
+   - **PostgreSQL** Database  
    - **Prometheus** for metrics collection  
    - **Grafana** for dashboard visualization  
 5. Old containers are stopped and removed.  
@@ -225,17 +225,23 @@ Below are the voice commands you can use in **MiniGDrive**:
    cd MiniGDrive
    ```
 
-2. **Install dependencies** (virtual environment recommended):
+2. **Set environment variables (PostgreSQL credentials)**:
+   ```bash
+   export POSTGRES_DB=your_db_name
+   export POSTGRES_USER=your_db_user
+   export POSTGRES_PASSWORD=your_db_password
+
+3. **Install dependencies** (virtual environment recommended):
    ```bash
    pip install -r requirements.txt
    ```
 
-3. **Run the application**:
+4. **Run the application**:
    ```bash
    python app.py
    ```
 
-4. **Visit the application**:
+5. **Visit the application**:
    ```bash
    http://127.0.0.1:6000
    ```
