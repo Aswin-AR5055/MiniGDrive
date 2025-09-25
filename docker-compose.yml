@@ -41,7 +41,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 256M
+          mem_limit: 256m
 
   gdrive:
     build: ./MiniGDrive
@@ -75,6 +75,17 @@ services:
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+
+  test:
+    build: .
+    command: pytest
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_HOST: postgres
+    depends_on:
+      - postgres
 
 volumes:
   grafana_data:
