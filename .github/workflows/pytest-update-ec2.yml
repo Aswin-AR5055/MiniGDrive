@@ -25,7 +25,7 @@ jobs:
 
     - name: Run Tests
       run: |
-        docker-compose run --rm test
+        docker compose run --rm test
 
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
