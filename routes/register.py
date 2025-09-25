@@ -22,7 +22,7 @@ def register():
             flash("Username already taken", "danger")
             return redirect("/register")
         hashed = generate_password_hash(passwd)
-        c.execute("insert into users (username, password) values (%s, ?)", (uname, hashed))
+        c.execute("insert into users (username, password) values (%s, %s)", (uname, hashed))
         conn.commit()
         conn.close()
 
