@@ -38,10 +38,6 @@ services:
     restart: unless-stopped
     volumes:
       - grafana_data:/var/lib/grafana
-    deploy:
-      resources:
-        limits:
-          mem_limit: 256m
 
   gdrive:
     build: ./MiniGDrive
