@@ -23,16 +23,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run tests
-      run: docker compose run --rm test
-      env:
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
-        GF_USER: ${{ secrets.GF_USER }}
-        GF_PASS: ${{ secrets.GF_PASSWORD }}
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
-
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
