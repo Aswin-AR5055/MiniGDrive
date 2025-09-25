@@ -2,8 +2,7 @@ import pytest
 import os
 import shutil
 import io
-import psycopg2
-from app import app, init_db
+from app import app, get_db_connection
 
 TEST_USER = "testuser"
 TEST_PASS = "testpass"
@@ -12,12 +11,7 @@ TEST_PASS = "testpass"
 
 @pytest.fixture(scope="session")
 def test_db():
-    conn = psycopg2.connect(
-        host=os.getenv("POSTGRES_HOST", "postgres"),
-        database=os.getenv("POSTGRES_DB", "minidrive"),
-        user=os.getenv("POSTGRES_USER", "admin"),
-        password=os.getenv("POSTGRES_PASSWORD", "supersecret")
-    )
+    conn = get_db_connection()
     yield conn
     conn.close()
 
@@ -35,8 +29,6 @@ def client(test_db):
         test_db.commit()
 
     with app.test_client() as client:
-        with app.app_context():
-            init_db()
         yield client
 
     cleanup_dirs(TEST_USER)
@@ -44,7 +36,6 @@ def client(test_db):
 def cleanup_dirs(username):
     shutil.rmtree(os.path.join("uploads", username), ignore_errors=True)
     shutil.rmtree(os.path.join("trash", username), ignore_errors=True)
-
 
 # ---------- Tests ----------
 
