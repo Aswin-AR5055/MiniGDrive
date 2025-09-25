@@ -1,5 +1,6 @@
 from flask import render_template, redirect, session, request
 import os, shutil, datetime, sqlite3
+from db_schema import get_db_connection
 from translations import get_translations
 from .profile import get_user_profile
 from file_utils import get_user_folder, get_storage_info
@@ -43,9 +44,9 @@ def favourites():
                            active_page="favourites")
 
 def get_user_favourites():
-    conn = sqlite3.connect("users.db")
+    conn = get_db_connection()
     c = conn.cursor()
-    c.execute("SELECT filename FROM favourites WHERE username=?", (session["username"],))
+    c.execute("SELECT filename FROM favourites WHERE username=%s", (session["username"],))
     rows = c.fetchall()
     conn.close()
     
@@ -64,15 +65,15 @@ def get_user_favourites():
     return existing_files
 
 def add_favourite(filename):
-    conn = sqlite3.connect("users.db")
+    conn = get_db_connection()
     c = conn.cursor()
-    c.execute("INSERT OR IGNORE INTO favourites (username, filename) VALUES (?, ?)", (session["username"], filename))
+    c.execute("INSERT OR IGNORE INTO favourites (username, filename) VALUES (%s, %s)", (session["username"], filename))
     conn.commit()
     conn.close()
 
 def remove_favourite(filename):
-    conn = sqlite3.connect("users.db")
+    conn = get_db_connection()
     c = conn.cursor()
-    c.execute("DELETE FROM favourites WHERE username=? AND filename=?", (session["username"], filename))
+    c.execute("DELETE FROM favourites WHERE username=%s AND filename=%s", (session["username"], filename))
     conn.commit()
     conn.close()

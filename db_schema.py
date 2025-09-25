@@ -1,26 +1,11 @@
-import sqlite3
+import psycopg2
+import os
 
-def init_db():
-    conn = sqlite3.connect("users.db")
-    c = conn.cursor()
-    c.execute("""
-            create table if not exists users (
-                id integer primary key,
-                username text,
-                password text,
-                bio text,
-                age integer,
-                profile_pic text
-            )
-        """)
-    c.execute("""
-        create table if not exists favourites (
-              id integer primary key autoincrement,
-              username text not null,
-              filename text not null
-            )
-        """)
-    conn.commit()
-    conn.close()
-    
-init_db()
+def get_db_connection():
+    conn = psycopg2.connect(
+        host = "postgres",
+        database = os.getenv("POSTGRES_DB"),
+        user = os.getenv("POSTGRES_USER"),
+        password = os.getenv("POSTGRES_PASSWORD")
+    )
+    return conn

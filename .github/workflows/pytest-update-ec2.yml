@@ -108,6 +108,9 @@ jobs:
         sudo SECRET_KEY="${{ secrets.SECRET_KEY }}" \
             GF_USER="${{ secrets.GF_USER }}" \
             GF_PASS="${{ secrets.GF_PASSWORD }}" \
+            POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
+            POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
+            POSTGRES_DB: "${{ secrets.POSTGRES_DB }}" \
             docker-compose up -d --build
 
         echo "[+] Deployment complete. Running containers:"

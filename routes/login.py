@@ -1,6 +1,7 @@
 from flask import render_template, flash, session, redirect, request
 from . import app
-import sqlite3
+import psycopg2
+from db_schema import get_db_connection
 from werkzeug.security import check_password_hash
 
 @app.route("/login", methods=["GET", "POST"])
@@ -13,9 +14,9 @@ def login():
         passwd = request.form["password"]
         remember = request.form.get("remember")
 
-        conn = sqlite3.connect("users.db")
+        conn = get_db_connection()
         c = conn.cursor()
-        c.execute("select password from users where username=?", (uname,))
+        c.execute("select password from users where username=%s", (uname,))
         row = c.fetchone()
         conn.close()
 

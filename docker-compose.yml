@@ -1,6 +1,17 @@
-version: "3.8"
-
 services:
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -41,10 +52,12 @@ services:
       - /home/ubuntu/minigdrive_data/uploads:/app/uploads
       - /home/ubuntu/minigdrive_data/trash:/app/trash
       - /home/ubuntu/minigdrive_data/storage:/app/storage
-      - /home/ubuntu/minigdrive_data/users.db:/app/users.db
       - /home/ubuntu/minigdrive_data/profiles:/app/static/profiles
     environment:
       SECRET_KEY: ${SECRET_KEY}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     restart: unless-stopped
 
   node-exporter:
@@ -65,3 +78,4 @@ services:
 
 volumes:
   grafana_data:
+  pg_data:
