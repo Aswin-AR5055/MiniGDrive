@@ -25,7 +25,7 @@ def profile():
         filename = None
         if profile_pic and profile_pic.filename:
             filename = secure_filename(profile_pic.filename)
-            profile_pic_path = os.path.join("static", "profiles", filename)
+            profile_pic_path = os.path.join(app.root_path,"static", "profiles", filename)
             os.makedirs(os.path.dirname(profile_pic_path), exist_ok=True)
             profile_pic.save(profile_pic_path)
             c.execute("UPDATE users SET bio=%s, age=%s, profile_pic=%s WHERE username=%s",
