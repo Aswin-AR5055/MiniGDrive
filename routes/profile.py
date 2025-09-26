@@ -29,8 +29,9 @@ def profile():
 
         if profile_pic and profile_pic.filename:
             filename = secure_filename(profile_pic.filename)
-            profile_pic_path = os.path.join(app.root_path, "static", "profiles", filename)
-            os.makedirs(os.path.dirname(profile_pic_path), exist_ok=True)
+            profile_pic_dir = os.path.join(app.static_folder, "profiles")
+            os.makedirs(profile_pic_dir, exist_ok=True)
+            profile_pic_path = os.path.join(profile_pic_dir, filename)
             profile_pic.save(profile_pic_path)
 
             c.execute(
@@ -48,7 +49,7 @@ def profile():
             current_pic = c.fetchone()[0]
             if current_pic:
                 try:
-                    os.remove(os.path.join(app.root_path, "static", "profiles", current_pic))
+                    os.remove(os.path.join(app.static_folder, "profiles", current_pic))
                 except FileNotFoundError:
                     pass
             c.execute("UPDATE users SET profile_pic=NULL WHERE username=%s", (session["username"],))
