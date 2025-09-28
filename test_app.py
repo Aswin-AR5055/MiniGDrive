@@ -6,15 +6,19 @@ import shutil
 from app import app
 from db_schema import get_db_connection
 
-# Test credentials – separate from production
+# Hardcoded test DB credentials (matching pipeline)
 TEST_USER = "testuser"
 TEST_PASS = "testpass"
-TEST_DB = os.getenv("POSTGRES_DB") + "_test"  # Optional: separate test DB
+TEST_DB = "test_db"
+TEST_HOST = "localhost"
+TEST_PORT = 5432
 
 # Override environment variables for test DB connection
+os.environ["POSTGRES_USER"] = TEST_USER
+os.environ["POSTGRES_PASSWORD"] = TEST_PASS
 os.environ["POSTGRES_DB"] = TEST_DB
-os.environ["POSTGRES_USER"] = os.getenv("POSTGRES_USER")
-os.environ["POSTGRES_PASSWORD"] = os.getenv("POSTGRES_PASSWORD")
+os.environ["POSTGRES_HOST"] = TEST_HOST
+os.environ["POSTGRES_PORT"] = str(TEST_PORT)
 
 @pytest.fixture(scope="module")
 def db_conn():
@@ -53,7 +57,7 @@ def db_conn():
 def client(db_conn):
     app.config['TESTING'] = True
     app.config['WTF_CSRF_ENABLED'] = False
-    app.secret_key = os.getenv("SECRET_KEY", "prod_test_key")
+    app.secret_key = "prod_test_key"
     app.config['UPLOAD_FOLDER'] = os.path.join("uploads", TEST_USER)
 
     # Ensure isolated folders for testing
