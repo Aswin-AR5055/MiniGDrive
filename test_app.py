@@ -4,25 +4,25 @@ import io
 import psycopg2
 import shutil
 from app import app
-from db_schema import get_db_connection
 
-# Hardcoded test DB credentials (matching pipeline)
+# --- Test credentials (hardcoded for pipeline) ---
 TEST_USER = "testuser"
 TEST_PASS = "testpass"
 TEST_DB = "test_db"
 TEST_HOST = "localhost"
 TEST_PORT = 5432
 
-# Override environment variables for test DB connection
-os.environ["POSTGRES_USER"] = TEST_USER
-os.environ["POSTGRES_PASSWORD"] = TEST_PASS
-os.environ["POSTGRES_DB"] = TEST_DB
-os.environ["POSTGRES_HOST"] = TEST_HOST
-os.environ["POSTGRES_PORT"] = str(TEST_PORT)
-
+# --- Test DB fixture ---
 @pytest.fixture(scope="module")
 def db_conn():
-    conn = get_db_connection()
+    # Connect directly using test credentials
+    conn = psycopg2.connect(
+        host=TEST_HOST,
+        database=TEST_DB,
+        user=TEST_USER,
+        password=TEST_PASS,
+        port=TEST_PORT
+    )
     cursor = conn.cursor()
 
     # Create tables only for testing
@@ -53,11 +53,12 @@ def db_conn():
     cursor.close()
     conn.close()
 
+# --- Flask test client fixture ---
 @pytest.fixture
 def client(db_conn):
     app.config['TESTING'] = True
     app.config['WTF_CSRF_ENABLED'] = False
-    app.secret_key = "prod_test_key"
+    app.secret_key = "test_secret_key"
     app.config['UPLOAD_FOLDER'] = os.path.join("uploads", TEST_USER)
 
     # Ensure isolated folders for testing
@@ -72,7 +73,7 @@ def client(db_conn):
     shutil.rmtree(app.config['UPLOAD_FOLDER'], ignore_errors=True)
     shutil.rmtree(trash_folder, ignore_errors=True)
 
-# Helper functions
+# --- Helper functions ---
 def login(client):
     return client.post('/login', data={'username': TEST_USER, 'password': TEST_PASS}, follow_redirects=True)
 
