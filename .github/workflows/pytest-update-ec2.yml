@@ -9,6 +9,21 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
     - name: Checkout Code
       uses: actions/checkout@v3
@@ -22,7 +37,6 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest python-dotenv psycopg2-binary
 
     - name: Run tests
       env:
@@ -32,15 +46,8 @@ jobs:
         POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
         POSTGRES_HOST: localhost
       run: |
-        echo "[+] Starting temporary Postgres for tests..."
-        sudo apt-get update
-        sudo apt-get install -y postgresql postgresql-contrib
-        sudo service postgresql start
-
-        # Create test database + user
-        psql -U postgres -c "CREATE USER $POSTGRES_USER WITH PASSWORD '$POSTGRES_PASSWORD';" || true
-        psql -U postgres -c "CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;" || true
-
+        echo "[+] Waiting for Postgres service..."
+        sleep 10
         echo "[+] Running pytest..."
         pytest
 

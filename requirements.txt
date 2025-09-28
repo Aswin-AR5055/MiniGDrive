@@ -3,3 +3,4 @@ Werkzeug>=2.0.0,<3.0.0
 pytest
 gunicorn
 psycopg2-binary
+python-dotenv
