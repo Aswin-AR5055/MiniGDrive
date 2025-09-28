@@ -152,4 +152,5 @@ jobs:
 
         echo "[+] Deployment complete. Running containers:"
         sudo docker ps
+        sudo docker logs -f gdrive
         EOF
