@@ -9,3 +9,4 @@ test_app.py.bak
 uploads/
 trash/
 terraform/
+.env

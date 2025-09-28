@@ -1,13 +1,17 @@
 import psycopg2
 from psycopg2 import sql
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host = "postgres",
-        database = os.getenv("POSTGRES_DB"),
-        user = os.getenv("POSTGRES_USER"),
-        password = os.getenv("POSTGRES_PASSWORD")
+        host=os.getenv("POSTGRES_HOST"),
+        port=5432,
+        database=os.getenv("POSTGRES_DB"),
+        user=os.getenv("POSTGRES_USER"),
+        password=os.getenv("POSTGRES_PASSWORD")
     )
     return conn
 
@@ -37,5 +41,3 @@ def init_db():
     conn.commit()
     c.close()
     conn.close()
-
-init_db()

@@ -22,15 +22,36 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+        pip install pytest python-dotenv psycopg2-binary
+
+    - name: Run tests
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_HOST: localhost
+      run: |
+        echo "[+] Starting temporary Postgres for tests..."
+        sudo apt-get update
+        sudo apt-get install -y postgresql postgresql-contrib
+        sudo service postgresql start
+
+        # Create test database + user
+        psql -U postgres -c "CREATE USER $POSTGRES_USER WITH PASSWORD '$POSTGRES_PASSWORD';" || true
+        psql -U postgres -c "CREATE DATABASE $POSTGRES_DB OWNER $POSTGRES_USER;" || true
+
+        echo "[+] Running pytest..."
+        pytest
 
     - name: Set up SSH
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: Deploy to EC2 with Docker Compose
+    - name: Deploy to EC2
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << 'EOF'
+        ssh -o StrictHostKeyChecking=no ubuntu@${{ secrets.INSTANCE_IP }} << EOF
         set -e
 
         echo "[+] Updating packages..."
@@ -76,8 +97,6 @@ jobs:
           sudo rm -f /etc/nginx/sites-enabled/default
           sudo nginx -t
           sudo systemctl restart nginx
-        else
-          echo "[!] Nginx config not found, skipping..."
         fi
 
         echo "[+] Setting up Prometheus..."
@@ -92,20 +111,23 @@ jobs:
         sudo mkdir -p /home/ubuntu/minigdrive_data/storage
         sudo mkdir -p /home/ubuntu/minigdrive_data/profiles
 
+        echo "[+] Writing .env file automatically..."
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" > /home/ubuntu/minigdrive_env
+        echo "GF_USER=${{ secrets.GF_USER }}" >> /home/ubuntu/minigdrive_env
+        echo "GF_PASS=${{ secrets.GF_PASSWORD }}" >> /home/ubuntu/minigdrive_env
+        echo "POSTGRES_USER=${{ secrets.POSTGRES_USER }}" >> /home/ubuntu/minigdrive_env
+        echo "POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}" >> /home/ubuntu/minigdrive_env
+        echo "POSTGRES_DB=${{ secrets.POSTGRES_DB }}" >> /home/ubuntu/minigdrive_env
+        sudo chmod 600 /home/ubuntu/minigdrive_env
+
         echo "[+] Copying Docker Compose file..."
         cp MiniGDrive/docker-compose.yml docker-compose.yml
 
         echo "[+] Stopping old containers if any..."
         sudo docker-compose down || true
 
-        echo "[+] Starting new stack with Docker Compose and secrets..."
-        sudo SECRET_KEY="${{ secrets.SECRET_KEY }}" \
-            GF_USER="${{ secrets.GF_USER }}" \
-            GF_PASS="${{ secrets.GF_PASSWORD }}" \
-            POSTGRES_USER="${{ secrets.POSTGRES_USER }}" \
-            POSTGRES_PASSWORD="${{ secrets.POSTGRES_PASSWORD }}" \
-            POSTGRES_DB="${{ secrets.POSTGRES_DB }}" \
-            docker-compose up -d --build
+        echo "[+] Starting new stack with Docker Compose using .env file..."
+        sudo docker-compose --env-file /home/ubuntu/minigdrive_env up -d --build
 
         echo "[+] Deployment complete. Running containers:"
         sudo docker ps
