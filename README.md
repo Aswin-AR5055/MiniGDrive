@@ -163,6 +163,7 @@ Nginx config
 ├── docker-compose.yml   # Docker compose for running multiple containers
 ├── Dockerfile           # Docker configuration
 ├── LICENSE              # LICENSE file
+├── test_app.py          # Tests
 └── requirements.txt     # Python dependencies 
 
 ```
