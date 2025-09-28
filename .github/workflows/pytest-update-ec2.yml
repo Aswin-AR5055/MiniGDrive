@@ -59,6 +59,8 @@ jobs:
         POSTGRES_USER: testuser
         POSTGRES_PASSWORD: testpass
         POSTGRES_DB: test_db
+        POSTGRES_HOST: localhost
+        POSTGRES_PORT: 5432
       run: pytest -v
 
     - name: Set up SSH
