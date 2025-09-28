@@ -13,12 +13,12 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-          POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: test_db
         ports: ["5432:5432"]
         options: >-
-          --health-cmd="pg_isready -U postgres"
+          --health-cmd="pg_isready -U testuser"
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
@@ -36,20 +36,29 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest
+        pip install pytest psycopg2-binary
 
     - name: Wait for Postgres and create test DB
       run: |
         echo "[+] Waiting for Postgres..."
-        sleep 10
-        PGPASSWORD=${{ secrets.POSTGRES_PASSWORD }} \
-          psql -h localhost -U ${{ secrets.POSTGRES_USER }} -c "CREATE DATABASE ${POSTGRES_DB}_test;"
+        until pg_isready -h localhost -U testuser; do
+          sleep 2
+        done
+        echo "[+] Postgres is ready!"
+
+        PGPASSWORD=testpass psql -h localhost -U testuser -d postgres \
+          -c "DO \$\$ BEGIN
+                IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'test_db') THEN
+                  CREATE DATABASE test_db;
+                END IF;
+              END
+              \$\$;"
 
     - name: Run tests
       env:
-        POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
-        POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
-        POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+        POSTGRES_USER: testuser
+        POSTGRES_PASSWORD: testpass
+        POSTGRES_DB: test_db
       run: pytest -v
 
     - name: Set up SSH
