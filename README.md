@@ -5,7 +5,7 @@
 ![Status](https://img.shields.io/badge/status-completed-green)
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-**MiniGDrive** is a lightweight, responsive cloud storage application powered by Flask + PostgreSQL, with voice command support. Users can register, log in, upload, download, and manage files — all within a clean and intuitive UI. Includes **Prometheus + Grafana monitoring dashboards** for performance and usage metrics.
+**MiniGDrive** is a cloud storage web app (like a mini Google Drive) where users can sign up, log in, upload, download, and manage their files. It has a clean, responsive UI with support for voice commands and works on both desktop and mobile. This project also demonstrates my skills in full-stack development and DevOps — including databases, Docker, CI/CD pipelines, and AWS deployment.
 
 ---
 
