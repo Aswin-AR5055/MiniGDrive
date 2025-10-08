@@ -3,25 +3,11 @@ name: CI/CD - Docker + Nginx + Prometheus/Grafana
 on:
   push:
     branches:
-      - master
+      - testbranch
 
 jobs:
-  test-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: testuser
-          POSTGRES_PASSWORD: testpass
-          POSTGRES_DB: test_db
-        ports: ["5432:5432"]
-        options: >-
-          --health-cmd="pg_isready -U testuser"
-          --health-interval=10s
-          --health-timeout=5s
-          --health-retries=5
 
     steps:
     - name: Checkout Code
