@@ -16,7 +16,7 @@ def get_s3_client():
     )
 
 # S3 bucket name
-BUCKET_NAME = os.getenv("S3_BUCKET_NAME")
+BUCKET_NAME = os.getenv("BUCKET_NAME")
 
 # ---------- Filename Utilities ----------
 def normalize_filename(name):
