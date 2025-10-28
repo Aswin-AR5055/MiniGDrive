@@ -10,3 +10,6 @@ uploads/
 trash/
 terraform/
 .env
+.terraform.lock.hcl
+.terraform/
+storage/
