@@ -103,7 +103,7 @@ jobs:
         echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> /home/ubuntu/minigdrive_env
         echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> /home/ubuntu/minigdrive_env
         echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> /home/ubuntu/minigdrive_env
-        echo "BUCKET_NAME=${{ secrets.S3_BUCKET_NAME }}" >> /home/ubuntu/minigdrive_env
+        echo "BUCKET_NAME=${{ secrets.BUCKET_NAME }}" >> /home/ubuntu/minigdrive_env
         sudo chmod 600 /home/ubuntu/minigdrive_env
 
         echo "[+] Copying Docker Compose file..."
