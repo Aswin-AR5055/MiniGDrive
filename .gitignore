@@ -10,3 +10,5 @@ uploads/
 trash/
 terraform/
 .env
+.terraform/
+.terraform.lock.hcl
