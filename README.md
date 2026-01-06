@@ -41,7 +41,7 @@ Dashboard (Mobile view):
 
 ---
 
-## Live Demo
+## Live Demo (Server is DOWN for now to save costs)
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-CLICK%20HERE-blue)](https://d3gl01gujethk4.cloudfront.net)  
 > **Hosted:** AWS EC2 instance using Docker, Gunicorn, and Nginx  
