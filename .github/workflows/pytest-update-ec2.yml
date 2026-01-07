@@ -1,6 +1,6 @@
 name: CI/CD - Docker + Nginx + Prometheus/Grafana
 
-₹on:
+#on:
   #push:
     #branches:
       #- master
