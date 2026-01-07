@@ -1,9 +1,9 @@
 name: CI/CD - Docker + Nginx + Prometheus/Grafana
 
-on:
-  push:
-    branches:
-      - master
+₹on:
+  #push:
+    #branches:
+      #- master
 
 jobs:
   test-and-deploy:
