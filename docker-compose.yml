@@ -43,7 +43,7 @@ services:
     build: ./MiniGDrive
     container_name: gdrive
     ports:
-      - "6000:6000"
+      - "5000:5000"
     volumes:
       - /home/ubuntu/minigdrive_data/uploads:/app/uploads
       - /home/ubuntu/minigdrive_data/trash:/app/trash
